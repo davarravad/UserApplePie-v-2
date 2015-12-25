@@ -23,16 +23,11 @@ The framework requirements are limited:
 
 ## Installation
 
-(Update Coming Soon)
 1. [Download](http://www.userapplepie.com/Downloads/) the framework.
 2. Unzip the package.
 3. Open `app/Core/Config.php` and set your base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do) and database credentials (if a database is needed). Set the default theme. When you are done, rename the file to `Core/Config.php`.
 4. Edit `.htaccess` file and save the base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do).
 
-## Other Contributions
-
-Have you found this framework helpful? Why not take a minute to endorse my hard work on [coderwall](https://coderwall.com/daveismynamecom)! Just click the badge below:
-
-[![endorse](https://api.coderwall.com/daveismynamecom/endorsecount.png)](https://coderwall.com/daveismynamecom)
+## Built on Simple MVC Framework
 
 ![Simple MVC Framework](http://simplemvcframework.com/app/templates/publicthemes/smvc/images/logo.png)
