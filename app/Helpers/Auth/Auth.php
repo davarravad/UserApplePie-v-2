@@ -9,7 +9,7 @@
 namespace Helpers\Auth;
 
 use Helpers\Database;
-use Helpers\Cookie;
+use Helpers\Auth\Cookie;
 
 class Auth {
 
