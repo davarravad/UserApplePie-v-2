@@ -16,10 +16,12 @@ class Auth extends Controller {
 	// Logs the user into the system
 	public function Login(){
 		
-		if($this->auth->isLogged()){
+		// Check to make sure user is not already logged in
+		if($this->auth->isLoggedIn()){
 			Url::redirect();
 		}
 		
+		// Check to make sure user is trying to login
 		if(isset($_POST['submit'])){
 				
 			// Catch username an password inputs using the Request helper
@@ -27,22 +29,14 @@ class Auth extends Controller {
 			$password = Request::post('password');
 			
 			// Login Validation
-			if(empty($username)){
-				$error[] = 'UserName is Blank!';
-			}else if(empty($password)){
-				$error[] = 'Password is Blank!';
-			}else if(!$this->auth->login($username, $password)){		
-				$error[] = 'Incorrect UserName or Password!';
-			}
-			
-			// User Passed Validation - Let them in
-			if(!$error){
+			if($this->auth->login($username, $password)){		
+				// User Passed Validation - Let them in
 				// User is good to go
 				$data = array('LastLogin' => date('Y-m-d G:i:s'));
-				$where = array('id' => $this->auth->getID($username));
+				$where = array('userID' => $this->auth->getID($username));
 				$this->auth->updateUser($data,$where);
 				
-				//Url::redirect();
+				Url::redirect();
 			}
 		}
 		
