@@ -6,8 +6,6 @@ use \Core\View,
 
 class Auth extends Controller {
 	
-
-	
 	// Logs the user into the system
 	public function Login(){
 		
@@ -15,7 +13,7 @@ class Auth extends Controller {
 		if($this->auth->isLoggedIn()){
 			Url::redirect();
 		}
-		
+			
 		// Check to make sure user is trying to login
 		if(isset($_POST['submit'])){
 				

@@ -74,5 +74,4 @@ $hooks = Hooks::get();
 //hook for running code after body tag
 $hooks->run('afterBody');
 ?>
-
 <div class="container">

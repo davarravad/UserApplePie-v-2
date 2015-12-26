@@ -9,7 +9,7 @@
 namespace Helpers\Auth;
 
 use Helpers\Database;
-use Helpers\Session;
+use Helpers\Cookie;
 
 class Auth {
 
@@ -33,7 +33,7 @@ class Auth {
      */
     public function login($username, $password) {
 		
-        if (!Session::get("auth_session")) {
+        if (!Cookie::get("auth_cookie")) {
 			
             $attcount = $this->getAttempt($_SERVER['REMOTE_ADDR']);
 
@@ -85,7 +85,7 @@ class Auth {
                             return false;
                         } else {
                             // Account is activated
-                            $this->newSession($username); //generate new cookie session
+                            $this->newCookie($username); //generate new cookie cookie
                             $this->logActivity($username, "AUTH_LOGIN_SUCCESS", "User logged in");
                             $this->successmsg[] = $this->lang['login_success'];
                             return true;
@@ -101,12 +101,12 @@ class Auth {
     }
 
     /**
-     * Logs out an user, deletes all sessions and destroys the cookies 
+     * Logs out an user, deletes all cookies and destroys the cookies 
      */
     public function logout() {
-        $auth_session = Session::get("auth_session");
-        if ($auth_session != '') {
-            $this->deleteSession($auth_session);
+        $auth_cookie = Cookie::get("auth_cookie");
+        if ($auth_cookie != '') {
+            $this->deleteCookie($auth_cookie);
         }
     }
 
@@ -115,9 +115,9 @@ class Auth {
      * @return boolean
      */
     public function isLoggedIn() {
-        $auth_session = Session::get("auth_session"); //get hash from browser
-        //check if session is valid
-        if ($auth_session != '' && $this->sessionIsValid($auth_session)) {
+        $auth_cookie = Cookie::get("auth_cookie"); //get hash from browser
+        //check if cookie is valid
+        if ($auth_cookie != '' && $this->cookieIsValid($auth_cookie)) {
             return true;
         } else {
             return false;
@@ -128,75 +128,75 @@ class Auth {
      * Provides an associateve array with current user's info 
      * @return array 
      */
-    public function currentSessionInfo() {
+    public function currentCookieInfo() {
         if ($this->isLoggedIn()) {
-            $auth_session = Session::get("auth_session"); //get hash from browser
-            return $this->sessionInfo($auth_session);
+            $auth_cookie = Cookie::get("auth_cookie"); //get hash from browser
+            return $this->cookieInfo($auth_cookie);
         }
     }
 
     /**
-     * Provides an associative array of user info based on session hash 
+     * Provides an associative array of user info based on cookie hash 
      * @param string $hash
-     * @return array $session
+     * @return array $cookie
      */
-    private function sessionInfo($hash) {
+    private function cookieInfo($hash) {
         $query = $this->db->select("SELECT uid, username, expiredate, ip FROM ".PREFIX."sessions WHERE hash=:hash", array(':hash' => $hash));
         $count = count($query);
         if ($count == 0) {
             // Hash doesn't exist
-            $error[] = $this->lang['sessioninfo_invalid'];
-            //setcookie("auth_session", $hash, time() - 3600, '/');
-            Session::destroy('auth_session', $hash); //check if destroys deletes only a specific hash
-            //   \Helpers\Session::set("auth_session", $hash, time() - 3600, "/",$_SERVER["HTTP_HOST"]);
+            $error[] = $this->lang['cookieinfo_invalid'];
+            //setcookie("auth_cookie", $hash, time() - 3600, '/');
+            Cookie::destroy('auth_cookie', $hash); //check if destroys deletes only a specific hash
+            //   \Helpers\Cookie::set("auth_cookie", $hash, time() - 3600, "/",$_SERVER["HTTP_HOST"]);
             return false;
         } else {
             // Hash exists
-            $session["uid"] = $query[0]->uid;
-            $session["username"] = $query[0]->username;
-            $session["expiredate"] = $query[0]->expiredate;
-            $session["ip"] = $query[0]->ip;
-            return $session;
+            $cookie["uid"] = $query[0]->uid;
+            $cookie["username"] = $query[0]->username;
+            $cookie["expiredate"] = $query[0]->expiredate;
+            $cookie["ip"] = $query[0]->ip;
+            return $cookie;
         }
     }
 
     /**
-     * Checks if a hash session is valid on database 
+     * Checks if a hash cookie is valid on database 
      * @param string $hash
      * @return boolean
      */
-    private function sessionIsValid($hash) {
+    private function cookieIsValid($hash) {
         //if hash in db
         $sql = "SELECT username, expiredate, ip FROM ".PREFIX."sessions WHERE hash=:hash";
-        $session = $this->db->select($sql, array(":hash" => $hash));
-        $count = count($session);
+        $cookie = $this->db->select($sql, array(":hash" => $hash));
+        $count = count($cookie);
         if ($count == 0) {
             //hash did not exists deleting cookie
-            Session::destroy("auth_session", $hash);
-            //Session::destroy("auth_session", $hash, '');
-            //setcookie("auth_session", $hash, time() - 3600, "/");
-            $this->logActivity('UNKNOWN', "AUTH_CHECKSESSION", "User session cookie deleted - Hash ({$hash}) didn't exist");
+            Cookie::destroy("auth_cookie", $hash);
+            //Cookie::destroy("auth_cookie", $hash, '');
+            //setcookie("auth_cookie", $hash, time() - 3600, "/");
+            $this->logActivity('UNKNOWN', "AUTH_CHECKCOOKIE", "User cookie cookie deleted - Hash ({$hash}) didn't exist");
             return false;
         } else {
-            $username = $session[0]->username;
-            $db_expiredate = $session[0]->expiredate;
-            $db_ip = $session[0]->ip;
+            $username = $cookie[0]->username;
+            $db_expiredate = $cookie[0]->expiredate;
+            $db_ip = $cookie[0]->ip;
             if ($_SERVER['REMOTE_ADDR'] != $db_ip) {
-                //hash exists but ip is changed, delete session and hash
+                //hash exists but ip is changed, delete cookie and hash
                 $this->db->delete(PREFIX.'sessions', array('username' => $username));
-                Session::destroy("auth_session", $hash);
-                //setcookie("auth_session", $hash, time() - 3600, "/");
-                $this->logActivity($username, "AUTH_CHECKSESSION", "User session cookie deleted - IP Different ( DB : {$db_ip} / Current : " . $_SERVER['REMOTE_ADDR'] . " )");
+                Cookie::destroy("auth_cookie", $hash);
+                //setcookie("auth_cookie", $hash, time() - 3600, "/");
+                $this->logActivity($username, "AUTH_CHECKCOOKIE", "User cookie cookie deleted - IP Different ( DB : {$db_ip} / Current : " . $_SERVER['REMOTE_ADDR'] . " )");
                 return false;
             } else {
                 $expiredate = strtotime($db_expiredate);
                 $currentdate = strtotime(date("Y-m-d H:i:s"));
                 if ($currentdate > $expiredate) {
-                    //session has expired delete session and cookies
+                    //cookie has expired delete cookie and cookies
                     $this->db->delete(PREFIX.'sessions', array('username' => $username));
-                    Session::destroy("auth_session", $hash);
-                    //setcookie("auth_session", $hash, time() - 3600, "/");
-                    $this->logActivity($username, "AUTH_CHECKSESSION", "User session cookie deleted - Session expired ( Expire date : {$db_expiredate} )");
+                    Cookie::destroy("auth_cookie", $hash);
+                    //setcookie("auth_cookie", $hash, time() - 3600, "/");
+                    $this->logActivity($username, "AUTH_CHECKCOOKIE", "User cookie cookie deleted - Cookie expired ( Expire date : {$db_expiredate} )");
                 } else {
                     //all ok
                     return true;
@@ -261,42 +261,42 @@ class Auth {
     }
 
     /**
-     * Creates a new session for the provided username and sets cookie 
+     * Creates a new cookie for the provided username and sets cookie 
      * @param string $username
      */
-    private function newSession($username) {
-        $hash = md5(microtime()); // unique session hash
+    private function newCookie($username) {
+        $hash = md5(microtime()); // unique cookie hash
         // Fetch User ID :		
         $queryUid = $this->db->select("SELECT userID FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
         $uid = $queryUid[0]->userID;
-        // Delete all previous sessions :
+        // Delete all previous cookies :
         $this->db->delete(PREFIX.'sessions', array('username' => $username));
         $ip = $_SERVER['REMOTE_ADDR'];
         $expiredate = date("Y-m-d H:i:s", strtotime(SESSION_DURATION));
         $expiretime = strtotime($expiredate);
         $this->db->insert(PREFIX.'sessions', array('uid' => $uid, 'username' => $username, 'hash' => $hash, 'expiredate' => $expiredate, 'ip' => $ip));
-        Session::set('auth_session', $hash, $expiretime, "/", FALSE);
+        Cookie::set('auth_cookie', $hash, $expiretime, "/", FALSE);
     }
 
     /**
-     * Deletes a session based on a hash 
+     * Deletes a cookie based on a hash 
      * @param string $hash
      */
-    private function deleteSession($hash) {
+    private function deleteCookie($hash) {
 
         $query_username = $this->db->select('SELECT username FROM '.PREFIX.'sessions WHERE hash=:hash', array(':hash' => $hash));
         $count = count($query_username);
         if ($count == 0) {
             // Hash doesn't exist
-            $this->logActivity("UNKNOWN", "AUTH_LOGOUT", "User session cookie deleted - Database session not deleted - Hash ({$hash}) didn't exist");
-            $error[] = $this->lang['deletesession_invalid'];
+            $this->logActivity("UNKNOWN", "AUTH_LOGOUT", "User cookie cookie deleted - Database cookie not deleted - Hash ({$hash}) didn't exist");
+            $error[] = $this->lang['deletecookie_invalid'];
         } else {
             $username = $query_username[0]->username;
-            // Hash exists, Delete all sessions for that username :
+            // Hash exists, Delete all cookies for that username :
             $this->db->delete(PREFIX.'sessions', array('username' => $username));
-            $this->logActivity($username, "AUTH_LOGOUT", "User session cookie deleted - Database session deleted - Hash ({$hash})");
-            //setcookie("auth_session", $hash, time() - 3600, "/");
-            Session::destroy("auth_session", $hash);
+            $this->logActivity($username, "AUTH_LOGOUT", "User cookie cookie deleted - Database cookie deleted - Hash ({$hash})");
+            //setcookie("auth_cookie", $hash, time() - 3600, "/");
+            Cookie::destroy("auth_cookie", $hash);
         }
     }
 
@@ -309,7 +309,7 @@ class Auth {
      * @return boolean If succesfully registered true false otherwise
      */
     public function directRegister($username, $password, $verifypassword, $email) {
-        if (!Session::get('auth_session')) {
+        if (!Cookie::get('auth_cookie')) {
             // Input Verification :
             if (strlen($username) == 0) {
                 $error[] = $this->lang['register_username_empty'];
@@ -388,7 +388,7 @@ class Auth {
      * @return boolean
      */
     public function register($username, $password, $verifypassword, $email) {
-        if (!Session::get('auth_session')) {
+        if (!Cookie::get('auth_cookie')) {
             // Input Verification :
             if (strlen($username) == 0) {
                 $error[] = $this->lang['register_username_empty'];
@@ -862,7 +862,7 @@ class Auth {
                 if ($verify_password) {
                     $this->db->delete(PREFIX.'users', array('username' => $username));
                     $this->db->delete(PREFIX.'sessions', array('username' => $username));
-                    $this->logActivity($username, "AUTH_DELETEACCOUNT_SUCCESS", "Account deleted - Sessions deleted");
+                    $this->logActivity($username, "AUTH_DELETEACCOUNT_SUCCESS", "Account deleted - Cookies deleted");
                     $this->successmsg[] = $this->lang['deleteaccount_success'];
                     return true;
                 } else {
