@@ -1,4 +1,5 @@
-# UAP Version 2.0.0
+# UAP Version 2.0.0 - Coming Soon
+We are starting from scratch with UAP2.  This build is expected to take some time.  Check back soon for updates!
 
 [![Software License](http://img.shields.io/badge/License-BSD--3-brightgreen.svg?style=flat-square)](LICENSE)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/simple-mvc-framework/v2/master/license.txt)
