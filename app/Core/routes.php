@@ -14,7 +14,7 @@ use Helpers\Hooks;
 /** Define routes. */
 Router::any('', 'Controllers\Welcome@index');
 Router::any('subpage', 'Controllers\Welcome@subPage');
-Router::any('forum', 'Controllers\Welcome@Forum');
+Router::any('Forum', 'Controllers\Welcome@Forum');
 Router::any('Login', 'Controllers\Auth@Login');
 Router::any('Logout', 'Controllers\Auth@Logout');
 

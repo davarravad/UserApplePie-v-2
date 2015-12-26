@@ -35,13 +35,41 @@ $hooks = Hooks::get();
 
 </head>
 <body>
-<nav>
-	<ul>
-		<li><a href='<?php echo DIR; ?>'>Home</a></li>
-		<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
-		<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
-	</ul>
-</nav>
+   <nav class='navbar navbar-default navbar-fixed-top'>
+      <div class='container-fluid'>
+        <div class='navbar-header'>
+          <button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar'>
+            <span class='sr-only'>Toggle navigation</span>
+            <span class='icon-bar'></span>
+            <span class='icon-bar'></span>
+            <span class='icon-bar'></span>
+          </button>
+		 <a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>
+          <img style='max-height: 20px; border-radius: 5px' alt='Brand' src='/app/templates/default/images/logo.gif'>
+         </a>
+         <a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>UserApplePie</a>
+        </div>
+		
+		<!-- Collect Left Main Links -->
+        <div id='navbar' class='navbar-collapse collapse'>
+          <ul class='nav navbar-nav'>
+			<li><a href='<?php echo DIR; ?>Forum'>Forum</a></li>
+		  </ul>
+		  <ul class='nav navbar-nav navbar-right'>
+				<?php if(ISLOGGEDIN != 'true'){ ?>
+					<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
+				<?php }else{ ?>
+					<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
+				<?php } ?>
+		  </ul>
+		</div>
+	  </div>
+   </nav>
+
+<!-- Create Spacer For Navbar -->
+<div class='visible-lg visible-md visible-sm' style='height: 70px'></div>
+<div class='visible-xs' style='height: 110px'></div>
+   
 <?php
 //hook for running code after body tag
 $hooks->run('afterBody');

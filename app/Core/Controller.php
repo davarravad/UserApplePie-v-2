@@ -12,6 +12,7 @@ namespace Core;
 
 use Core\View;
 use Core\Language;
+use Helpers\Auth\Auth;
 
 /**
  * Core controller, all other controllers extend this base controller.
@@ -33,6 +34,13 @@ abstract class Controller
     public $language;
 
     /**
+     * Language variable to use the languages class.
+     *
+     * @var string
+     */
+    public $auth;
+	
+    /**
      * On run make an instance of the config class and view class.
      */
     public function __construct()
@@ -42,5 +50,8 @@ abstract class Controller
 
         /** initialise the language object */
         $this->language = new Language();
+		
+        /** initialise the auth object */
+        $this->auth = new Auth();
     }
 }

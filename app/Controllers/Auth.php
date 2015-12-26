@@ -6,12 +6,7 @@ use \Core\View,
 
 class Auth extends Controller {
 	
-	private $auth;
-	
-	public function __construct(){
-		parent::__construct();
-		$this->auth = new \Helpers\Auth\Auth();
-	}
+
 	
 	// Logs the user into the system
 	public function Login(){

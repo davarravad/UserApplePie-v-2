@@ -891,5 +891,4 @@ class Auth {
 	public function updateUser($data,$where){
 		$this->db->update(PREFIX."users",$data,$where);
 	}
-	
 }
