@@ -16,6 +16,8 @@ $hooks = Hooks::get();
 
 	<!-- Site meta -->
 	<meta charset="utf-8">
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
 	<?php
 	//hook for plugging in meta tags
 	$hooks->run('meta');
@@ -58,6 +60,7 @@ $hooks = Hooks::get();
 		  <ul class='nav navbar-nav navbar-right'>
 				<?php if(ISLOGGEDIN != 'true'){ ?>
 					<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
+					<li><a href='<?php echo DIR; ?>Register'>Register</a></li>
 				<?php }else{ ?>
 					<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
 				<?php } ?>

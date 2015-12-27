@@ -14,7 +14,7 @@ use Helpers\Cookie;
 class Auth {
 
     protected $db;
-    public $errormsg;
+    public $error;
     public $successmsg;
     public $lang;
 
@@ -449,6 +449,8 @@ class Auth {
                         $body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
                         $body .= "To activate your account please click the following link<br/><br/>";
                         $body .= "<b><a href=\"" . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
+						$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
+						$body .= " " . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
                         $mail->body($body);
                         $mail->send();
                         $this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
@@ -475,9 +477,22 @@ class Auth {
     public function activateAccount($username, $key) {
         // check lengst of keys and username strings since this can be directly called
         //  if current account is active dont activate 
-        $this->db->update(PREFIX.'users', array('isactive' => 1, 'activekey' => $key), array('username' => $username));
-        $this->logActivity($username, "AUTH_ACTIVATE_SUCCESS", "Activation successful. Key Entry deleted.");
-        $this->successmsg[] = $this->lang['activate_success'];
+
+		// Get Data from Database for requested user
+        $query_active = $this->db->select("SELECT isactive,activekey FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
+        $db_isactive = $query_active[0]->isactive;
+		$db_key = $query_active[0]->activekey;
+		
+		// Check to see if Keys Match Account and user is not already active
+		if(isset($username) && $db_isactive == "0" && $key == $db_key){
+			$this->db->update(PREFIX.'users', array('isactive' => 1, 'activekey' => 0), array('username' => $username));
+			$this->logActivity($username, "AUTH_ACTIVATE_SUCCESS", "Activation successful. Key Entry deleted.");
+			$this->successmsg[] = $this->lang['activate_success'];
+			return true;
+		}else{
+			return false;
+		}
+
     }
 
     /**
@@ -891,4 +906,13 @@ class Auth {
 	public function updateUser($data,$where){
 		$this->db->update(PREFIX."users",$data,$where);
 	}
+	
+	/**
+	 * Get Current Session Data
+	 */
+    public function user_info(){
+        return $this->currentCookieInfo()['uid'];
+    }
+	
+	
 }

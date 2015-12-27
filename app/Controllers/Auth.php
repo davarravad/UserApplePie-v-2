@@ -46,4 +46,70 @@ class Auth extends Controller {
 		Url::redirect();
 	}
 	
+	// Setup the Register Page
+	public function register(){
+		// Check to make sure user is not already logged in
+		if($this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// Check to make sure user is trying to login
+		if(isset($_POST['submit'])){
+				
+			// Catch username an password inputs using the Request helper
+			$username = Request::post('username');
+			$password = Request::post('password');
+			$verifypassword = Request::post('passwordc');
+			$email = Request::post('email');
+			
+			// Run the register script
+			if($this->auth->register($username, $password, $verifypassword, $email)){
+				echo "Register ok";
+				//Url::redirect();
+			}else{
+				echo "Register fail";
+			}
+
+		}
+		
+		$data['title'] = 'Register';
+		View::rendertemplate('header',$data);
+		View::render('auth/Register',$data,$error);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Activation Page
+	public function activate(){
+		// Check to make sure user is not already logged in
+		if($this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// Check to make sure user is trying to login
+		if(isset($_GET['username']) && isset($_GET['key'])){
+				
+			// Catch username an password inputs using the Request helper
+			$username = Request::get('username');
+			$activekey = Request::get('key');
+			
+			// Run the Activation script
+			if($this->auth->activateAccount($username, $activekey)){
+				// Success
+				$data['welcome_message'] = "Your Account Has Been Activated!  <a href='".DIR."Login'>Login</a>";
+			}else{
+				// Fail
+				$data['welcome_message'] = "Activation Failed - Please Contact Administrator";
+			}
+
+		}else{
+			// No GET information - Send User to index
+			//Url::redirect();
+		}
+		
+		$data['title'] = 'New Member Activation';
+		View::rendertemplate('header',$data);
+		View::render('welcome/info',$data,$error);
+		View::rendertemplate('footer',$data);
+	}
+	
 }

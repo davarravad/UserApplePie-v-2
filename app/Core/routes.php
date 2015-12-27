@@ -17,8 +17,8 @@ Router::any('subpage', 'Controllers\Welcome@subPage');
 Router::any('Forum', 'Controllers\Welcome@Forum');
 Router::any('Login', 'Controllers\Auth@Login');
 Router::any('Logout', 'Controllers\Auth@Logout');
-
-
+Router::any('Register', 'Controllers\Auth@Register');
+Router::any('Activate', 'Controllers\Auth@Activate');
 
 /** Module routes. */
 $hooks = Hooks::get();

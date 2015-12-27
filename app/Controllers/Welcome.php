@@ -13,12 +13,15 @@ namespace Controllers;
 use Core\View;
 use Core\Controller;
 use Helpers\Url;
+use Helpers\Auth\Auth;
 
 /**
  * Sample controller showing a construct and 2 methods and their typical usage.
  */
 class Welcome extends Controller
 {
+
+	private $UserData;
 
     /**
      * Call the parent construct
@@ -28,7 +31,7 @@ class Welcome extends Controller
         parent::__construct();
 		
         $this->language->load('Welcome');
-		
+		$this->UserData = new \Models\UserData();
 		// Define if user is logged in
 		if($this->auth->isLoggedIn()){ define('ISLOGGEDIN', 'true'); }
     }
@@ -41,7 +44,22 @@ class Welcome extends Controller
         $data['title'] = $this->language->get('welcome_text');
 		
 		if($this->auth->isLoggedIn()){
-			$data['welcome_message'] = " You are logged in! ";
+			// Get current user's information
+			$u_id = $this->auth->user_info();
+			$u_username = $this->UserData->getUserName($u_id);
+			$u_email = $this->UserData->getUserEmail($u_id);
+			$u_lastlogin = date("F d, Y",strtotime($this->UserData->getUserLastLogin($u_id)));
+			$u_signup = date("F d, Y",strtotime($this->UserData->getUserSignUp($u_id)));
+			// Setup the output data
+			$page_data = " 
+				You are logged in! <br><br>
+				Cookie userID: $u_id <br>
+				UserName: $u_username <br>
+				Email: $u_email <Br>
+				Last Login Date: $u_lastlogin <Br>
+				Sign Up Date: $u_signup <br>
+			";
+			$data['welcome_message'] = $page_data;
 		}else{
 			$data['welcome_message'] = $this->language->get('welcome_message');
 		}
