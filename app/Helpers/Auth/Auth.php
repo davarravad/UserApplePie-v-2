@@ -15,7 +15,7 @@ class Auth {
 
     protected $db;
     public $error;
-    public $successmsg;
+    public $success;
     public $lang;
 
     public function __construct() {
@@ -87,7 +87,7 @@ class Auth {
                             // Account is activated
                             $this->newCookie($username); //generate new cookie cookie
                             $this->logActivity($username, "AUTH_LOGIN_SUCCESS", "User logged in");
-                            $this->successmsg[] = $this->lang['login_success'];
+                            $this->success[] = $this->lang['login_success'];
                             return true;
                         }
                     }
@@ -363,7 +363,7 @@ class Auth {
                         $this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'activekey' => $activekey));
                         //$last_insert_id = $this->db->lastInsertId('id');
                         $this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created");
-                        $this->successmsg[] = $this->lang['register_success'];
+                        $this->success[] = $this->lang['register_success'];
                         //activar usuario directamente
                         $this->activateAccount($username, $activekey); //se ignora la activekey ya que es directo
                         return true;
@@ -454,7 +454,7 @@ class Auth {
                         $mail->body($body);
                         $mail->send();
                         $this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
-                        $this->successmsg[] = $this->lang['register_success'];
+                        $this->success[] = $this->lang['register_success'];
                         return true;
                     }
                 }
@@ -487,7 +487,7 @@ class Auth {
 		if(isset($username) && $db_isactive == "0" && $key == $db_key){
 			$this->db->update(PREFIX.'users', array('isactive' => 1, 'activekey' => 0), array('username' => $username));
 			$this->logActivity($username, "AUTH_ACTIVATE_SUCCESS", "Activation successful. Key Entry deleted.");
-			$this->successmsg[] = $this->lang['activate_success'];
+			$this->success[] = $this->lang['activate_success'];
 			return true;
 		}else{
 			return false;
@@ -610,7 +610,7 @@ class Auth {
                 if ($verify_password) {
                     $this->db->update(PREFIX.'users', array('password' => $newpass), array('username' => $username));
                     $this->logActivity($username, "AUTH_CHANGEPASS_SUCCESS", "Password changed");
-                    $this->successmsg[] = $this->lang['changepass_success'];
+                    $this->success[] = $this->lang['changepass_success'];
                     return true;
                 } else {
                     $this->logActivity($username, "AUTH_CHANGEPASS_FAIL", "Current Password Incorrect ( DB : {$db_currpass} / Given : {$currpass} )");
@@ -662,7 +662,7 @@ class Auth {
                 } else {
                     $this->db->update(PREFIX.'users', array('email' => $email), array('username' => $username));
                     $this->logActivity($username, "AUTH_CHANGEEMAIL_SUCCESS", "Email changed from {$db_email} to {$email}");
-                    $this->successmsg[] = $this->lang['changeemail_success'];
+                    $this->success[] = $this->lang['changeemail_success'];
                     return true;
                 }
             }
@@ -726,7 +726,7 @@ class Auth {
                     $mail->body($body);
                     $mail->send();
                     $this->logActivity($username, "AUTH_RESETPASS_SUCCESS", "Reset pass request sent to {$email} ( Key : {$resetkey} )");
-                    $this->successmsg[] = $this->lang['resetpass_email_sent'];
+                    $this->success[] = $this->lang['resetpass_email_sent'];
                     return true;
                 }
             } else {
@@ -769,7 +769,7 @@ class Auth {
                             $resetkey = '0';
                             $this->db->update(PREFIX.'users', array('password' => $newpass, 'resetkey' => $resetkey), array('username' => $username));
                             $this->logActivity($username, "AUTH_RESETPASS_SUCCESS", "Password reset - Key reset");
-                            $this->successmsg[] = $this->lang['resetpass_success'];
+                            $this->success[] = $this->lang['resetpass_success'];
                             return true;
                         } else {
                             $error[] = $this->lang['resetpass_key_incorrect'];
@@ -878,7 +878,7 @@ class Auth {
                     $this->db->delete(PREFIX.'users', array('username' => $username));
                     $this->db->delete(PREFIX.'sessions', array('username' => $username));
                     $this->logActivity($username, "AUTH_DELETEACCOUNT_SUCCESS", "Account deleted - Cookies deleted");
-                    $this->successmsg[] = $this->lang['deleteaccount_success'];
+                    $this->success[] = $this->lang['deleteaccount_success'];
                     return true;
                 } else {
                     $this->logActivity($username, "AUTH_DELETEACCOUNT_FAIL", "Password incorrect ( DB : {$db_password} / Given : {$password} )");
@@ -913,6 +913,5 @@ class Auth {
     public function user_info(){
         return $this->currentCookieInfo()['uid'];
     }
-	
 	
 }

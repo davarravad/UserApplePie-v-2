@@ -1,6 +1,7 @@
 <?php 
-use \Helpers\Form,
-	\Core\Error; 	
+use Helpers\Form,
+	Core\Error,
+	Core\Success; 	
 ?>
 <div class='col-lg-8 col-centered'>
 	<div class='panel panel-default'>
@@ -17,6 +18,7 @@ use \Helpers\Form,
 					</div>
 					<div class='pannel-body' style='padding:10px' align='center'>
 						<?php echo Error::display($error); ?>
+						<?php echo Success::display($success); ?>
 						<?php echo Form::open(array('method' => 'post')); ?>
 						
 							<!-- Username -->
@@ -61,6 +63,8 @@ use \Helpers\Form,
 							
 							<!-- reCAPTCHA -->
 							
+							<!-- CSRF Token -->
+							<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
 							
 							<?php echo Form::input(array('type' => 'submit', 'name' => 'submit', 'value' => 'Register', 'class' => 'btn btn-success btn-sm')); ?>
 						<?php echo Form::close(); ?>

@@ -1,10 +1,14 @@
 <?php namespace controllers;
-use \Core\View,
-	\Core\Controller,
-	\Helpers\Url,
-	\Helpers\Request as Request;
+use Core\View,
+	Core\Controller,
+	Helpers\Url,
+	Helpers\Csrf,
+	Helpers\Request as Request;
 
 class Auth extends Controller {
+	
+    public $error;
+    public $success;
 	
 	// Logs the user into the system
 	public function Login(){
@@ -16,24 +20,33 @@ class Auth extends Controller {
 			
 		// Check to make sure user is trying to login
 		if(isset($_POST['submit'])){
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {	
+				// Catch username an password inputs using the Request helper
+				$username = Request::post('username');
+				$password = Request::post('password');
 				
-			// Catch username an password inputs using the Request helper
-			$username = Request::post('username');
-			$password = Request::post('password');
-			
-			// Login Validation
-			if($this->auth->login($username, $password)){		
-				// User Passed Validation - Let them in
-				// User is good to go
-				$data = array('LastLogin' => date('Y-m-d G:i:s'));
-				$where = array('userID' => $this->auth->getID($username));
-				$this->auth->updateUser($data,$where);
-				
-				Url::redirect();
+				// Login Validation
+				if($this->auth->login($username, $password)){		
+					// User Passed Validation - Let them in
+					// User is good to go
+					$data = array('LastLogin' => date('Y-m-d G:i:s'));
+					$where = array('userID' => $this->auth->getID($username));
+					$this->auth->updateUser($data,$where);
+					
+					Url::redirect();
+				}else{
+					$error[] = "Incorrect UserName or Password!";
+				}
+			}else{
+				// Tokens do not match
+				$error[] = "Tokens Do Not Match.  Please Try Again.";
 			}
 		}
 		
 		$data['title'] = 'Login';
+		$data['csrf_token'] = Csrf::makeToken();
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/Login',$data,$error);
 		View::rendertemplate('footer',$data);
@@ -55,26 +68,34 @@ class Auth extends Controller {
 			
 		// Check to make sure user is trying to login
 		if(isset($_POST['submit'])){
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {
+				// Catch username an password inputs using the Request helper
+				$username = Request::post('username');
+				$password = Request::post('password');
+				$verifypassword = Request::post('passwordc');
+				$email = Request::post('email');
 				
-			// Catch username an password inputs using the Request helper
-			$username = Request::post('username');
-			$password = Request::post('password');
-			$verifypassword = Request::post('passwordc');
-			$email = Request::post('email');
-			
-			// Run the register script
-			if($this->auth->register($username, $password, $verifypassword, $email)){
-				echo "Register ok";
-				//Url::redirect();
+				// Run the register script
+				if($this->auth->register($username, $password, $verifypassword, $email)){
+					// Register ok
+					$success[] = "Registration Successful! Check Your Email For Activation Instructions.";
+					// Url::redirect();
+				}else{
+					// Register fail
+					$error[] = "Registration Error!";
+				}
 			}else{
-				echo "Register fail";
+				// Tokens do not match
+				$error[] = "Tokens Do Not Match.  Please Try Again.";
 			}
-
 		}
 		
 		$data['title'] = 'Register';
+		$data['csrf_token'] = Csrf::makeToken();
+		
 		View::rendertemplate('header',$data);
-		View::render('auth/Register',$data,$error);
+		View::render('auth/Register',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
 	

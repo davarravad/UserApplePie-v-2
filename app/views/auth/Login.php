@@ -1,6 +1,7 @@
 <?php 
-use \Helpers\Form,
-	\Core\Error; 	
+use Helpers\Form,
+	Core\Error,
+	\Core\Success; 	
 ?>
 <div class='col-lg-8 col-centered'>
 	<div class='panel panel-default'>
@@ -26,7 +27,9 @@ use \Helpers\Form,
 								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
 								<?php echo Form::input(array('type' => 'password', 'name' => 'password', 'class' => 'form-control', 'placeholder' => 'Password')); ?>
 							</div>
-							<?php echo Form::input(array('type' => 'submit', 'name' => 'submit', 'value' => 'Submit', 'class' => 'btn btn-success btn-sm')); ?>
+							<!-- CSRF Token -->
+							<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
+							<?php echo Form::input(array('type' => 'submit', 'name' => 'submit', 'value' => 'Login', 'class' => 'btn btn-success btn-sm')); ?>
 						<?php echo Form::close(); ?>
 					</div>
 				</div>

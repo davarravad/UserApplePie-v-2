@@ -1,2 +1,7 @@
 app/Core/_notes/dwsync.xml
 _notes/dwsync.xml
+app/Controllers/_notes/dwsync.xml
+app/Helpers/Auth/_notes/dwsync.xml
+app/views/auth/_notes/dwsync.xml
+vendor/composer/_notes/dwsync.xml
+vendor/_notes/dwsync.xml
