@@ -7,9 +7,6 @@ use Core\View,
 
 class Auth extends Controller {
 	
-    public $error;
-    public $success;
-	
 	// Logs the user into the system
 	public function Login(){
 		
@@ -79,12 +76,18 @@ class Auth extends Controller {
 				// Run the register script
 				if($this->auth->register($username, $password, $verifypassword, $email)){
 					// Register ok
-					$success[] = "Registration Successful! Check Your Email For Activation Instructions.";
+					if(NEW_USER_ACTIVATION == "true"){
+						$success[] = "Registration Successful! Check Your Email For Activation Instructions.";
+					}
+					if(NEW_USER_ACTIVATION == "false"){
+						$success[] = "Registration Successful! <a href='".DIR."Login'>Login</a>.";
+					}					
 					// Url::redirect();
 				}else{
 					// Register fail
 					$error[] = "Registration Error!";
 				}
+				
 			}else{
 				// Tokens do not match
 				$error[] = "Tokens Do Not Match.  Please Try Again.";

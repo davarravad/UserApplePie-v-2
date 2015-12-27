@@ -5,3 +5,6 @@ app/Helpers/Auth/_notes/dwsync.xml
 app/views/auth/_notes/dwsync.xml
 vendor/composer/_notes/dwsync.xml
 vendor/_notes/dwsync.xml
+app/Helpers/_notes/dwsync.xml
+app/templates/default/js/_notes/dwsync.xml
+app/views/welcome/_notes/dwsync.xml

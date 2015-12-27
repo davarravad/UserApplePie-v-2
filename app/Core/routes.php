@@ -19,6 +19,8 @@ Router::any('Login', 'Controllers\Auth@Login');
 Router::any('Logout', 'Controllers\Auth@Logout');
 Router::any('Register', 'Controllers\Auth@Register');
 Router::any('Activate', 'Controllers\Auth@Activate');
+Router::any('LiveCheckEmail', 'Controllers\LiveCheck@emailCheck');
+Router::any('LiveCheckUserName', 'Controllers\LiveCheck@userNameCheck');
 
 /** Module routes. */
 $hooks = Hooks::get();

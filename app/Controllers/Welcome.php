@@ -94,4 +94,12 @@ class Welcome extends Controller
         View::render('welcome/Forum', $data);
         View::renderTemplate('footer', $data);
     }
+	
+    /**
+     * Define live check email
+     */
+    public function LiveCheckEmail()
+    {
+        View::render('welcome/LiveCheckEmail', $data);
+    }
 }

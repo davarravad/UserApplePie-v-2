@@ -100,7 +100,12 @@ class Config
 		define("SITE_NAME", "UAP V2.0"); // Name of website to appear in emails
 
         /**
-         * Optionall set a site email address.
+         * User Registration Settings.
+         */
+		define('NEW_USER_ACTIVATION', 'true'); // Define if new member has to Activate their account or not true=activate by email, false account is active
+		
+        /**
+         * Optional set a site email address.
          */
         define('SITEEMAIL', 'admin@userapplepie.com');
 		define("EMAIL_FROM", "welcome@userapplepie.com"); // Email FROM address for Auth emails (Activation, password reset...)
