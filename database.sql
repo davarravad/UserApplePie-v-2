@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 27, 2015 at 09:22 PM
+-- Generation Time: Dec 28, 2015 at 05:35 PM
 -- Server version: 5.5.46-0ubuntu0.14.04.2
 -- PHP Version: 5.5.9-1ubuntu4.14
 
@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS `uap_activitylog` (
   `username` varchar(30) NOT NULL,
   `action` varchar(100) NOT NULL,
   `additionalinfo` varchar(500) NOT NULL DEFAULT 'none',
-  `ip` varchar(15) NOT NULL,
+  `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=344 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=378 ;
 
 -- --------------------------------------------------------
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `uap_activitylog` (
 --
 
 CREATE TABLE IF NOT EXISTS `uap_attempts` (
-  `ip` varchar(15) NOT NULL,
+  `ip` varchar(39) NOT NULL,
   `count` int(11) NOT NULL,
   `expiredate` datetime NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -60,9 +60,9 @@ CREATE TABLE IF NOT EXISTS `uap_sessions` (
   `username` varchar(30) NOT NULL,
   `hash` varchar(32) NOT NULL,
   `expiredate` datetime NOT NULL,
-  `ip` varchar(15) NOT NULL,
+  `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=31 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=37 ;
 
 -- --------------------------------------------------------
 

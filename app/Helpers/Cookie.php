@@ -78,10 +78,10 @@ class Cookie {
 	/**
 	 * Function to destroy the cookie 
 	 */
-	public static function destroy($key, $path = "/", $domain = ""){
+	public static function destroy($key, $value = '', $path = "/", $domain = ""){
 		if(isset($_COOKIE[COOKIE_PREFIX.$key])){
 			unset($_COOKIE[COOKIE_PREFIX.$key]);
-			setcookie(COOKIE_PREFIX.$key, '', time()-3600, $path, $domain);
+			setcookie(COOKIE_PREFIX.$key, $value, time()-3600, $path, $domain);
 		}
 	}
 
