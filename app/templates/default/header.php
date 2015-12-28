@@ -9,6 +9,7 @@ use Helpers\Hooks;
 
 //initialise hooks
 $hooks = Hooks::get();
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo LANGUAGE_CODE; ?>">
@@ -62,7 +63,14 @@ $hooks = Hooks::get();
 					<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
 					<li><a href='<?php echo DIR; ?>Register'>Register</a></li>
 				<?php }else{ ?>
-					<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
+					<li class='dropdown'>
+						<a href='#' title='<?php echo CUR_USERNAME; ?>' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+						<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <?php echo CUR_USERNAME; ?> <span class='caret'></span> </a>
+						<ul class='dropdown-menu'>
+							<li><a href='<?php echo DIR; ?>ChangePassword' title='Change Your Account Settings'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Change Password</a></li>
+						</ul>
+						<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
+					</li>
 				<?php } ?>
 		  </ul>
 		</div>

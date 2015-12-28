@@ -15,7 +15,7 @@ class Auth {
 
     protected $db;
     public $error;
-    public $successmsg;
+    public $success;
     public $lang;
 
     public function __construct() {
@@ -87,7 +87,7 @@ class Auth {
                             // Account is activated
                             $this->newCookie($username); //generate new cookie cookie
                             $this->logActivity($username, "AUTH_LOGIN_SUCCESS", "User logged in");
-                            $this->successmsg[] = $this->lang['login_success'];
+                            $this->success[] = $this->lang['login_success'];
                             return true;
                         }
                     }
@@ -301,85 +301,6 @@ class Auth {
     }
 
     /**
-     * Directly register an user without sending email confirmation 
-     * @param string $username
-     * @param string $password
-     * @param string $verifypassword
-     * @param string $email
-     * @return boolean If succesfully registered true false otherwise
-     */
-    public function directRegister($username, $password, $verifypassword, $email) {
-        if (!Cookie::get('auth_cookie')) {
-            // Input Verification :
-            if (strlen($username) == 0) {
-                $error[] = $this->lang['register_username_empty'];
-            } elseif (strlen($username) > MAX_USERNAME_LENGTH) {
-                $error[] = $this->lang['register_username_long'];
-            } elseif (strlen($username) < MIN_USERNAME_LENGTH) {
-                $error[] = $this->lang['register_username_short'];
-            }
-            if (strlen($password) == 0) {
-                $error[] = $this->lang['register_password_empty'];
-            } elseif (strlen($password) > MAX_PASSWORD_LENGTH) {
-                $error[] = $this->lang['register_password_long'];
-            } elseif (strlen($password) < MIN_PASSWORD_LENGTH) {
-                $error[] = $this->lang['register_password_short'];
-            } elseif ($password !== $verifypassword) {
-                $error[] = $this->lang['register_password_nomatch'];
-            } elseif (strstr($password, $username)) {
-                $error[] = $this->lang['register_password_username'];
-            }
-            if (strlen($email) == 0) {
-                $error[] = $this->lang['register_email_empty'];
-            } elseif (strlen($email) > MAX_EMAIL_LENGTH) {
-                $error[] = $this->lang['register_email_long'];
-            } elseif (strlen($email) < MIN_EMAIL_LENGTH) {
-                $error[] = $this->lang['register_email_short'];
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $error[] = $this->lang['register_email_invalid'];
-            }
-            if (count($this->errormsg) == 0) {
-                // Input is valid 
-                $query = $this->db->select("SELECT * FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
-                $count = count($query);
-                if ($count != 0) {
-                    //ya existe el usuario
-                    $this->logActivity("UNKNOWN", "AUTH_REGISTER_FAIL", "Username ({$username}) already exists");
-                    $error[] = $this->lang['register_username_exist'];
-                    return false;
-                } else {
-                    //usuario esta libre
-                    $query = $this->db->select('SELECT * FROM '.PREFIX.'users WHERE email=:email', array(':email' => $email));
-                    $count = count($query);
-                    if ($count != 0) {
-                        //ya existe el email
-                        $this->logActivity("UNKNOWN", "AUTH_REGISTER_FAIL", "Email ({$email}) already exists");
-                        $error[] = $this->lang['register_email_exist'];
-                        return false;
-                    } else {
-                        //todo bien continua con registr
-                        $password = $this->hashPass($password);
-                        $activekey = $this->randomKey(RANDOM_KEY_LENGTH); //genera una randomkey para activacion enviar por email
-                        $this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'activekey' => $activekey));
-                        //$last_insert_id = $this->db->lastInsertId('id');
-                        $this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created");
-                        $this->successmsg[] = $this->lang['register_success'];
-                        //activar usuario directamente
-                        $this->activateAccount($username, $activekey); //se ignora la activekey ya que es directo
-                        return true;
-                    }
-                }
-            } else {
-                return false; //algun error
-            }
-        } else {
-            // User is logged in
-            $error[] = $this->lang['register_email_loggedin'];
-            return false;
-        }
-    }
-
-    /**
      * Register a new user into the database 
      * @param string $username
      * @param string $password
@@ -417,7 +338,7 @@ class Auth {
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error[] = $this->lang['register_email_invalid'];
             }
-            if (count($this->errormsg) == 0) {
+            if (count($this->error) == 0) {
                 // Input is valid
                 $query = $this->db->select("SELECT * FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
                 $count = count($query);
@@ -436,26 +357,39 @@ class Auth {
                         $error[] = $this->lang['register_email_exist'];
                         return false;
                     } else {
-                        // Email address isn't already used
-                        $password = $this->hashPass($password);
-                        $activekey = $this->randomKey(RANDOM_KEY_LENGTH);
-                        $this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'activekey' => $activekey));
-                        //EMAIL MESSAGE USING PHPMAILER
-                        $mail = new \Helpers\PhpMailer\Mail();
-                        $mail->setFrom(EMAIL_FROM);
-                        $mail->addAddress($email);
-                        $mail->subject(SITE_NAME);
-                        $body = "Hello {$username}<br/><br/>";
-                        $body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
-                        $body .= "To activate your account please click the following link<br/><br/>";
-                        $body .= "<b><a href=\"" . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
-						$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
-						$body .= " " . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
-                        $mail->body($body);
-                        $mail->send();
-                        $this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
-                        $this->successmsg[] = $this->lang['register_success'];
-                        return true;
+						// Check to see if user has to activate their account or not
+						if(NEW_USER_ACTIVATION == "true"){
+							// Site is set for new members to activate their account by email
+							// Email address isn't already used
+							$password = $this->hashPass($password);
+							$activekey = $this->randomKey(RANDOM_KEY_LENGTH);
+							$this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'activekey' => $activekey));
+							//EMAIL MESSAGE USING PHPMAILER
+							$mail = new \Helpers\PhpMailer\Mail();
+							$mail->setFrom(EMAIL_FROM);
+							$mail->addAddress($email);
+							$mail->subject(SITE_NAME);
+							$body = "Hello {$username}<br/><br/>";
+							$body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
+							$body .= "To activate your account please click the following link<br/><br/>";
+							$body .= "<b><a href=\"" . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
+							$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
+							$body .= " " . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
+							$mail->body($body);
+							$mail->send();
+							$this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
+							$this->success[] = $this->lang['register_success'];
+							return true;
+						}
+						if(NEW_USER_ACTIVATION == "false"){
+							// Site is set to let new members register without email activation
+							$password = $this->hashPass($password);
+							$activekey = $this->randomKey(RANDOM_KEY_LENGTH);
+							$this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'isactive' => '1'));
+							$this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
+							$this->success[] = $this->lang['register_success'];
+							return true;
+						}
                     }
                 }
             } else {
@@ -487,7 +421,7 @@ class Auth {
 		if(isset($username) && $db_isactive == "0" && $key == $db_key){
 			$this->db->update(PREFIX.'users', array('isactive' => 1, 'activekey' => 0), array('username' => $username));
 			$this->logActivity($username, "AUTH_ACTIVATE_SUCCESS", "Activation successful. Key Entry deleted.");
-			$this->successmsg[] = $this->lang['activate_success'];
+			$this->success[] = $this->lang['activate_success'];
 			return true;
 		}else{
 			return false;
@@ -528,7 +462,7 @@ class Auth {
             $error[] = $this->lang['logactivity_addinfo_long'];
             return false;
         }
-        if (count($this->errormsg) == 0) {
+        if (count($this->error) == 0) {
             $ip = $_SERVER['REMOTE_ADDR'];
             $date = date("Y-m-d H:i:s");
             $this->db->insert(PREFIX.'activitylog', array('date' => $date, 'username' => $username, 'action' => $action, 'additionalinfo' => $additionalinfo, 'ip' => $ip));
@@ -595,7 +529,7 @@ class Auth {
         } elseif ($newpass !== $verifynewpass) {
             $error[] = $this->lang['changepass_password_nomatch'];
         }
-        if (count($this->errormsg) == 0) {
+        if (count($this->error) == 0) {
             //$currpass = $this->hashPass($currpass);
             $newpass = $this->hashPass($newpass);
             $query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
@@ -610,7 +544,7 @@ class Auth {
                 if ($verify_password) {
                     $this->db->update(PREFIX.'users', array('password' => $newpass), array('username' => $username));
                     $this->logActivity($username, "AUTH_CHANGEPASS_SUCCESS", "Password changed");
-                    $this->successmsg[] = $this->lang['changepass_success'];
+                    $this->success[] = $this->lang['changepass_success'];
                     return true;
                 } else {
                     $this->logActivity($username, "AUTH_CHANGEPASS_FAIL", "Current Password Incorrect ( DB : {$db_currpass} / Given : {$currpass} )");
@@ -646,7 +580,7 @@ class Auth {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error[] = $this->lang['changeemail_email_invalid'];
         }
-        if (count($this->errormsg) == 0) {
+        if (count($this->error) == 0) {
             $query = $this->db->select("SELECT email FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
             $count = count($query);
             if ($count == 0) {
@@ -662,7 +596,7 @@ class Auth {
                 } else {
                     $this->db->update(PREFIX.'users', array('email' => $email), array('username' => $username));
                     $this->logActivity($username, "AUTH_CHANGEEMAIL_SUCCESS", "Email changed from {$db_email} to {$email}");
-                    $this->successmsg[] = $this->lang['changeemail_success'];
+                    $this->success[] = $this->lang['changeemail_success'];
                     return true;
                 }
             }
@@ -726,7 +660,7 @@ class Auth {
                     $mail->body($body);
                     $mail->send();
                     $this->logActivity($username, "AUTH_RESETPASS_SUCCESS", "Reset pass request sent to {$email} ( Key : {$resetkey} )");
-                    $this->successmsg[] = $this->lang['resetpass_email_sent'];
+                    $this->success[] = $this->lang['resetpass_email_sent'];
                     return true;
                 }
             } else {
@@ -750,7 +684,7 @@ class Auth {
                 } elseif ($newpass !== $verifynewpass) {
                     $error[] = $this->lang['resetpass_newpass_nomatch'];
                 }
-                if (count($this->errormsg) == 0) {
+                if (count($this->error) == 0) {
                     $query = $this->db->select("SELECT resetkey FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
                     $count = count($query);
                     if ($count == 0) {
@@ -769,7 +703,7 @@ class Auth {
                             $resetkey = '0';
                             $this->db->update(PREFIX.'users', array('password' => $newpass, 'resetkey' => $resetkey), array('username' => $username));
                             $this->logActivity($username, "AUTH_RESETPASS_SUCCESS", "Password reset - Key reset");
-                            $this->successmsg[] = $this->lang['resetpass_success'];
+                            $this->success[] = $this->lang['resetpass_success'];
                             return true;
                         } else {
                             $error[] = $this->lang['resetpass_key_incorrect'];
@@ -863,7 +797,7 @@ class Auth {
         } elseif (strlen($password) < MIN_PASSWORD_LENGTH) {
             $error[] = $this->lang['deleteaccount_password_short'];
         }
-        if (count($this->errormsg) == 0) {
+        if (count($this->error) == 0) {
 
             $query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
             $count = count($query);
@@ -878,7 +812,7 @@ class Auth {
                     $this->db->delete(PREFIX.'users', array('username' => $username));
                     $this->db->delete(PREFIX.'sessions', array('username' => $username));
                     $this->logActivity($username, "AUTH_DELETEACCOUNT_SUCCESS", "Account deleted - Cookies deleted");
-                    $this->successmsg[] = $this->lang['deleteaccount_success'];
+                    $this->success[] = $this->lang['deleteaccount_success'];
                     return true;
                 } else {
                     $this->logActivity($username, "AUTH_DELETEACCOUNT_FAIL", "Password incorrect ( DB : {$db_password} / Given : {$password} )");
@@ -913,6 +847,5 @@ class Auth {
     public function user_info(){
         return $this->currentCookieInfo()['uid'];
     }
-	
 	
 }

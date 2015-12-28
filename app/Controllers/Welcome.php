@@ -21,8 +21,6 @@ use Helpers\Auth\Auth;
 class Welcome extends Controller
 {
 
-	private $UserData;
-
     /**
      * Call the parent construct
      */
@@ -31,9 +29,18 @@ class Welcome extends Controller
         parent::__construct();
 		
         $this->language->load('Welcome');
-		$this->UserData = new \Models\UserData();
+		
 		// Define if user is logged in
-		if($this->auth->isLoggedIn()){ define('ISLOGGEDIN', 'true'); }
+		if($this->auth->isLoggedIn()){ 
+			// Define if user is logged in
+			define('ISLOGGEDIN', 'true'); 
+			// Define Current User's UserName and ID for header
+			$u_id = $this->auth->user_info();
+			$u_username = $this->UserData->getUserName($u_id);
+			define('CUR_USERID', $u_username);
+			define('CUR_USERNAME', $u_username);
+		}
+
     }
 
     /**
@@ -93,5 +100,13 @@ class Welcome extends Controller
         View::renderTemplate('header', $data);
         View::render('welcome/Forum', $data);
         View::renderTemplate('footer', $data);
+    }
+	
+    /**
+     * Define live check email
+     */
+    public function LiveCheckEmail()
+    {
+        View::render('welcome/LiveCheckEmail', $data);
     }
 }

@@ -1,7 +1,7 @@
 <?php 
 use Helpers\Form,
 	Core\Error,
-	\Core\Success; 	
+	Core\Success; 	
 ?>
 <div class='col-lg-8 col-centered'>
 	<div class='panel panel-default'>
@@ -14,22 +14,27 @@ use Helpers\Form,
 				<!-- Display Login Box -->
 				<div class='panel panel-info' style='max-width: 500px' align='center'>
 					<div class='panel-heading'>
-						<div class='panel-title'>Login</div>
+						<div class='panel-title'>Change Password</div>
 					</div>
 					<div class='pannel-body' style='padding:10px' align='center'>
 						<?php echo Error::display($error); ?>
+						<?php echo Success::display($success); ?>
 						<?php echo Form::open(array('method' => 'post')); ?>
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
-								<span class='input-group-addon'><i class='glyphicon glyphicon-user'></i></span>
-								<?php echo Form::input(array('name' => 'username', 'class' => 'form-control', 'placeholder' => 'UserName or Email')); ?>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
+								<?php echo Form::input(array('type' => 'password', 'name' => 'currpassword', 'class' => 'form-control', 'placeholder' => 'Current Password')); ?>
 							</div>
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
 								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
-								<?php echo Form::input(array('type' => 'password', 'name' => 'password', 'class' => 'form-control', 'placeholder' => 'Password')); ?>
+								<?php echo Form::input(array('type' => 'password', 'name' => 'newpass', 'class' => 'form-control', 'placeholder' => 'New Password')); ?>
+							</div>
+							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
+								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
+								<?php echo Form::input(array('type' => 'password', 'name' => 'verifynewpass', 'class' => 'form-control', 'placeholder' => 'Confirm New Password')); ?>
 							</div>
 							<!-- CSRF Token -->
 							<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
-							<?php echo Form::input(array('type' => 'submit', 'name' => 'submit', 'value' => 'Login', 'class' => 'btn btn-success btn-sm')); ?>
+							<?php echo Form::input(array('type' => 'submit', 'name' => 'submit', 'value' => 'Change Password', 'class' => 'btn btn-success btn-sm')); ?>
 						<?php echo Form::close(); ?>
 					</div>
 				</div>

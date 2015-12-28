@@ -29,6 +29,10 @@ The framework requirements are limited:
 3. Open `app/Core/Config.php` and set your base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do) and database credentials (if a database is needed). Set the default theme. When you are done, rename the file to `Core/Config.php`.
 4. Edit `.htaccess` file and save the base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do).
 
+## Credit
+Thank You to All Who Make UAP Possible!
+- [Auth System](https://github.com/geomorillo/Auth)
+
 ## Built on Simple MVC Framework
 
 ![Simple MVC Framework](http://simplemvcframework.com/app/templates/publicthemes/smvc/images/logo.png)

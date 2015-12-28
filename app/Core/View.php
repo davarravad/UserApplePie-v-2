@@ -27,7 +27,7 @@ class View
      * @param  array  $data  array of data
      * @param  array  $error array of errors
      */
-    public static function render($path, $data = false, $error = false)
+    public static function render($path, $data = false, $error = false, $success = false)
     {
         self::sendHeaders();
         
@@ -41,7 +41,7 @@ class View
      * @param  array $data  array of data
      * @param  array $error array of errors
      */
-    public static function renderModule($path, $data = false, $error = false)
+    public static function renderModule($path, $data = false, $error = false, $success = false)
     {
         self::sendHeaders();
         
