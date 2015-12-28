@@ -25,13 +25,17 @@ The framework requirements are limited:
 ## Installation
 
 1. [Download](http://www.userapplepie.com/Downloads/) the framework.
-2. Unzip the package.
-3. Open `app/Core/Config.php` and set your base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do) and database credentials (if a database is needed). Set the default theme. When you are done, rename the file to `Core/Config.php`.
+2. Unzip the package to your web server.
+3. Open `app/Core/Config.php` and set your base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do) and database credentials.
 4. Edit `.htaccess` file and save the base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do).
+5. Import the database.sql to your database (Updated table PREFIX if changed in Config.php).
+6. Enjoy!
+
+Note: Project is not complete, Stuff might be broken...
 
 ## Credit
 Thank You to All Who Make UAP Possible!
-- [Auth System](https://github.com/geomorillo/Auth)
+- [Auth System](https://github.com/geomorillo/Auth) By: geomorillo
 
 ## Built on Simple MVC Framework
 
