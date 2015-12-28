@@ -53,5 +53,8 @@ abstract class Controller
 		
         /** initialise the auth object */
         $this->auth = new Auth();
+		
+		/** initialise the UserData object */
+		$this->UserData = new \Models\UserData();
     }
 }

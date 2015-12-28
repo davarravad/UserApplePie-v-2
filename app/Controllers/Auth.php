@@ -7,6 +7,28 @@ use Core\View,
 
 class Auth extends Controller {
 	
+    /**
+     * Call the parent construct
+     */
+    public function __construct()
+    {
+        parent::__construct();
+		
+        $this->language->load('Welcome');
+		
+		// Define if user is logged in
+		if($this->auth->isLoggedIn()){ 
+			// Define if user is logged in
+			define('ISLOGGEDIN', 'true'); 
+			// Define Current User's UserName and ID for header
+			$u_id = $this->auth->user_info();
+			$u_username = $this->UserData->getUserName($u_id);
+			define('CUR_USERID', $u_username);
+			define('CUR_USERNAME', $u_username);
+		}
+
+    }
+
 	// Logs the user into the system
 	public function Login(){
 		
@@ -133,6 +155,50 @@ class Auth extends Controller {
 		$data['title'] = 'New Member Activation';
 		View::rendertemplate('header',$data);
 		View::render('welcome/info',$data,$error);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Change Password Page
+	public function ChangePassword(){
+		// Check to make sure user is logged in
+		if(!$this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// Check to make sure user is trying to login
+		if(isset($_POST['submit'])){
+			
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {
+				// Catch password inputs using the Request helper
+				$currpassword = Request::post('currpassword');
+				$newpass = Request::post('newpass');
+				$verifynewpass = Request::post('verifynewpass');
+				
+				// Get Current User's UserName
+				$u_id = $this->auth->user_info();
+				$u_username = $this->UserData->getUserName($u_id);
+				
+				echo "($u_username)";
+				
+				// Run the Activation script
+				if($this->auth->changePass($u_username, $currpassword, $newpass, $verifynewpass)){
+					// Success
+					$success[] = "You Have Successfully Changed Your Password";
+				}else{
+					// Fail
+					$error[] = "Password Change Failed";
+				}
+			}
+		}else{
+			// No GET information - Send User to index
+			//Url::redirect();
+		}
+		
+		$data['title'] = 'Change Password';
+		$data['csrf_token'] = Csrf::makeToken();
+		View::rendertemplate('header',$data);
+		View::render('auth/ChangePassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
 	

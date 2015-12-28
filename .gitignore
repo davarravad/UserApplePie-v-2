@@ -8,3 +8,4 @@ vendor/_notes/dwsync.xml
 app/Helpers/_notes/dwsync.xml
 app/templates/default/js/_notes/dwsync.xml
 app/views/welcome/_notes/dwsync.xml
+app/templates/default/_notes/dwsync.xml
