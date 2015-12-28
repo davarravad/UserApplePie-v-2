@@ -47,7 +47,7 @@ class Csrf
         $stored_time  = Session::get('csrf_token_time');
 
         if ($max_time + $stored_time <= time() || empty($csrf_token)) {
-            Session::set('csrf_token', md5(uniqid(rand(), true)));
+            Session::set('csrf_token', base64_encode(openssl_random_pseudo_bytes(64)));  // Secure Token Gen
             Session::set('csrf_token_time', time());
         }
 
