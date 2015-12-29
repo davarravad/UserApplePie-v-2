@@ -56,7 +56,7 @@ $hooks = Hooks::get();
 		<!-- Collect Left Main Links -->
         <div id='navbar' class='navbar-collapse collapse'>
           <ul class='nav navbar-nav'>
-			<li><a href='<?php echo DIR; ?>Forum'>Forum</a></li>
+			<li><a href='<?php echo DIR; ?>About'>About</a></li>
 		  </ul>
 		  <ul class='nav navbar-nav navbar-right'>
 				<?php if(ISLOGGEDIN != 'true'){ ?>
@@ -68,6 +68,7 @@ $hooks = Hooks::get();
 						<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <?php echo CUR_USERNAME; ?> <span class='caret'></span> </a>
 						<ul class='dropdown-menu'>
 							<li><a href='<?php echo DIR; ?>ChangePassword' title='Change Your Account Settings'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Change Password</a></li>
+							<li><a href='<?php echo DIR; ?>ChangeEmail' title='Change Your Account Settings'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Change Email</a></li>
 						</ul>
 						<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
 					</li>

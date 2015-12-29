@@ -179,8 +179,6 @@ class Auth extends Controller {
 				$u_id = $this->auth->user_info();
 				$u_username = $this->UserData->getUserName($u_id);
 				
-				echo "($u_username)";
-				
 				// Run the Activation script
 				if($this->auth->changePass($u_username, $currpassword, $newpass, $verifynewpass)){
 					// Success
@@ -199,6 +197,48 @@ class Auth extends Controller {
 		$data['csrf_token'] = Csrf::makeToken();
 		View::rendertemplate('header',$data);
 		View::render('auth/ChangePassword',$data,$error,$success);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Change Email Page
+	// Setup the Change Password Page
+	public function ChangeEmail(){
+		// Check to make sure user is logged in
+		if(!$this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// Get Current User's userID
+		$u_id = $this->auth->user_info();
+		$data['email'] = $this->UserData->getUserEmail($u_id);
+			
+		// Check to make sure user is trying to login
+		if(isset($_POST['submit'])){
+			
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {
+				// Catch password inputs using the Request helper
+				$password = Request::post('password');
+				$newemail = Request::post('newemail');
+				
+				// Run the Activation script
+				if($this->auth->changeEmail($u_id, $password, $newemail)){
+					// Success
+					$success[] = "You Have Successfully Changed Your Email";
+				}else{
+					// Fail
+					$error[] = "Email Change Failed";
+				}
+			}
+		}else{
+			// No GET information - Send User to index
+			//Url::redirect();
+		}
+		
+		$data['title'] = 'Change Email';
+		$data['csrf_token'] = Csrf::makeToken();
+		View::rendertemplate('header',$data);
+		View::render('auth/ChangeEmail',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
 	

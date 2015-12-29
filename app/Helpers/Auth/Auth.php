@@ -338,7 +338,7 @@ class Auth {
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $error[] = $this->lang['register_email_invalid'];
             }
-            if (count($this->error) == 0) {
+            if (count($error) == 0) {
                 // Input is valid
                 $query = $this->db->select("SELECT * FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
                 $count = count($query);
@@ -462,7 +462,7 @@ class Auth {
             $error[] = $this->lang['logactivity_addinfo_long'];
             return false;
         }
-        if (count($this->error) == 0) {
+        if (count($error) == 0) {
             $ip = $_SERVER['REMOTE_ADDR'];
             $date = date("Y-m-d H:i:s");
             $this->db->insert(PREFIX.'activitylog', array('date' => $date, 'username' => $username, 'action' => $action, 'additionalinfo' => $additionalinfo, 'ip' => $ip));
@@ -529,7 +529,7 @@ class Auth {
         } elseif ($newpass !== $verifynewpass) {
             $error[] = $this->lang['changepass_password_nomatch'];
         }
-        if (count($this->error) == 0) {
+        if (count($error) == 0) {
             //$currpass = $this->hashPass($currpass);
             $newpass = $this->hashPass($newpass);
             $query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
@@ -563,14 +563,24 @@ class Auth {
      * @param string $email
      * @return boolean
      */
-    function changeEmail($username, $email) {
-        if (strlen($username) == 0) {
-            $error[] = $this->lang['changeemail_username_empty'];
-        } elseif (strlen($username) > MAX_USERNAME_LENGTH) {
-            $error[] = $this->lang['changeemail_username_long'];
-        } elseif (strlen($username) < MIN_USERNAME_LENGTH) {
-            $error[] = $this->lang['changeemail_username_short'];
-        }
+    function changeEmail($userID, $password, $email) {
+		// Get Current Password From Database
+		$query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE userID=:userID", array(':userID' => $userID));
+		$db_currpass = $query[0]->password;
+		// Verify Current Password With Database Password
+		$verify_password = \Helpers\Password::verify($password, $db_currpass);
+		echo $verify_password;
+		// Make sure Password is good to go.
+        if (strlen($password) == 0) {
+            $error[] = $this->lang['changepass_currpass_empty'];
+        } elseif (strlen($password) < MIN_PASSWORD_LENGTH) {
+            $error[] = $this->lang['changepass_currpass_short'];
+        } elseif (strlen($password) > MAX_PASSWORD_LENGTH) {
+            $error[] = $this->lang['changepass_currpass_long'];
+        } elseif (!$verify_password){
+			$error[] = $this->lang['changepass_currpass_incorrect'];
+		}
+		// Make sure Email is good
         if (strlen($email) == 0) {
             $error[] = $this->lang['changeemail_email_empty'];
         } elseif (strlen($email) > MAX_EMAIL_LENGTH) {
@@ -580,11 +590,13 @@ class Auth {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error[] = $this->lang['changeemail_email_invalid'];
         }
-        if (count($this->error) == 0) {
-            $query = $this->db->select("SELECT email FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
+		
+		// Everything looks good.  Let user update their password
+        if (count($error) == 0) {
+            $query = $this->db->select("SELECT email FROM ".PREFIX."users WHERE userID=:userID", array(':userID' => $userID));
             $count = count($query);
             if ($count == 0) {
-                $this->logActivity("UNKNOWN", "AUTH_CHANGEEMAIL_FAIL", "Username Incorrect ({$username})");
+                $this->logActivity("UNKNOWN", "AUTH_CHANGEEMAIL_FAIL", "Username Incorrect ({$userID})");
                 $error[] = $this->lang['changeemail_username_incorrect'];
                 return false;
             } else {
@@ -594,7 +606,7 @@ class Auth {
                     $error[] = $this->lang['changeemail_email_match'];
                     return false;
                 } else {
-                    $this->db->update(PREFIX.'users', array('email' => $email), array('username' => $username));
+                    $this->db->update(PREFIX.'users', array('email' => $email), array('userID' => $userID));
                     $this->logActivity($username, "AUTH_CHANGEEMAIL_SUCCESS", "Email changed from {$db_email} to {$email}");
                     $this->success[] = $this->lang['changeemail_success'];
                     return true;
@@ -684,7 +696,7 @@ class Auth {
                 } elseif ($newpass !== $verifynewpass) {
                     $error[] = $this->lang['resetpass_newpass_nomatch'];
                 }
-                if (count($this->error) == 0) {
+                if (count($error) == 0) {
                     $query = $this->db->select("SELECT resetkey FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
                     $count = count($query);
                     if ($count == 0) {
@@ -797,7 +809,7 @@ class Auth {
         } elseif (strlen($password) < MIN_PASSWORD_LENGTH) {
             $error[] = $this->lang['deleteaccount_password_short'];
         }
-        if (count($this->error) == 0) {
+        if (count($error) == 0) {
 
             $query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
             $count = count($query);
