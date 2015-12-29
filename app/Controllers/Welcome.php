@@ -92,13 +92,13 @@ class Welcome extends Controller
     /**
      * Define Forum page title and load template files
      */
-    public function Forum()
+    public function About()
     {
-        $data['title'] = $this->language->get('forum_text');
-        $data['welcome_message'] = $this->language->get('forum_message');
+        $data['title'] = $this->language->get('about_text');
+        $data['welcome_message'] = $this->language->get('about_message');
 
         View::renderTemplate('header', $data);
-        View::render('welcome/Forum', $data);
+        View::render('welcome/subpage', $data);
         View::renderTemplate('footer', $data);
     }
 	

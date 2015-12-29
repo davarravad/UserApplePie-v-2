@@ -16,7 +16,7 @@ use Helpers\Hooks;
 /** Main Pages */
 Router::any('', 'Controllers\Welcome@index');
 Router::any('subpage', 'Controllers\Welcome@subPage');
-Router::any('Forum', 'Controllers\Welcome@Forum');
+Router::any('About', 'Controllers\Welcome@About');
 
 /** Auth Pages */
 Router::any('Login', 'Controllers\Auth@Login');
@@ -24,6 +24,7 @@ Router::any('Logout', 'Controllers\Auth@Logout');
 Router::any('Register', 'Controllers\Auth@Register');
 Router::any('Activate', 'Controllers\Auth@Activate');
 Router::any('ChangePassword', 'Controllers\Auth@ChangePassword');
+Router::any('ChangeEmail', 'Controllers\Auth@ChangeEmail');
 
 /** Live Checks */
 Router::any('LiveCheckEmail', 'Controllers\LiveCheck@emailCheck');
