@@ -33,6 +33,23 @@ The framework requirements are limited:
 
 Note: Project is not complete, Stuff might be broken...
 
+## UAP Default Site Map
+Pages with Guest Access
+-Home (Welcome - Default)
+-About
+-subpage
+-Login
+-Register
+-ForgotPassword
+-ResendActivationEmail
+Pages that Require User to be Logged In
+-Logout
+-ChangePassword
+-ChangeEmail
+Pages that Are Used From Email Link
+-ResetPassword
+-Activate
+
 ## Credit
 Thank You to All Who Make UAP Possible!
 - [Auth System](https://github.com/geomorillo/Auth) By: geomorillo
