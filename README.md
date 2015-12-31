@@ -54,7 +54,7 @@ Pages that Are Used From Email Link
 
 ## Credit
 Thank You to All Who Make UAP Possible!
-- [Auth System](https://github.com/geomorillo/Auth) By: geomorillo
+- [Auth System](https://github.com/geomorillo/Auth) By: @geomorillo
 
 ## Built on Simple MVC Framework
 
