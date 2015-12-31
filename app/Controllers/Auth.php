@@ -3,6 +3,7 @@ use Core\View,
 	Core\Controller,
 	Helpers\Url,
 	Helpers\Csrf,
+	Core\Language,
 	Helpers\Request as Request;
 
 class Auth extends Controller {
@@ -14,7 +15,7 @@ class Auth extends Controller {
     {
         parent::__construct();
 		
-        $this->language->load('Welcome');
+        $this->language->load('Auth');
 		
 		// Define if user is logged in
 		if($this->auth->isLoggedIn()){ 
@@ -201,7 +202,6 @@ class Auth extends Controller {
 	}
 	
 	// Setup the Change Email Page
-	// Setup the Change Password Page
 	public function ChangeEmail(){
 		// Check to make sure user is logged in
 		if(!$this->auth->isLoggedIn()){
@@ -239,6 +239,121 @@ class Auth extends Controller {
 		$data['csrf_token'] = Csrf::makeToken();
 		View::rendertemplate('header',$data);
 		View::render('auth/ChangeEmail',$data,$error,$success);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Forgot Password Page
+	public function ForgotPassword(){
+		// Check to make sure user is NOT logged in
+		if($this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// Check to make sure user is trying to login
+		if(isset($_POST['submit'])){
+			
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {
+				// Catch email input using the Request helper
+				$email = Request::post('email');
+				
+				// Run the Activation script
+				if($this->auth->resetPass($email)){
+					// Success
+					$success[] = Language::show('success_msg_forgot_pass', 'Auth');
+				}else{
+					// Fail
+					$error[] = Language::show('error_msg_forgot_pass', 'Auth');
+				}
+			}
+		}else{
+			// No GET information - Send User to index
+			//Url::redirect();
+		}
+		
+		$data['title'] = Language::show('title_forgot_password', 'Auth');
+		$data['csrf_token'] = Csrf::makeToken();
+		View::rendertemplate('header',$data);
+		View::render('auth/ForgotPassword',$data,$error,$success);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Forgot Password Page
+	public function ResetPassword(){
+		// Check to make sure user is NOT logged in
+		if($this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+		// Catch username and resetkey inputs using the Request helper
+		$username = Request::query('username');
+		$resetkey = Request::query('key');
+		// Check to make sure user is trying to login
+		if(isset($username) && isset($resetkey)){
+			// Check to make sure UserName and ResetKey are good
+			if($this->auth->checkResetKey($username, $resetkey)){
+				// If good we show the form then check to see if new password has been submitted
+				if(isset($_POST['submit'])){
+					// Check to make sure the csrf token is good
+					if (Csrf::isTokenValid()) {
+						// Catch password inputs using the Request helper
+						$password = Request::post('password');
+						$confirm_password = Request::post('confirm_password');
+						// Everything looks good, lets go ahead and reset the password
+						if($this->auth->resetPass('', $username, $resetkey, $password, $confirm_password)){
+							$success = "Your Password has ben reset!";
+						}else{
+							$error = "Password Reset Fail!";
+						}   
+					}
+				}
+			}else{
+				$error[] = "Password Reset Fail!";
+			}
+		}else{
+			// No GET information - Send User to index
+			//Url::redirect();
+		}
+		
+		$data['title'] = Language::show('title_forgot_password', 'Auth');
+		$data['csrf_token'] = Csrf::makeToken();
+		View::rendertemplate('header',$data);
+		View::render('auth/ResetPassword',$data,$error,$success);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Resend Activation Page
+	public function ResendActivation(){
+		// Check to make sure user is NOT logged in
+		if($this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// Check to make sure user is trying to login
+		if(isset($_POST['submit'])){
+			
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {
+				// Catch email input using the Request helper
+				$email = Request::post('email');
+				
+				// Run the Activation script
+				if($this->auth->resendActivation($email)){
+					// Success
+					$success[] = Language::show('success_msg_resend_activation', 'Auth');
+				}else{
+					// Fail
+					$error[] = Language::show('error_msg_resend_activation', 'Auth');
+				}
+			}
+		}else{
+			// No GET information - Send User to index
+			//Url::redirect();
+		}
+		
+		$data['title'] = Language::show('title_resend_activation', 'Auth');
+		$data['csrf_token'] = Csrf::makeToken();
+		View::rendertemplate('header',$data);
+		View::render('auth/ResendActivation',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
 	

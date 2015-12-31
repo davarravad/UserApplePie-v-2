@@ -25,6 +25,9 @@ Router::any('Register', 'Controllers\Auth@Register');
 Router::any('Activate', 'Controllers\Auth@Activate');
 Router::any('ChangePassword', 'Controllers\Auth@ChangePassword');
 Router::any('ChangeEmail', 'Controllers\Auth@ChangeEmail');
+Router::any('ForgotPassword', 'Controllers\Auth@ForgotPassword');
+Router::any('ResetPassword', 'Controllers\Auth@ResetPassword');
+Router::any('ResendActivationEmail', 'Controllers\Auth@ResendActivation');
 
 /** Live Checks */
 Router::any('LiveCheckEmail', 'Controllers\LiveCheck@emailCheck');
