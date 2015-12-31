@@ -34,7 +34,7 @@ The framework requirements are limited:
 Note: Project is not complete, Stuff might be broken...
 
 ## UAP Default Site Map
-#Pages with Guest Access
+Pages with Guest Access  
  - Home (Welcome - Default)
  - About
  - subpage
@@ -42,11 +42,11 @@ Note: Project is not complete, Stuff might be broken...
  - Register
  - ForgotPassword
  - ResendActivationEmail
-#Pages that Require User to be Logged In
+Pages that Require User to be Logged In  
  - Logout
  - ChangePassword
  - ChangeEmail
-#Pages that Are Used From Email Link
+Pages that Are Used From Email Link  
  - ResetPassword
  - Activate
 
