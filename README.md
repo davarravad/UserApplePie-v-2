@@ -33,7 +33,7 @@ The framework requirements are limited:
 
 Note: Project is not complete, Stuff might be broken...
 
-## UAP Default Site Map
+## UAP Default Site URL Map ex:http://www.demo.com/ForgotPassword
 Pages with Guest Access
  - Home (Welcome - Default)  
  - About  
