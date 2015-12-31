@@ -1,7 +1,8 @@
 <?php 
 use Helpers\Form,
 	Core\Error,
-	Core\Success;
+	Core\Success,
+	Core\Language;
 ?>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -117,15 +118,15 @@ $(document).ready(function()
 <div class='col-lg-8 col-centered'>
 	<div class='panel panel-default'>
 		<div class='panel-heading'>
-			<h3 class='jumbotron-heading'><?php echo $data['title'] ?></h3>
+			<h3 class='jumbotron-heading'><?php echo Language::show('title_register', 'Auth'); ?></h3>
 		</div>
 		<div class='panel-body'>
-			<p><?php echo $data['welcome_message'] ?></p>
+			<p><?php echo Language::show('welcome_register', 'Auth'); ?></p>
 			<div align=center>
 				<!-- Display Login Box -->
 				<div class='panel panel-info' style='max-width: 500px' align='center'>
 					<div class='panel-heading'>
-						<div class='panel-title'>Register</div>
+						<div class='panel-title'><?php echo Language::show('title_register', 'Auth'); ?></div>
 					</div>
 					<div class='pannel-body' style='padding:10px' align='center'>
 						<?php echo Error::display($error); ?>
@@ -182,7 +183,9 @@ $(document).ready(function()
 							<span class='label' id='passwordStrength'></span>
 							<span id='resultemail2' class='label'></span>
 
-							<?php echo Form::input(array('type' => 'submit', 'name' => 'submit', 'value' => 'Register', 'class' => 'btn btn-success btn-sm')); ?>
+							<button class="btn btn-md btn-success" name="submit" type="submit">
+								<?php echo Language::show('register', 'Auth'); ?>
+							</button>
 						<?php echo Form::close(); ?>
 					</div>
 				</div>
