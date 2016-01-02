@@ -15,7 +15,7 @@ $(document).ready(function()
  {  
   var name = $(this).val(); 
   
-  if(name.length > 4)
+  if(name.length >= <?php echo MIN_USERNAME_LENGTH;?>)
   {  
    $("#resultun").html('');
    
@@ -55,7 +55,7 @@ $(document).ready(function()
   else
   {
    $("#resultun").html("<i class='glyphicon glyphicon-remove text-danger'></i>");
-   $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name must be at least <strong>5</strong> characters.</div>");
+   $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name must be at least <strong><?php echo MIN_USERNAME_LENGTH;?></strong> characters.</div>");
   }
  });
  
@@ -69,7 +69,7 @@ $(document).ready(function()
  {  
   var name = $(this).val(); 
   
-  if(name.length > 4)
+  if(name.length >= <?php echo MIN_EMAIL_LENGTH;?>)
   {  
    $("#resultemail").html('');
    
@@ -104,14 +104,70 @@ $(document).ready(function()
   else
   {
    $("#resultemail").html("<i class='glyphicon glyphicon-remove text-danger'></i>");
-   $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email must be at least <strong>5</strong> characters.</div>");
+   $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email must be at least <strong><?php echo MIN_EMAIL_LENGTH; ?></strong> characters.</div>");
   }
  });
  
 });
 </script>
 
-<script src="app/templates/default/js/jq-pw-strength.js"></script>
+<script type="text/javascript">
+ $(document).ready(function() {
+ 
+$('#passwordInput, #confirmPasswordInput').on('keyup', function(e) {
+ 
+if($('#passwordInput').val() != '' && $('#confirmPasswordInput').val() != '' && $('#passwordInput').val() != $('#confirmPasswordInput').val())
+{
+$('#passwordStrength').html('<div class="alert alert-danger" role="alert">Passwords do not match!</div>');
+$('#password01').html("<i class='glyphicon glyphicon-remove text-danger'></i>");
+$('#password02').html("<i class='glyphicon glyphicon-remove text-danger'></i>");
+ 
+return false;
+}
+ 
+// Must have capital letter, numbers and lowercase letters
+var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+ 
+// Must have either capitals and lowercase letters or lowercase and numbers
+var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+ 
+// Must be at least 8 characters long
+var okRegex = new RegExp("(?=.{<?php echo MIN_PASSWORD_LENGTH; ?>,}).*", "g");
+ 
+if (okRegex.test($(this).val()) === false) {
+// If ok regex doesn't match the password
+$('#passwordStrength').html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Password must be at least <?php echo MIN_PASSWORD_LENGTH;?> characters long.</div>");
+$('#password01').html("<i class='glyphicon glyphicon-remove text-danger'></i>");
+	if($('#confirmPasswordInput').val()){
+		$('#password02').html("<i class='glyphicon glyphicon-remove text-danger'></i>");
+	}
+} else if (strongRegex.test($(this).val())) {
+// If reg ex matches strong password
+$('#passwordStrength').html("");
+$('#password01').html("<i class='glyphicon glyphicon-thumbs-up text-success'></i>");
+	if($('#confirmPasswordInput').val()){
+		$('#password02').html("<i class='glyphicon glyphicon-thumbs-up text-success'></i>");
+	}
+} else if (mediumRegex.test($(this).val())) {
+// If medium password matches the reg ex
+$('#passwordStrength').html("<div class='alert alert-info alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Good Password!</div>");
+$('#password01').html("<i class='glyphicon glyphicon-ok text-info'></i>");
+	if($('#confirmPasswordInput').val()){
+		$('#password02').html("<i class='glyphicon glyphicon-ok text-info'></i>");
+	}
+} else {
+// If password is ok
+$('#passwordStrength').html("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Weak Password!</div>");
+$('#password01').html("<i class='glyphicon glyphicon-remove text-warning'></i>");
+	if($('#confirmPasswordInput').val()){
+		$('#password02').html("<i class='glyphicon glyphicon-remove text-warning'></i>");
+	}
+}
+return true;
+});
+ 
+});
+</script>
 
 
 
@@ -139,18 +195,12 @@ $(document).ready(function()
 								<?php echo Form::input(array('id' => 'username', 'name' => 'username', 'class' => 'form-control', 'placeholder' => 'UserName')); ?>
 								<span id='resultun' class='input-group-addon'></span>
 							</div>							
-							<div class='form-group' style='width: 75%; margin-bottom: 5px'>
-								<font size=1>Pick a username you will remember.</font>
-							</div>
 							
 							<!-- Password 1 -->
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
 								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
 								<?php echo Form::input(array('id' => 'passwordInput', 'type' => 'password', 'name' => 'password', 'class' => 'form-control', 'placeholder' => 'Password')); ?>
 								<span id='password01' class='input-group-addon'></span>
-							</div>
-							<div class='form-group' style='width: 75%; margin-bottom: 5px'>
-								<font size=1>Pick a password you will remember.</font>
 							</div>
 							
 							<!-- Password 2 -->
@@ -159,9 +209,6 @@ $(document).ready(function()
 								<?php echo Form::input(array('id' => 'confirmPasswordInput', 'type' => 'password', 'name' => 'passwordc', 'class' => 'form-control', 'placeholder' => 'Confirm Password')); ?>
 								<span id='password02' class='input-group-addon'></span>
 							</div>
-							<div class='form-group' style='width: 75%; margin-bottom: 5px'>
-								<font size=1>Confirm Your Password.</font>
-							</div>
 							
 							<!-- Email -->
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
@@ -169,11 +216,12 @@ $(document).ready(function()
 								<?php echo Form::input(array('id' => 'email', 'type' => 'text', 'name' => 'email', 'class' => 'form-control', 'placeholder' => 'E-Mail')); ?>
 								<span id='resultemail' class='input-group-addon'></span>
 							</div>
-							<div class='form-group' style='width: 75%; margin-bottom: 5px'>
-								<font size=1>Please use Current Working Email so you can activate your UserApplePie account.  Check your Email and click the link provided.</font>
-							</div>
 							
 							<!-- reCAPTCHA -->
+							<script type='text/javascript'>var RecaptchaOptions = {theme : 'clean'};</script>
+							<div class="g-recaptcha" data-sitekey="<?php echo RECAP_PUBLIC_KEY;?>"></div>
+							<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=en">
+							</script>
 							
 							<!-- CSRF Token -->
 							<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />

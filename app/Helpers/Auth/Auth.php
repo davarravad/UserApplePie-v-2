@@ -31,7 +31,7 @@ class Auth {
      * @param string $password
      * @return boolean
      */
-    public function login($username, $password) {
+    public function login($username, $password, $rememberme) {
 		
         if (!Cookie::get("auth_cookie")) {
 			
@@ -85,7 +85,7 @@ class Auth {
                             return false;
                         } else {
                             // Account is activated
-                            $this->newCookie($username); //generate new cookie cookie
+							$this->newCookie($username, $rememberme); //generate new cookie cookie
                             $this->logActivity($username, "AUTH_LOGIN_SUCCESS", "User logged in");
                             $this->success[] = $this->lang['login_success'];
                             return true;
@@ -264,7 +264,7 @@ class Auth {
      * Creates a new cookie for the provided username and sets cookie 
      * @param string $username
      */
-    private function newCookie($username) {
+    private function newCookie($username, $rememberme) {
         $hash = md5(microtime()); // unique cookie hash
         // Fetch User ID :		
         $queryUid = $this->db->select("SELECT userID FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
@@ -272,10 +272,16 @@ class Auth {
         // Delete all previous cookies :
         $this->db->delete(PREFIX.'sessions', array('username' => $username));
         $ip = $_SERVER['REMOTE_ADDR'];
-        $expiredate = date("Y-m-d H:i:s", strtotime(SESSION_DURATION));
+		if($rememberme == "true"){
+			// User wants to be remembered for a while
+			$expiredate = date("Y-m-d H:i:s", strtotime(SESSION_DURATION_RM));
+		}else{
+			$expiredate = date("Y-m-d H:i:s", strtotime(SESSION_DURATION));
+		}
         $expiretime = strtotime($expiredate);
         $this->db->insert(PREFIX.'sessions', array('uid' => $uid, 'username' => $username, 'hash' => $hash, 'expiredate' => $expiredate, 'ip' => $ip));
-        Cookie::set('auth_cookie', $hash, $expiretime, "/", FALSE);
+		// Check to see if user checked the remember me box
+		Cookie::set('auth_cookie', $hash, $expiretime, "/", FALSE);
     }
 
     /**
@@ -364,11 +370,15 @@ class Auth {
 							$password = $this->hashPass($password);
 							$activekey = $this->randomKey(RANDOM_KEY_LENGTH);
 							$this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'activekey' => $activekey));
+							//  Add User to Default Group
+							$new_user_id = $this->db->lastInsertId('contactID');
+							$this->db->insert(PREFIX.'users_groups', array('userID' => $new_user_id, 'groupID' => '1'));
 							//EMAIL MESSAGE USING PHPMAILER
 							$mail = new \Helpers\PhpMailer\Mail();
 							$mail->setFrom(EMAIL_FROM);
 							$mail->addAddress($email);
-							$mail->subject(SITE_NAME);
+							$subject = " " . SITE_NAME . " - Account Activation Link";
+							$mail->subject($subject);
 							$body = "Hello {$username}<br/><br/>";
 							$body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
 							$body .= "To activate your account please click the following link<br/><br/>";
@@ -664,11 +674,14 @@ class Auth {
                     $mail = new \Helpers\PhpMailer\Mail();
                     $mail->setFrom(EMAIL_FROM);
                     $mail->addAddress($email);
-                    $mail->subject(SITE_NAME . " - Password reset request !");
+                    $subject = " " . SITE_NAME . " - Password Reset Request";
+					$mail->subject($subject);
                     $body = "Hello {$username}<br/><br/>";
                     $body .= "You recently requested a password reset on " . SITE_NAME . "<br/>";
                     $body .= "To proceed with the password reset, please click the following link :<br/><br/>";
                     $body .= "<b><a href=\"" . BASE_URL . RESET_PASSWORD_ROUTE . "?username={$username}&key={$resetkey}\">Reset My Password</a></b>";
+					$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
+					$body .= " " . BASE_URL . RESET_PASSWORD_ROUTE . "?username={$username}&key={$resetkey}";
                     $mail->body($body);
                     $mail->send();
                     $this->logActivity($username, "AUTH_RESETPASS_SUCCESS", "Reset pass request sent to {$email} ( Key : {$resetkey} )");
@@ -865,7 +878,7 @@ class Auth {
 					$mail = new \Helpers\PhpMailer\Mail();
 					$mail->setFrom(EMAIL_FROM);
 					$mail->addAddress($email);
-					$subject = " " . SITE_NAME . " Account Activation";
+					$subject = " " . SITE_NAME . " - Account Activation Link";
 					$mail->subject($subject);
 					$body = "Hello {$username}<br/><br/>";
 					$body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
@@ -901,6 +914,30 @@ class Auth {
 		$data = $this->db->select("SELECT userID FROM ".PREFIX."users WHERE username = :username",
 			array(':username' => $username));
 		return $data[0]->userID;
+	}
+	
+	/**
+	 * Get username attached to email
+	 */
+	public function getUserNameFromEmail($email){
+		$data = $this->db->select("SELECT username FROM ".PREFIX."users WHERE email = :email",
+			array(':email' => $email));
+		return $data[0]->username;
+	}
+	
+	/**
+	 * Check to see if email exists in users database
+	 */
+	public function checkIfEmail($email){
+		$query = $this->db->select("SELECT * FROM ".PREFIX."users WHERE email=:email", array(':email' => $email));
+		$count = count($query);
+		if ($count != 0) {
+			// Email Exists
+			return true;
+		}else{
+			// Email Does not exists
+			return false;
+		}
 	}
 	
 	/**

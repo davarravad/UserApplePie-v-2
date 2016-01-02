@@ -45,16 +45,60 @@ class Auth extends Controller {
 				// Catch username an password inputs using the Request helper
 				$username = Request::post('username');
 				$password = Request::post('password');
+				$rememberme = Request::post('rememberme');
+				
+				// Check to see if user is trying to login with their email
+				if($this->auth->checkIfEmail($username)){
+					// User is trying to use email to login
+					// Output the user's username
+					$username = $this->auth->getUserNameFromEmail($username);
+				}
+				
+				// Check to see if remember me is not true, then make it false
+				if($rememberme != "true"){ $rememberme = "false"; }
 				
 				// Login Validation
-				if($this->auth->login($username, $password)){		
+				if($this->auth->login($username, $password, $rememberme)){		
 					// User Passed Validation - Let them in
 					// User is good to go
 					$data = array('LastLogin' => date('Y-m-d G:i:s'));
 					$where = array('userID' => $this->auth->getID($username));
 					$this->auth->updateUser($data,$where);
 					
-					Url::redirect();
+					//Login Success
+					//Redirect to user
+					//Check to see if user came from another page within the site
+					if(isset($_SESSION['login_prev_page'])){ $login_prev_page = $_SESSION['login_prev_page']; }else{ $login_prev_page = ""; }
+					// Checking to see if user user was viewing anything before login
+					// If they were viewing a page on this site, then after login
+					// send them to that page they were on.
+					if(!empty($login_prev_page)){
+						//Send member to previous page
+						//echo " ${login_prev_page} "; // Debug
+						
+						//Clear the prev page session if set
+						if(isset($_SESSION['login_prev_page'])){
+							unset($_SESSION['login_prev_page']);
+						}
+						
+						// Set the redir page
+						$redir_link_url = "$login_prev_page";
+						
+						// Redirect member to their post
+						header("Location: $redir_link_url");
+						exit;
+					}else{
+						//No previous page, send member to home page
+						//echo " send user to home page "; // Debug
+						
+						//Clear the prev page session if set
+						if(isset($_SESSION['login_prev_page'])){
+							unset($_SESSION['login_prev_page']);
+						}
+						
+						// Redirect member to home page
+						Url::redirect();
+					}
 				}else{
 					$error[] = "Incorrect UserName or Password!";
 				}
@@ -88,29 +132,49 @@ class Auth extends Controller {
 			
 		// Check to make sure user is trying to login
 		if(isset($_POST['submit'])){
+			// Google Captcha Check
+			if(isset($_POST['g-recaptcha-response'])){
+				$captcha=$_POST['g-recaptcha-response'];
+			}
+			if(!$captcha){
+				//What happens when the CAPTCHA was entered incorrectly
+				//err_message("Sorry, The reCAPTCHA was not entered correctly! Please try again!");
+				//die;	
+				$capcha_fail = "true";
+			}
+			$response=file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=".RECAP_PRIVATE_KEY."&response=".$captcha."&remoteip=".$_SERVER['REMOTE_ADDR']);
+			if($response.'success'==false)
+			{
+				$capcha_fail = "true";
+			}
 			// Check to make sure the csrf token is good
 			if (Csrf::isTokenValid()) {
-				// Catch username an password inputs using the Request helper
-				$username = Request::post('username');
-				$password = Request::post('password');
-				$verifypassword = Request::post('passwordc');
-				$email = Request::post('email');
-				
-				// Run the register script
-				if($this->auth->register($username, $password, $verifypassword, $email)){
-					// Register ok
-					if(NEW_USER_ACTIVATION == "true"){
-						$success[] = "Registration Successful! Check Your Email For Activation Instructions.";
+				if($capcha_fail !== "true"){
+					// Catch username an password inputs using the Request helper
+					$username = Request::post('username');
+					$password = Request::post('password');
+					$verifypassword = Request::post('passwordc');
+					$email = Request::post('email');
+					
+					// Run the register script
+					if($this->auth->register($username, $password, $verifypassword, $email)){
+						// Register ok
+						if(NEW_USER_ACTIVATION == "true"){
+							$success[] = "Registration Successful! Check Your Email For Activation Instructions.";
+						}
+						if(NEW_USER_ACTIVATION == "false"){
+							$success[] = "Registration Successful! <a href='".DIR."Login'>Login</a>.";
+						}					
+						// Url::redirect();
+					}else{
+						// Register fail
+						$error[] = "Registration Error!";
 					}
-					if(NEW_USER_ACTIVATION == "false"){
-						$success[] = "Registration Successful! <a href='".DIR."Login'>Login</a>.";
-					}					
-					// Url::redirect();
+					
 				}else{
-					// Register fail
-					$error[] = "Registration Error!";
+					// Tokens do not match
+					$error[] = "reCAPTCHA Fail.";
 				}
-				
 			}else{
 				// Tokens do not match
 				$error[] = "Tokens Do Not Match.  Please Try Again.";
@@ -173,8 +237,8 @@ class Auth extends Controller {
 			if (Csrf::isTokenValid()) {
 				// Catch password inputs using the Request helper
 				$currpassword = Request::post('currpassword');
-				$newpass = Request::post('newpass');
-				$verifynewpass = Request::post('verifynewpass');
+				$newpass = Request::post('password');
+				$verifynewpass = Request::post('passwordc');
 				
 				// Get Current User's UserName
 				$u_id = $this->auth->user_info();
@@ -218,7 +282,7 @@ class Auth extends Controller {
 			// Check to make sure the csrf token is good
 			if (Csrf::isTokenValid()) {
 				// Catch password inputs using the Request helper
-				$password = Request::post('password');
+				$password = Request::post('passwordemail');
 				$newemail = Request::post('newemail');
 				
 				// Run the Activation script

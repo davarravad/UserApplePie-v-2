@@ -29,6 +29,9 @@ use Helpers\Form,
 								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
 								<?php echo Form::input(array('type' => 'password', 'name' => 'password', 'class' => 'form-control', 'placeholder' => 'Password')); ?>
 							</div>
+							<div class='input-group text-center' style='width: 80%; margin-bottom: 25px'>
+								<label><input type="checkbox" name="rememberme" value="true"> Remember Me </label>
+							</div>
 							<!-- CSRF Token -->
 							<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
 							<button class="btn btn-md btn-success" name="submit" type="submit">

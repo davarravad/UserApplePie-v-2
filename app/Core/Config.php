@@ -72,7 +72,7 @@ class Config
         /**
          * Database username.
          */
-        define('DB_USER', 'user');
+        define('DB_USER', 'userapplepie');
 
         /**
          * Database password.
@@ -116,6 +116,12 @@ class Config
 		define("ACTIVATION_ROUTE", 'Activate'); //  for activating an account should be implemented by you on any controller you can name it whatever you want
         define("RESET_PASSWORD_ROUTE", 'ResetPassword'); // for resetting a password and should be implemented  by you on any controller you can name it whatever you want
 
+		/**
+		 * reCAPTCHA settings
+		 */
+		define("RECAP_PUBLIC_KEY", '6LeLwQkTAAAAAJJkIcvbiuZ5j1HulqatLAjyv32U'); // reCAPCHA site key
+		define("RECAP_PRIVATE_KEY", '6LeLwQkTAAAAAGue6GABhTIbs2XOr6VpBFeXjptC'); // reCAPCHA secret key
+		
         /**
          * Turn on custom error handling.
          */

@@ -24,7 +24,11 @@ class LiveCheck extends Controller
      */
     public function emailCheck()
     { 
-		$email = $_POST['email'];
+		if(isset($_POST['email'])){
+			$email = $_POST['email'];
+		}else if(isset($_POST['newemail'])){
+			$email = $_POST['newemail'];
+		}
 		
 		if(isSet($email))
 		{

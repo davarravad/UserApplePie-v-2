@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 28, 2015 at 05:35 PM
+-- Generation Time: Jan 01, 2016 at 11:15 PM
 -- Server version: 5.5.46-0ubuntu0.14.04.2
 -- PHP Version: 5.5.9-1ubuntu4.14
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `uap_activitylog` (
   `additionalinfo` varchar(500) NOT NULL DEFAULT 'none',
   `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=378 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -51,6 +51,31 @@ CREATE TABLE IF NOT EXISTS `uap_attempts` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `uap_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_groups` (
+  `groupID` int(11) NOT NULL AUTO_INCREMENT,
+  `groupName` varchar(150) NOT NULL,
+  `groupDescription` varchar(255) NOT NULL,
+  `groupFontColor` varchar(20) NOT NULL,
+  `groupFontWeight` varchar(20) NOT NULL,
+  PRIMARY KEY (`groupID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+--
+-- Dumping data for table `uap_groups`
+--
+
+INSERT INTO `uap_groups` (`groupID`, `groupName`, `groupDescription`, `groupFontColor`, `groupFontWeight`) VALUES
+(1, 'New Member', 'Site Members that Recently Registered to the Web Site.', 'GREEN', 'BOLD'),
+(2, 'Member', 'Site Members That Have Been Here a While.', 'BLUE', 'BOLD'),
+(3, 'Moderator', 'Site Members That Have a Little Extra Privilege on the Site.', 'ORANGE', 'BOLD'),
+(4, 'Administrator', 'Site Members That Have Full Access To The Site.', 'RED', 'BOLD');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `uap_sessions`
 --
 
@@ -62,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `uap_sessions` (
   `expiredate` datetime NOT NULL,
   `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=37 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -81,7 +106,20 @@ CREATE TABLE IF NOT EXISTS `uap_users` (
   `LastLogin` datetime DEFAULT NULL,
   `SignUp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_users_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_users_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userID` int(11) NOT NULL,
+  `groupID` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

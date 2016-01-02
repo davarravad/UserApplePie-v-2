@@ -57,6 +57,7 @@ class Welcome extends Controller
 			$u_email = $this->UserData->getUserEmail($u_id);
 			$u_lastlogin = date("F d, Y",strtotime($this->UserData->getUserLastLogin($u_id)));
 			$u_signup = date("F d, Y",strtotime($this->UserData->getUserSignUp($u_id)));
+			$data['user_group'] = $this->UserData->getUserGroupName($u_id);
 			// Setup the output data
 			$page_data = " 
 				You are logged in! <br><br>
