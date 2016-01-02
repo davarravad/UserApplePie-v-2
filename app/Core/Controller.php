@@ -13,6 +13,7 @@ namespace Core;
 use Core\View;
 use Core\Language;
 use Helpers\Auth\Auth;
+use Helpers\PageFunctions;
 
 /**
  * Core controller, all other controllers extend this base controller.
@@ -34,11 +35,25 @@ abstract class Controller
     public $language;
 
     /**
-     * Language variable to use the languages class.
+     * Auth variable to use the Auth class.
      *
      * @var string
      */
     public $auth;
+	
+    /**
+     * UserData variable to use the UserData class.
+     *
+     * @var string
+     */
+    public $UserData;
+	
+    /**
+     * PageFunctions variable to use the PageFunctions class.
+     *
+     * @var string
+     */
+    public $PageFunctions;
 	
     /**
      * On run make an instance of the config class and view class.
@@ -56,5 +71,8 @@ abstract class Controller
 		
 		/** initialise the UserData object */
 		$this->UserData = new \Models\UserData();
+		
+		/** initialise the UserData object */
+		$this->PageFunctions = new PageFunctions();
     }
 }

@@ -6,9 +6,15 @@
 use Helpers\Assets;
 use Helpers\Url;
 use Helpers\Hooks;
+use Helpers\PageFunctions;
 
 //initialise hooks
 $hooks = Hooks::get();
+
+// Check to see what page is being viewed
+// If not Home, Login, Register, etc.. 
+// Send url to Session
+PageFunctions::prevpage();
 
 ?>
 <!DOCTYPE html>

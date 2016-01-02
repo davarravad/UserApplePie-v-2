@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Helper to get all user Data from users database
+* Model to get all user Data from users database
 */
 
 namespace Models;
@@ -44,4 +44,25 @@ class UserData extends \Core\Model {
 		return $data[0]->SignUp;
 	}
 	
+	/**
+	 * Get current user's Group
+	 */
+	public function getUserGroupName($where_id){
+		// Get user's group ID
+		$data = $this->db->select("SELECT groupID FROM ".PREFIX."users_groups WHERE userID = :userID ORDER BY groupID ASC",
+			array(':userID' => $where_id));
+		//$groupID = $data[0]->groupID;
+		foreach($data as $row){
+			// Use group ID to get the group name
+			$data2 = $this->db->select("SELECT groupName, groupFontColor, groupFontWeight FROM ".PREFIX."groups WHERE groupID = :groupID",
+				array(':groupID' => $row->groupID));
+			$groupName = $data2[0]->groupName;
+			$groupColor = "color='".$data2[0]->groupFontColor."'";
+			$groupWeight = "style='font-weight:".$data2[0]->groupFontWeight."'";
+			// Format the output with font style
+			$groupOutput[] = "<font $groupColor $groupWeight>$groupName</font>";
+		}
+		return $groupOutput;
+		
+	}
 }
