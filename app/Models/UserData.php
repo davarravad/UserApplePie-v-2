@@ -18,6 +18,15 @@ class UserData extends \Core\Model {
 	}
 
 	/**
+	 * Get current user's id from database
+	 */
+	public function getUserID($where_username){
+		$data = $this->db->select("SELECT userID FROM ".PREFIX."users WHERE username = :username",
+			array(':username' => $where_username));
+		return $data[0]->userID;
+	}
+	
+	/**
 	 * Get current user's Email from database
 	 */
 	public function getUserEmail($where_id){
@@ -62,7 +71,40 @@ class UserData extends \Core\Model {
 			// Format the output with font style
 			$groupOutput[] = "<font $groupColor $groupWeight>$groupName</font>";
 		}
-		return $groupOutput;
-		
+		return $groupOutput;	
 	}
+	
+	// Gets list of members that have activated accounts
+	public function getMembers(){
+		// Get online users userID
+		$data = $this->db->select("
+				SELECT 
+					u.userID,
+					u.username,
+					u.firstName,
+					u.isactive,
+					ug.userID,
+					ug.groupID,
+					g.groupID,
+					g.groupName,
+					g.groupFontColor,
+					g.groupFontWeight
+				FROM 
+					uap_users u
+				LEFT JOIN
+					uap_users_groups ug
+					ON u.userID = ug.userID
+				LEFT JOIN
+					uap_groups g
+					ON ug.groupID = g.groupID
+				WHERE
+					u.isactive=1
+				GROUP BY
+					u.userID
+				ORDER BY 
+					u.userID ASC, g.groupID DESC
+		");
+		return $data;
+	}
+	
 }

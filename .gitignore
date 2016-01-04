@@ -11,3 +11,9 @@ app/views/welcome/_notes/dwsync.xml
 app/templates/default/_notes/dwsync.xml
 app/language/en/_notes/dwsync.xml
 app/Models/_notes/dwsync.xml
+app/Modules/Profile/Controllers/_notes/dwsync.xml
+app/Modules/Profile/Models/_notes/dwsync.xml
+app/Modules/Profile/views/_notes/dwsync.xml
+app/templates/default/images/_notes/dwsync.xml
+app/views/error/_notes/dwsync.xml
+app/Modules/Profile/_notes/dwsync.xml

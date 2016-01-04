@@ -65,6 +65,11 @@ class Auth extends Controller {
 					$where = array('userID' => $this->auth->getID($username));
 					$this->auth->updateUser($data,$where);
 					
+					// Make sure user is not already in users_online table
+					$usr_id = $this->UserData->getUserID($username);
+					$this->OnlineUsers->remove($usr_id);
+					$this->OnlineUsers->add($usr_id);
+					
 					//Login Success
 					//Redirect to user
 					//Check to see if user came from another page within the site
@@ -119,6 +124,10 @@ class Auth extends Controller {
 	
 	// Logs the user out of the system
 	public function Logout(){
+		// Get userID then remove user from online status
+		$usr_id = $this->auth->user_info();
+		$this->OnlineUsers->remove($usr_id);
+		// Log the user out
 		$this->auth->logout();
 		Url::redirect();
 	}

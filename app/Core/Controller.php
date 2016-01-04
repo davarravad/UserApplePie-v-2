@@ -56,6 +56,20 @@ abstract class Controller
     public $PageFunctions;
 	
     /**
+     * RightLinks variable to use the RightLinks class.
+     *
+     * @var string
+     */
+    public $RightLinks;
+	
+    /**
+     * OnlineUsers variable to use the OnlineUsers class.
+     *
+     * @var string
+     */
+    public $OnlineUsers;
+	
+    /**
      * On run make an instance of the config class and view class.
      */
     public function __construct()
@@ -74,5 +88,11 @@ abstract class Controller
 		
 		/** initialise the UserData object */
 		$this->PageFunctions = new PageFunctions();
+		
+		/** initialise the UserData object */
+		$this->RightLinks = new \Models\RightLinks();
+		
+		/** initialise the UserData object */
+		$this->OnlineUsers = new \Models\OnlineUsers();
     }
 }

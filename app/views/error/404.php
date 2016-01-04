@@ -6,12 +6,12 @@
 use Core\Error;
 
 ?>
-<div class="container content">
-	<div class="row">
-		<div class="col-md-12">
-
-			<h1>404</h1>
-
+<div class='col-lg-12'>
+	<div class='panel panel-danger'>
+		<div class='panel-heading'>
+			<h3 class='jumbotron-heading'>404 Error</h3>
+		</div>
+		<div class='panel-body'>
 			<?php echo $data['error'];?>
 
 			<hr />
