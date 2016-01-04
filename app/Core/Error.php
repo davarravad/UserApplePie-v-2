@@ -12,6 +12,7 @@ namespace Core;
 
 use Core\Controller;
 use Core\View;
+use Helpers\Auth\Auth;
 
 /**
  * Error class to generate 404 pages.
@@ -34,6 +35,20 @@ class Error extends Controller
     {
         parent::__construct();
         $this->error = $error;
+		
+		// Define if user is logged in
+		if($this->auth->isLoggedIn()){ 
+			// Define if user is logged in
+			define('ISLOGGEDIN', 'true'); 
+			// Define Current User's UserName and ID for header
+			$u_id = $this->auth->user_info();
+			$u_username = $this->UserData->getUserName($u_id);
+			define('CUR_USERID', $u_username);
+			define('CUR_USERNAME', $u_username);
+			$this->OnlineUsers->update($u_id);
+		}
+		// Run OnLine Status Checker
+		$this->OnlineUsers->check();
     }
 
     /**

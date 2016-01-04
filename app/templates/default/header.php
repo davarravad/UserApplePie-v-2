@@ -40,49 +40,54 @@ PageFunctions::prevpage();
 
 	//hook for plugging in css
 	$hooks->run('css');
+	
+	// Setup the favicon
+	echo "<link rel='shortcut icon' href='".Url::templatePath() ."images/favicon.ico'>";
+	
 	?>
 
 </head>
 <body>
-   <nav class='navbar navbar-default navbar-fixed-top'>
-      <div class='container-fluid'>
-        <div class='navbar-header'>
-          <button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar'>
-            <span class='sr-only'>Toggle navigation</span>
-            <span class='icon-bar'></span>
-            <span class='icon-bar'></span>
-            <span class='icon-bar'></span>
-          </button>
-		 <a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>
-          <img style='max-height: 20px; border-radius: 5px' alt='Brand' src='/app/templates/default/images/logo.gif'>
-         </a>
-         <a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>UserApplePie</a>
-        </div>
-		
-		<!-- Collect Left Main Links -->
-        <div id='navbar' class='navbar-collapse collapse'>
-          <ul class='nav navbar-nav'>
-			<li><a href='<?php echo DIR; ?>About'>About</a></li>
-		  </ul>
-		  <ul class='nav navbar-nav navbar-right'>
+
+	<nav class='navbar navbar-default navbar-fixed-top'>
+		<div class='container-fluid'>
+			<div class='navbar-header'>
+				<button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar'>
+				<span class='sr-only'>Toggle navigation</span>
+				<span class='icon-bar'></span>
+				<span class='icon-bar'></span>
+				<span class='icon-bar'></span>
+				</button>
+				<a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>
+				<img style='max-height: 20px; border-radius: 5px' alt='Brand' src='<?php echo Url::templatePath();?>images/logo.gif'>
+				</a>
+				<a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>UserApplePie</a>
+			</div>
+
+			<!-- Collect Left Main Links -->
+			<div id='navbar' class='navbar-collapse collapse'>
+				<ul class='nav navbar-nav'>
+				<li><a href='<?php echo DIR; ?>About'>About</a></li>
+				</ul>
+				<ul class='nav navbar-nav navbar-right'>
 				<?php if(ISLOGGEDIN != 'true'){ ?>
-					<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
-					<li><a href='<?php echo DIR; ?>Register'>Register</a></li>
+				<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
+				<li><a href='<?php echo DIR; ?>Register'>Register</a></li>
 				<?php }else{ ?>
-					<li class='dropdown'>
-						<a href='#' title='<?php echo CUR_USERNAME; ?>' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
-						<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <?php echo CUR_USERNAME; ?> <span class='caret'></span> </a>
-						<ul class='dropdown-menu'>
-							<li><a href='<?php echo DIR; ?>ChangePassword' title='Change Your Account Settings'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Change Password</a></li>
-							<li><a href='<?php echo DIR; ?>ChangeEmail' title='Change Your Account Settings'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Change Email</a></li>
-						</ul>
-						<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
-					</li>
+				<li class='dropdown'>
+				<a href='#' title='<?php echo CUR_USERNAME; ?>' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+				<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <?php echo CUR_USERNAME; ?> <span class='caret'></span> </a>
+					<ul class='dropdown-menu'>
+					<li><a href='<?php echo DIR; ?>ChangePassword' title='Change Your Account Settings'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Change Password</a></li>
+					<li><a href='<?php echo DIR; ?>ChangeEmail' title='Change Your Account Settings'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Change Email</a></li>
+					</ul>
+				<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
+				</li>
 				<?php } ?>
-		  </ul>
+				</ul>
+			</div>
 		</div>
-	  </div>
-   </nav>
+	</nav>
 
 <!-- Create Spacer For Navbar -->
 <div class='visible-lg visible-md visible-sm' style='height: 70px'></div>
@@ -93,3 +98,4 @@ PageFunctions::prevpage();
 $hooks->run('afterBody');
 ?>
 <div class="container">
+<div class='row'>

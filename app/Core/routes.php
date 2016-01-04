@@ -28,6 +28,8 @@ Router::any('ChangeEmail', 'Controllers\Auth@ChangeEmail');
 Router::any('ForgotPassword', 'Controllers\Auth@ForgotPassword');
 Router::any('ResetPassword', 'Controllers\Auth@ResetPassword');
 Router::any('ResendActivationEmail', 'Controllers\Auth@ResendActivation');
+Router::any('Members', 'Controllers\Welcome@Members');
+Router::any('MembersOnline', 'Controllers\Welcome@MembersOnline');
 
 /** Live Checks */
 Router::any('LiveCheckEmail', 'Controllers\LiveCheck@emailCheck');

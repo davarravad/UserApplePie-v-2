@@ -34,6 +34,18 @@ return array(
 		Check back soon for updates!
 	',
 	
+	// Members method
+	'members_text' => 'Members',
+	'members_message' => '
+		List of All Activated Site Members
+	',
+	
+	// Members Online method
+	'membersonline_text' => 'Members Online',
+	'membersonline_message' => '
+		List of All Online Site Members
+	',
+	
 	// Buttons
 	'open_subpage' => 'Open subpage',
 	'back_home' => 'Home',
