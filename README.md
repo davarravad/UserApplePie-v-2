@@ -42,9 +42,13 @@ Pages with Guest Access
  - Register  
  - ForgotPassword  
  - ResendActivationEmail
+ - Members
+ - MembersOnline
+ - Profile/3 or Profile/demouser (Profile accepts userID or userName)
 
 Pages that Require User to be Logged In  
  - Logout  
+ - AccountSettings
  - ChangePassword  
  - ChangeEmail  
 
