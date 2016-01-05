@@ -34,12 +34,12 @@ class Welcome extends Controller
 		if($this->auth->isLoggedIn()){ 
 			// Define if user is logged in
 			define('ISLOGGEDIN', 'true'); 
-			// Define Current User's UserName and ID for header
+			// Define Current User's ID for header
 			$u_id = $this->auth->user_info();
-			$u_username = $this->UserData->getUserName($u_id);
-			define('CUR_USERID', $u_username);
-			define('CUR_USERNAME', $u_username);
+			define('CUR_LOGGED_USERID', $u_id);
 			$this->OnlineUsers->update($u_id);
+		}else{
+			define('ISLOGGEDIN', 'false');
 		}
 		// Run OnLine Status Checker
 		$this->OnlineUsers->check();
@@ -90,6 +90,12 @@ class Welcome extends Controller
 		$data['sidebar'] = $this->RightLinks->DisplaySiteStats();
         $data['welcome_message'] = $this->language->get('subpage_message');
 
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
         View::renderTemplate('header', $data);
         View::render('welcome/subpage', $data);
         View::renderTemplate('footer', $data);
@@ -104,6 +110,12 @@ class Welcome extends Controller
 		$data['sidebar'] = $this->RightLinks->DisplaySiteStats();
         $data['welcome_message'] = $this->language->get('about_message');
 
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
         View::renderTemplate('header', $data);
         View::render('welcome/subpage', $data);
         View::renderTemplate('footer', $data);
@@ -119,6 +131,12 @@ class Welcome extends Controller
         $data['welcome_message'] = $this->language->get('members_message');
 		$data['members'] = $this->UserData->getMembers();
 
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
         View::renderTemplate('header', $data);
         View::render('welcome/members', $data);
         View::renderTemplate('footer', $data);
@@ -133,6 +151,12 @@ class Welcome extends Controller
 		$data['sidebar'] = $this->RightLinks->DisplaySiteStats();
         $data['welcome_message'] = $this->language->get('membersonline_message');
 		$data['members'] = $this->OnlineUsers->getMembersOnline();
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
 		
         View::renderTemplate('header', $data);
         View::render('welcome/members', $data);

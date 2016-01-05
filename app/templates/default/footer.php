@@ -11,7 +11,7 @@ use Models\RightLinks;
 //initialise hooks
 $hooks = Hooks::get();
 
-// Display Right Links Bar
+// Display Right Links Bar if one set
 if(isset($data['sidebar'])){
 	echo $data['sidebar'];
 }

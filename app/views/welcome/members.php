@@ -6,7 +6,7 @@
 use Core\Language;
 
 ?>
-<div class='col-lg-8'>
+<div class='col-lg-8 col-md-8'>
 	<div class='panel panel-default'>
 		<div class='panel-heading'>
 			<h3 class='jumbotron-heading'><?php echo $data['title'] ?></h3>

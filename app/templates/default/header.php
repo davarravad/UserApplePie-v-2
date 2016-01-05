@@ -7,6 +7,7 @@ use Helpers\Assets;
 use Helpers\Url;
 use Helpers\Hooks;
 use Helpers\PageFunctions;
+use Helpers\CurrentUserData;
 
 //initialise hooks
 $hooks = Hooks::get();
@@ -15,6 +16,25 @@ $hooks = Hooks::get();
 // If not Home, Login, Register, etc.. 
 // Send url to Session
 PageFunctions::prevpage();
+
+// Get user data if logged in
+$cur_userID = CUR_LOGGED_USERID;
+// Get User Data From Array
+// Get user data from user's database
+if(isset($cur_userID)){
+	$current_user_data = CurrentUserData::getCUD($cur_userID);
+	foreach($current_user_data as $user_data){
+		$cu_username = $user_data->username;
+		$cu_first_name = $user_data->firstName;
+		$cu_gender = $user_data->gender;
+		$cu_email = $user_data->email;
+		$cu_lastlogin = date("F d, Y",strtotime($user_data->LastLogin));
+		$cu_signup = date("F d, Y",strtotime($user_data->SignUp));
+		$cu_img = $user_data->userImage;
+		$cu_aboutme = $user_data->aboutme;
+		$cu_website = $user_data->website;
+	}
+}
 
 ?>
 <!DOCTYPE html>
@@ -70,19 +90,52 @@ PageFunctions::prevpage();
 				<li><a href='<?php echo DIR; ?>About'>About</a></li>
 				</ul>
 				<ul class='nav navbar-nav navbar-right'>
-				<?php if(ISLOGGEDIN != 'true'){ ?>
+				<?php if(ISLOGGEDIN != "true"){ ?>
 				<li><a href='<?php echo DIR; ?>Login'>Login</a></li>
 				<li><a href='<?php echo DIR; ?>Register'>Register</a></li>
 				<?php }else{ ?>
 				<li class='dropdown'>
-				<a href='#' title='<?php echo CUR_USERNAME; ?>' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
-				<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <?php echo CUR_USERNAME; ?> <span class='caret'></span> </a>
+				<a href='#' title='<?php echo $cu_username; ?>' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+				<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <?php echo $cu_username; ?> <span class='caret'></span> </a>
 					<ul class='dropdown-menu'>
-					<li><a href='<?php echo DIR; ?>ChangePassword' title='Change Your Account Settings'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Change Password</a></li>
-					<li><a href='<?php echo DIR; ?>ChangeEmail' title='Change Your Account Settings'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Change Email</a></li>
+						<li>
+							<div class="navbar-login">
+								<div class="row">
+									<div class="col-lg-4 col-md-4" align="center">
+										<div class="col-centered" align="center">
+										<?php // Check to see if user has a profile image
+											if(!empty($cu_img)){
+												echo "<img src='".$cu_img."' class='img-responsive'>";
+											}else{
+												echo "<span class='glyphicon glyphicon-user icon-size'></span>";
+											}
+										?>
+										</div>
+									</div>
+									<div class="col-lg-8 col-md-8">
+										<p class="text-left"><strong><h5><?php echo $cu_username; if(isset($cu_first_name)){echo "  <small>".$cu_first_name."</small>";}?></h5></strong></p>
+										<p class="text-left small"><?php echo $cu_email; ?></p>
+										<p class="text-left">
+											<a href='<?php echo DIR."Profile/".$cu_username; ?>' title='View Your Profile' class='btn btn-primary btn-block btn-xs'> <span class='glyphicon glyphicon-user' aria-hidden='true'></span> View Profile</a>
+										</p>
+									</div>
+								</div>
+							</div>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="navbar-login navbar-login-session">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <p>
+											<a href='<?php echo DIR; ?>AccountSettings' title='Change Your Account Settings' class='btn btn-info btn-block btn-xs'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Account Settings</a>
+											<!-- <a href='<?php echo DIR; ?>PrivacySettings' title='Change Your Privacy Settings' class='btn btn-warning btn-block btn-xs'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Privacy Settings</a>-->
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+						</li>
 					</ul>
 				<li><a href='<?php echo DIR; ?>Logout'>Logout</a></li>
-				</li>
 				<?php } ?>
 				</ul>
 			</div>
@@ -98,4 +151,27 @@ PageFunctions::prevpage();
 $hooks->run('afterBody');
 ?>
 <div class="container">
+
+<!-- BreadCrumbs -->
+<?php
+// Display Breadcrumbs if set
+if(isset($data['breadcrumbs'])){
+	echo "<div class='row'>";
+		echo "<div class='col-lg-12 col-md-12'>";
+			echo "<ol class='breadcrumb'>";
+				echo $data['breadcrumbs'];
+			echo "</ol>";
+		echo "</div>";
+	echo "</div>";
+}
+?>
+
 <div class='row'>
+
+<!-- Left Sidebar -->
+<?php
+// Display Left Links Bar if one set
+if(isset($data['left_sidebar'])){
+	echo $data['left_sidebar'];
+}
+?>

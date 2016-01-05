@@ -13,9 +13,9 @@ foreach($data['user_data'] as $user_data){
 	$u_lastlogin = date("F d, Y",strtotime($user_data->LastLogin));
 	$u_signup = date("F d, Y",strtotime($user_data->SignUp));
 	$u_img = $user_data->userImage;
+	$u_aboutme = $user_data->aboutme;
+	$u_website = $user_data->website;
 }
-
-$u_details = $data['user_details'];
 
 ?>
 <div class='col-lg-12'>
@@ -29,7 +29,11 @@ $u_details = $data['user_details'];
 				<div class='panel-body'>
 					<div class='row'>
 						<div class="col-md-8 col-lg-8" align="center" style="float: none; margin: 0 auto;">
-							<img alt="User Pic" src="<?php echo $u_img ?>" class="img-circle img-responsive" style='overflow:hidden'>
+							<?php if(!empty($u_img)){ ?>
+								<img alt="User Pic" src="<?php echo $u_img ?>" class="img-circle img-responsive" style='overflow:hidden'>
+							<?php }else{ ?>
+								<span class='glyphicon glyphicon-user icon-size'></span>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
@@ -48,6 +52,7 @@ $u_details = $data['user_details'];
 									}
 								?>
 								<tr><td>Gender</td><td><?php echo $u_gender ?></td></tr>
+								<?php if(isset($u_website)){echo "<tr><td>Website</td><td><a href='$u_website' target='_blank'>View</a></td></tr>";}?>
 								<tr><td>Last Login</td><td><?php echo $u_lastlogin ?></td></tr>
 								<tr><td>Sign Up</td><td><?php echo $u_signup ?></td></tr>
 							</table>
@@ -64,7 +69,7 @@ $u_details = $data['user_details'];
 					<h4>All About <?php echo $u_name ?></h4>
 				</div>
 				<div class='panel-body'>
-					<?php echo $u_details ?>
+					<?php echo $u_aboutme ?>
 				</div>
 			</div>
 		</div>

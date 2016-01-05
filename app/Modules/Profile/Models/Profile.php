@@ -8,12 +8,27 @@ class Profile extends Model {
 	// Get user data for requested user's profile
 	public function user_data($where_id){
 		if(ctype_digit($where_id)){
-			$user_data = $this->db->select("SELECT userID, username, firstName, gender, userImage, LastLogin, SignUp FROM ".PREFIX."users WHERE userID = :userID",
+			$user_data = $this->db->select("
+					SELECT 
+						u.userID, 
+						u.username, 
+						u.firstName, 
+						u.gender, 
+						u.userImage, 
+						u.LastLogin, 
+						u.SignUp,
+						ue.userID,
+						ue.website,
+						ue.aboutme
+					FROM 
+						".PREFIX."users u
+					LEFT JOIN
+						".PREFIX."users_extprofile ue
+						ON u.userID = ue.userID
+					WHERE 
+						u.userID = :userID
+					",
 				array(':userID' => $where_id));
-			return $user_data;
-		}else if(isset($where_id)){
-			$user_data = $this->db->select("SELECT userID, username, firstName, gender, userImage, LastLogin, SignUp FROM ".PREFIX."users WHERE username = :username",
-				array(':username' => $where_id));
 			return $user_data;
 		}else{
 			return false;

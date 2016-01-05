@@ -17,3 +17,4 @@ app/Modules/Profile/views/_notes/dwsync.xml
 app/templates/default/images/_notes/dwsync.xml
 app/views/error/_notes/dwsync.xml
 app/Modules/Profile/_notes/dwsync.xml
+app/templates/default/css/_notes/dwsync.xml

@@ -23,11 +23,16 @@ Router::any('Login', 'Controllers\Auth@Login');
 Router::any('Logout', 'Controllers\Auth@Logout');
 Router::any('Register', 'Controllers\Auth@Register');
 Router::any('Activate', 'Controllers\Auth@Activate');
-Router::any('ChangePassword', 'Controllers\Auth@ChangePassword');
-Router::any('ChangeEmail', 'Controllers\Auth@ChangeEmail');
 Router::any('ForgotPassword', 'Controllers\Auth@ForgotPassword');
 Router::any('ResetPassword', 'Controllers\Auth@ResetPassword');
 Router::any('ResendActivationEmail', 'Controllers\Auth@ResendActivation');
+
+/** Auth Account Pages */
+Router::any('AccountSettings', 'Controllers\Auth@AccountSettings');
+Router::any('ChangePassword', 'Controllers\Auth@ChangePassword');
+Router::any('ChangeEmail', 'Controllers\Auth@ChangeEmail');
+
+/** Members List Pages*/
 Router::any('Members', 'Controllers\Welcome@Members');
 Router::any('MembersOnline', 'Controllers\Welcome@MembersOnline');
 

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 03, 2016 at 09:01 PM
+-- Generation Time: Jan 04, 2016 at 09:35 PM
 -- Server version: 5.5.46-0ubuntu0.14.04.2
 -- PHP Version: 5.5.9-1ubuntu4.14
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `uap_activitylog` (
   `additionalinfo` varchar(500) NOT NULL DEFAULT 'none',
   `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=312 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `uap_sessions` (
   `expiredate` datetime NOT NULL,
   `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -99,7 +99,19 @@ CREATE TABLE IF NOT EXISTS `uap_users` (
   `LastLogin` datetime DEFAULT NULL,
   `SignUp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`userID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_users_extprofile`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_users_extprofile` (
+  `userID` int(11) NOT NULL,
+  `website` varchar(100) NOT NULL,
+  `aboutme` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -112,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `uap_users_groups` (
   `userID` int(11) NOT NULL,
   `groupID` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -131,3 +143,13 @@ CREATE TABLE IF NOT EXISTS `uap_users_online` (
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+--
+-- Dumping data for table `uap_groups`
+--
+
+INSERT INTO `uap_groups` (`groupID`, `groupName`, `groupDescription`, `groupFontColor`, `groupFontWeight`) VALUES
+(1, 'New Member', 'Site Members that Recently Registered to the Web Site.', 'GREEN', 'BOLD'),
+(2, 'Member', 'Site Members That Have Been Here a While.', 'BLUE', 'BOLD'),
+(3, 'Moderator', 'Site Members That Have a Little Extra Privilege on the Site.', 'ORANGE', 'BOLD'),
+(4, 'Administrator', 'Site Members That Have Full Access To The Site.', 'RED', 'BOLD');
