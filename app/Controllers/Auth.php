@@ -21,12 +21,15 @@ class Auth extends Controller {
 		if($this->auth->isLoggedIn()){ 
 			// Define if user is logged in
 			define('ISLOGGEDIN', 'true'); 
-			// Define Current User's UserName and ID for header
+			// Define Current User's ID for header
 			$u_id = $this->auth->user_info();
-			$u_username = $this->UserData->getUserName($u_id);
-			define('CUR_USERID', $u_username);
-			define('CUR_USERNAME', $u_username);
+			define('CUR_LOGGED_USERID', $u_id);
+			$this->OnlineUsers->update($u_id);
+		}else{
+			define('ISLOGGEDIN', 'false');
 		}
+		// Run OnLine Status Checker
+		$this->OnlineUsers->check();
 
     }
 
@@ -116,6 +119,12 @@ class Auth extends Controller {
 		$data['title'] = 'Login';
 		$data['csrf_token'] = Csrf::makeToken();
 		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/Login',$data,$error);
 		View::rendertemplate('footer',$data);
@@ -193,6 +202,12 @@ class Auth extends Controller {
 		$data['title'] = 'Register';
 		$data['csrf_token'] = Csrf::makeToken();
 		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/Register',$data,$error,$success);
 		View::rendertemplate('footer',$data);
@@ -227,8 +242,41 @@ class Auth extends Controller {
 		}
 		
 		$data['title'] = 'New Member Activation';
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('welcome/info',$data,$error);
+		View::rendertemplate('footer',$data);
+	}
+	
+	// Setup the Account Settings Page
+	public function AccountSettings(){
+		// Check to make sure user is logged in
+		if(!$this->auth->isLoggedIn()){
+			Url::redirect();
+		}
+			
+		// ToDo: Put information regarding what needs attention
+		// For example, let user know they need to add first name
+		// Or that their password has been the same for way too long
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>Account Settings</li>
+		";
+		
+		$data['left_sidebar'] = $this->LeftLinks->AccountLinks();
+		$data['title'] = 'Account Settings';
+		$data['welcome_message'] = "Welcome to your Account Settings.  Everything related to your Account should be here. <br><br>
+									Use the links on your left to select what you would like to do.  More to come!";
+		View::rendertemplate('header',$data);
+		View::render('auth/AccountSettings',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
 	
@@ -267,8 +315,17 @@ class Auth extends Controller {
 			//Url::redirect();
 		}
 		
+		$data['left_sidebar'] = $this->LeftLinks->AccountLinks();
 		$data['title'] = 'Change Password';
 		$data['csrf_token'] = Csrf::makeToken();
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li><a href='".DIR."AccountSettings'>Account Settings</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/ChangePassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
@@ -308,8 +365,17 @@ class Auth extends Controller {
 			//Url::redirect();
 		}
 		
+		$data['left_sidebar'] = $this->LeftLinks->AccountLinks();
 		$data['title'] = 'Change Email';
 		$data['csrf_token'] = Csrf::makeToken();
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li><a href='".DIR."AccountSettings'>Account Settings</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/ChangeEmail',$data,$error,$success);
 		View::rendertemplate('footer',$data);
@@ -346,6 +412,13 @@ class Auth extends Controller {
 		
 		$data['title'] = Language::show('title_forgot_password', 'Auth');
 		$data['csrf_token'] = Csrf::makeToken();
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/ForgotPassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
@@ -389,6 +462,13 @@ class Auth extends Controller {
 		
 		$data['title'] = Language::show('title_forgot_password', 'Auth');
 		$data['csrf_token'] = Csrf::makeToken();
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/ResetPassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
@@ -425,6 +505,13 @@ class Auth extends Controller {
 		
 		$data['title'] = Language::show('title_resend_activation', 'Auth');
 		$data['csrf_token'] = Csrf::makeToken();
+		
+		// Setup Breadcrumbs
+		$data['breadcrumbs'] = "
+			<li><a href='".DIR."'>Home</a></li>
+			<li class='active'>".$data['title']."</li>
+		";
+		
 		View::rendertemplate('header',$data);
 		View::render('auth/ResendActivation',$data,$error,$success);
 		View::rendertemplate('footer',$data);

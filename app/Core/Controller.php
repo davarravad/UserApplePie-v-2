@@ -56,11 +56,12 @@ abstract class Controller
     public $PageFunctions;
 	
     /**
-     * RightLinks variable to use the RightLinks class.
+     * RightLinks variable to use the RightLinks and LeftLinks classes.
      *
      * @var string
      */
     public $RightLinks;
+	public $LeftLinks;
 	
     /**
      * OnlineUsers variable to use the OnlineUsers class.
@@ -89,10 +90,13 @@ abstract class Controller
 		/** initialise the UserData object */
 		$this->PageFunctions = new PageFunctions();
 		
-		/** initialise the UserData object */
+		/** initialise the RightLinks object */
 		$this->RightLinks = new \Models\RightLinks();
 		
-		/** initialise the UserData object */
+		/** initialise the RightLinks object */
+		$this->LeftLinks = new \Models\LeftLinks();
+		
+		/** initialise the OnlineUserData object */
 		$this->OnlineUsers = new \Models\OnlineUsers();
     }
 }

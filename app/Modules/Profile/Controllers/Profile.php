@@ -18,12 +18,12 @@ class Profile extends Controller{
 		if($this->auth->isLoggedIn()){ 
 			// Define if user is logged in
 			define('ISLOGGEDIN', 'true'); 
-			// Define Current User's UserName and ID for header
+			// Define Current User's ID for header
 			$u_id = $this->auth->user_info();
-			$u_username = $this->UserData->getUserName($u_id);
-			define('CUR_USERID', $u_username);
-			define('CUR_USERNAME', $u_username);
+			define('CUR_LOGGED_USERID', $u_id);
 			$this->OnlineUsers->update($u_id);
+		}else{
+			define('ISLOGGEDIN', 'false');
 		}
 		// Run OnLine Status Checker
 		$this->OnlineUsers->check();
@@ -36,6 +36,7 @@ class Profile extends Controller{
 		Router::any('Profile_Error/(:any)', 'Modules\Profile\Controllers\Profile@viewprofile_error');
 	}
 	
+	// Setup data for view profile display
 	public function viewprofile($id){
 		// Gets user's id if they are using username to view profile
 		if(!ctype_digit($id)){
@@ -49,9 +50,8 @@ class Profile extends Controller{
 			// Profile exist so display it
 			$data['title'] = "Member Profile";
 			$data['content'] = $id;
-			$data['user_data'] = $this->model->user_data($id);
+			$data['user_data'] = $this->model->user_data($u_id);
 			$data['user_group'] = $this->UserData->getUserGroupName($u_id);
-			$data['user_details'] = "Lots of information about this user and all that good stuff.";
 			View::renderTemplate('header', $data);
 			View::renderModule('Profile/views/profile', $data);
 			View::renderTemplate('footer', $data);
@@ -61,6 +61,7 @@ class Profile extends Controller{
 		}
 	}
 	
+	// Setup view profile error page
 	public function viewprofile_error(){
 		$data['title'] = "Member Profile Error";
 		$data['error_details'] = "Ooops! The profile you are trying to view does not exist.";

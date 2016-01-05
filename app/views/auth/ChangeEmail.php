@@ -54,7 +54,7 @@ $(document).ready(function()
 });
 </script>
 
-<div class='col-lg-12'>
+<div class='col-lg-8 col-md-8'>
 	<div class='panel panel-default'>
 		<div class='panel-heading'>
 			<h3 class='jumbotron-heading'><?php echo Language::show('title_change_email', 'Auth'); ?></h3>
