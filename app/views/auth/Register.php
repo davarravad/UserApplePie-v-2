@@ -1,4 +1,4 @@
-<?php 
+<?php
 use Helpers\Form,
 	Core\Error,
 	Core\Success,
@@ -10,22 +10,22 @@ use Helpers\Form,
 
 <script type="text/javascript">
 $(document).ready(function()
-{    
+{
  $("#username").keyup(function()
- {  
-  var name = $(this).val(); 
-  
+ {
+  var name = $(this).val();
+
   if(name.length >= <?php echo MIN_USERNAME_LENGTH;?>)
-  {  
+  {
    $("#resultun").html('');
-   
+
    /*$.post("username-check.php", $("#reg-form").serialize())
     .done(function(data){
     $("#result").html(data);
    });*/
-   
+
    $.ajax({
-    
+
     type : 'POST',
     url  : 'LiveCheckUserName',
     data : $(this).serialize(),
@@ -35,22 +35,22 @@ $(document).ready(function()
 			if(data == 'OK')
 			{
 			   $("#resultun").html("<i class='glyphicon glyphicon-ok text-success'></i>");
-			   $("#resultun2").html("");	
+			   $("#resultun2").html("");
 			}
 			if(data == 'CHAR')
 			{
 			   $("#resultun").html("<i class='glyphicon glyphicon-remove text-danger'></i>");
-			   $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name Invalid!</div>");	
+			   $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name Invalid!</div>");
 			}
 			if(data == 'INUSE')
 			{
 			   $("#resultun").html("<i class='glyphicon glyphicon-remove text-danger'></i>");
-			   $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name is already in use.</div>");	
+			   $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name is already in use.</div>");
 			}
         }
     });
     return false;
-   
+
   }
   else
   {
@@ -58,23 +58,23 @@ $(document).ready(function()
    $("#resultun2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>User Name must be at least <strong><?php echo MIN_USERNAME_LENGTH;?></strong> characters.</div>");
   }
  });
- 
+
 });
 </script>
 
 <script type="text/javascript">
 $(document).ready(function()
-{    
+{
  $("#email").keyup(function()
- {  
-  var name = $(this).val(); 
-  
+ {
+  var name = $(this).val();
+
   if(name.length >= <?php echo MIN_EMAIL_LENGTH;?>)
-  {  
+  {
    $("#resultemail").html('');
-   
+
    $.ajax({
-    
+
     type : 'POST',
     url  : 'LiveCheckEmail',
     data : $(this).serialize(),
@@ -84,22 +84,22 @@ $(document).ready(function()
 			if(data == 'OK')
 			{
 			   $("#resultemail").html("<i class='glyphicon glyphicon-ok text-success'></i>");
-			   $("#resultemail2").html("");	
+			   $("#resultemail2").html("");
 			}
 			if(data == 'BAD')
 			{
 			   $("#resultemail").html("<i class='glyphicon glyphicon-remove text-danger'></i>");
-			   $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email Address Invalid!</div>");	
+			   $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email Address Invalid!</div>");
 			}
 			if(data == 'INUSE')
 			{
 			   $("#resultemail").html("<i class='glyphicon glyphicon-remove text-danger'></i>");
-			   $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email is already in use.</div>");	
+			   $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email is already in use.</div>");
 			}
         }
     });
     return false;
-   
+
   }
   else
   {
@@ -107,33 +107,33 @@ $(document).ready(function()
    $("#resultemail2").html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Email must be at least <strong><?php echo MIN_EMAIL_LENGTH; ?></strong> characters.</div>");
   }
  });
- 
+
 });
 </script>
 
 <script type="text/javascript">
  $(document).ready(function() {
- 
+
 $('#passwordInput, #confirmPasswordInput').on('keyup', function(e) {
- 
+
 if($('#passwordInput').val() != '' && $('#confirmPasswordInput').val() != '' && $('#passwordInput').val() != $('#confirmPasswordInput').val())
 {
 $('#passwordStrength').html('<div class="alert alert-danger" role="alert">Passwords do not match!</div>');
 $('#password01').html("<i class='glyphicon glyphicon-remove text-danger'></i>");
 $('#password02').html("<i class='glyphicon glyphicon-remove text-danger'></i>");
- 
+
 return false;
 }
- 
+
 // Must have capital letter, numbers and lowercase letters
 var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
- 
+
 // Must have either capitals and lowercase letters or lowercase and numbers
 var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
- 
+
 // Must be at least 8 characters long
 var okRegex = new RegExp("(?=.{<?php echo MIN_PASSWORD_LENGTH; ?>,}).*", "g");
- 
+
 if (okRegex.test($(this).val()) === false) {
 // If ok regex doesn't match the password
 $('#passwordStrength').html("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>Password must be at least <?php echo MIN_PASSWORD_LENGTH;?> characters long.</div>");
@@ -165,7 +165,7 @@ $('#password01').html("<i class='glyphicon glyphicon-remove text-warning'></i>")
 }
 return true;
 });
- 
+
 });
 </script>
 
@@ -188,44 +188,46 @@ return true;
 						<?php echo Error::display($error); ?>
 						<?php echo Success::display($success); ?>
 						<?php echo Form::open(array('method' => 'post')); ?>
-						
+
 							<!-- Username -->
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
 								<span class='input-group-addon'><i class='glyphicon glyphicon-user'></i></span>
 								<?php echo Form::input(array('id' => 'username', 'name' => 'username', 'class' => 'form-control', 'placeholder' => 'UserName')); ?>
 								<span id='resultun' class='input-group-addon'></span>
-							</div>							
-							
+							</div>
+
 							<!-- Password 1 -->
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
 								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
 								<?php echo Form::input(array('id' => 'passwordInput', 'type' => 'password', 'name' => 'password', 'class' => 'form-control', 'placeholder' => 'Password')); ?>
 								<span id='password01' class='input-group-addon'></span>
 							</div>
-							
+
 							<!-- Password 2 -->
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
 								<span class='input-group-addon'><i class='glyphicon glyphicon-lock'></i></span>
 								<?php echo Form::input(array('id' => 'confirmPasswordInput', 'type' => 'password', 'name' => 'passwordc', 'class' => 'form-control', 'placeholder' => 'Confirm Password')); ?>
 								<span id='password02' class='input-group-addon'></span>
 							</div>
-							
+
 							<!-- Email -->
 							<div class='input-group' style='width: 80%; margin-bottom: 25px'>
 								<span class='input-group-addon'><i class='glyphicon glyphicon-envelope'></i></span>
 								<?php echo Form::input(array('id' => 'email', 'type' => 'text', 'name' => 'email', 'class' => 'form-control', 'placeholder' => 'E-Mail')); ?>
 								<span id='resultemail' class='input-group-addon'></span>
 							</div>
-							
+
 							<!-- reCAPTCHA -->
+							<?php if(RECAP_PUBLIC_KEY && RECAP_PRIVATE_KEY){ ?>
 							<script type='text/javascript'>var RecaptchaOptions = {theme : 'clean'};</script>
 							<div class="g-recaptcha" data-sitekey="<?php echo RECAP_PUBLIC_KEY;?>"></div>
 							<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=en">
 							</script>
-							
+							<?php } ?>
+
 							<!-- CSRF Token -->
 							<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
-							
+
 							<!-- Error Msg Display -->
 							<span id='resultun2' class='label'></span>
 							<span class='label' id='passwordStrength'></span>

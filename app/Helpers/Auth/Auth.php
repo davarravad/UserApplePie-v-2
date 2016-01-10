@@ -384,9 +384,9 @@ class Auth {
 							$body = "Hello {$username}<br/><br/>";
 							$body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
 							$body .= "To activate your account please click the following link<br/><br/>";
-							$body .= "<b><a href=\"" . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
+							$body .= "<b><a href=\"" . DIR . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
 							$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
-							$body .= " " . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
+							$body .= " " . DIR . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
 							$mail->body($body);
 							$mail->send();
 							$this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
@@ -686,9 +686,9 @@ class Auth {
                     $body = "Hello {$username}<br/><br/>";
                     $body .= "You recently requested a password reset on " . SITE_NAME . "<br/>";
                     $body .= "To proceed with the password reset, please click the following link :<br/><br/>";
-                    $body .= "<b><a href=\"" . BASE_URL . RESET_PASSWORD_ROUTE . "?username={$username}&key={$resetkey}\">Reset My Password</a></b>";
+                    $body .= "<b><a href=\"" . DIR . RESET_PASSWORD_ROUTE . "?username={$username}&key={$resetkey}\">Reset My Password</a></b>";
 					$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
-					$body .= " " . BASE_URL . RESET_PASSWORD_ROUTE . "?username={$username}&key={$resetkey}";
+					$body .= " " . DIR . RESET_PASSWORD_ROUTE . "?username={$username}&key={$resetkey}";
                     $mail->body($body);
                     $mail->send();
                     $this->logActivity($username, "AUTH_RESETPASS_SUCCESS", "Reset pass request sent to {$email} ( Key : {$resetkey} )");
@@ -890,9 +890,9 @@ class Auth {
 					$body = "Hello {$username}<br/><br/>";
 					$body .= "You recently registered a new account on " . SITE_NAME . "<br/>";
 					$body .= "To activate your account please click the following link<br/><br/>";
-					$body .= "<b><a href=\"" . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
+					$body .= "<b><a href=\"" . DIR . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}\">Activate my account</a></b>";
 					$body .= "<br><br> You May Copy and Paste this URL in your Browser Address Bar: <br>";
-					$body .= " " . BASE_URL . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
+					$body .= " " . DIR . ACTIVATION_ROUTE . "?username={$username}&key={$activekey}";
 					$body .= "<br><br> You Requested to have this email resent to your email.";
 					$mail->body($body);
 					$mail->send();
