@@ -42,16 +42,10 @@ Pages with Guest Access
 -Register
 -ForgotPassword
 -ResendActivationEmail
--Members
--MembersOnline
--Profile/(UserName or UserID)
 Pages that Require User to be Logged In
 -Logout
--AccountSettings
--EditProfile
 -ChangePassword
 -ChangeEmail
--PrivacySettings
 Pages that Are Used From Email Link
 -ResetPassword
 -Activate
