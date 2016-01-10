@@ -371,8 +371,10 @@ class Auth {
 							$activekey = $this->randomKey(RANDOM_KEY_LENGTH);
 							$this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'activekey' => $activekey));
 							//  Add User to Default Group
-							$new_user_id = $this->db->lastInsertId('contactID');
+							$new_user_id = $this->db->lastInsertId('userID');
 							$this->db->insert(PREFIX.'users_groups', array('userID' => $new_user_id, 'groupID' => '1'));
+              // Create User's Extended Profile
+              $this->db->insert(PREFIX.'users_extprofile', array('userID' => $new_user_id));
 							//EMAIL MESSAGE USING PHPMAILER
 							$mail = new \Helpers\PhpMailer\Mail();
 							$mail->setFrom(EMAIL_FROM);
@@ -396,6 +398,11 @@ class Auth {
 							$password = $this->hashPass($password);
 							$activekey = $this->randomKey(RANDOM_KEY_LENGTH);
 							$this->db->insert(PREFIX.'users', array('username' => $username, 'password' => $password, 'email' => $email, 'isactive' => '1'));
+              //  Add User to Default Group
+							$new_user_id = $this->db->lastInsertId('userID');
+							$this->db->insert(PREFIX.'users_groups', array('userID' => $new_user_id, 'groupID' => '1'));
+              // Create User's Extended Profile
+              $this->db->insert(PREFIX.'users_extprofile', array('userID' => $new_user_id));
 							$this->logActivity($username, "AUTH_REGISTER_SUCCESS", "Account created and activation email sent");
 							$this->success[] = $this->lang['register_success'];
 							return true;
