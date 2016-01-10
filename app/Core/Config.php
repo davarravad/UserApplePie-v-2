@@ -32,8 +32,7 @@ class Config
         /**
          * Define relative base path.
          */
-        define('DIR', 'http://uap2demo.userapplepie.com/');
-		    define("BASE_URL", "http://uap2demo.userapplepie.com/"); // URL to Auth Class installation root WITH trailing slash
+        define('DIR', 'http://www.userapplepie.com/'); // URL to root site WITH trailing slash
 
         /**
          * Set default controller and method for legacy calls.
@@ -67,17 +66,17 @@ class Config
         /**
          * Database name.
          */
-        define('DB_NAME', 'userapplepie');
+        define('DB_NAME', 'DatabaseName');
 
         /**
          * Database username.
          */
-        define('DB_USER', 'uapdemo');
+        define('DB_USER', 'UserName');
 
         /**
          * Database password.
          */
-        define('DB_PASS', 'password');
+        define('DB_PASS', 'Password');
 
         /**
          * PREFER to be used in database calls default is smvc_
@@ -119,8 +118,8 @@ class Config
     		/**
     		 * reCAPTCHA settings
     		 */
-    		define("RECAP_PUBLIC_KEY", '6LeLwQkTAAAAAJJkIcvbiuZ5j1HulqatLAjyv32U'); // reCAPCHA site key
-    		define("RECAP_PRIVATE_KEY", '6LeLwQkTAAAAAGue6GABhTIbs2XOr6VpBFeXjptC'); // reCAPCHA secret key
+    		define("RECAP_PUBLIC_KEY", ''); // reCAPCHA site key  
+    		define("RECAP_PRIVATE_KEY", ''); // reCAPCHA secret key
 
         /**
          * Turn on custom error handling.
