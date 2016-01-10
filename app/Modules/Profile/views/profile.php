@@ -5,6 +5,7 @@
 
 use Core\Language;
 
+// ToDo: Move the foreach to controller and run everything through $data['val']
 // Get user data from user's database
 foreach($data['user_data'] as $user_data){
 	$u_name = $user_data->username;
@@ -42,7 +43,7 @@ foreach($data['user_data'] as $user_data){
 						<div class=" col-md-12 col-lg-12 ">
 							<table class='table table-striped'>
 								<tr><td>First Name</td><td><?php echo $u_first_name ?></td></tr>
-								<?php 
+								<?php
 									if($data['user_group']){
 										echo "<tr><td>Group</td><td>";
 										foreach($data['user_group'] as $row){
@@ -61,7 +62,7 @@ foreach($data['user_data'] as $user_data){
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Basic User Info Display -->
 		<div class='col-md-8 col-lg-8'>
 			<div class="panel panel-default">

@@ -110,7 +110,8 @@ CREATE TABLE IF NOT EXISTS `uap_users` (
 CREATE TABLE IF NOT EXISTS `uap_users_extprofile` (
   `userID` int(11) NOT NULL,
   `website` varchar(100) NOT NULL,
-  `aboutme` text NOT NULL
+  `aboutme` text NOT NULL,
+  PRIMARY KEY (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

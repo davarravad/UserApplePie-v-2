@@ -26,22 +26,22 @@ class Auth {
     }
 
     /**
-     * Log user in via MySQL Database 
+     * Log user in via MySQL Database
      * @param string $username
      * @param string $password
      * @return boolean
      */
     public function login($username, $password, $rememberme) {
-		
+
         if (!Cookie::get("auth_cookie")) {
-			
+
             $attcount = $this->getAttempt($_SERVER['REMOTE_ADDR']);
 
             if ($attcount[0]->count >= MAX_ATTEMPTS) {
                 $auth_error[] = $this->lang['login_lockedout'];
                 $auth_error[] = sprintf($this->lang['login_wait'], WAIT_TIME);
                 return false;
-            } else { 
+            } else {
                 // Input verification :
                 if (strlen($username) == 0) {
                     $auth_error[] = $this->lang['login_username_empty'];
@@ -101,7 +101,7 @@ class Auth {
     }
 
     /**
-     * Logs out an user, deletes all cookies and destroys the cookies 
+     * Logs out an user, deletes all cookies and destroys the cookies
      */
     public function logout() {
         $auth_cookie = Cookie::get("auth_cookie");
@@ -111,7 +111,7 @@ class Auth {
     }
 
     /**
-     * Checks if current user is logged or not 
+     * Checks if current user is logged or not
      * @return boolean
      */
     public function isLoggedIn() {
@@ -125,8 +125,8 @@ class Auth {
     }
 
     /**
-     * Provides an associateve array with current user's info 
-     * @return array 
+     * Provides an associateve array with current user's info
+     * @return array
      */
     public function currentCookieInfo() {
         if ($this->isLoggedIn()) {
@@ -136,7 +136,7 @@ class Auth {
     }
 
     /**
-     * Provides an associative array of user info based on cookie hash 
+     * Provides an associative array of user info based on cookie hash
      * @param string $hash
      * @return array $cookie
      */
@@ -161,7 +161,7 @@ class Auth {
     }
 
     /**
-     * Checks if a hash cookie is valid on database 
+     * Checks if a hash cookie is valid on database
      * @param string $hash
      * @return boolean
      */
@@ -206,7 +206,7 @@ class Auth {
     }
 
     /**
-     * Provides amount of attempts already in database based on user's IP 
+     * Provides amount of attempts already in database based on user's IP
      * @param string $ip
      * @return int $attempt_count
      */
@@ -222,7 +222,7 @@ class Auth {
     }
 
     /*
-     * Adds a new attempt to database based on user's IP 
+     * Adds a new attempt to database based on user's IP
      * @param string $ip
      */
 
@@ -242,7 +242,7 @@ class Auth {
     }
 
     /**
-     * Used to remove expired attempt logs from database 
+     * Used to remove expired attempt logs from database
      * (Currently used on __construct but need more testing)
      */
     private function expireAttempt() {
@@ -261,12 +261,12 @@ class Auth {
     }
 
     /**
-     * Creates a new cookie for the provided username and sets cookie 
+     * Creates a new cookie for the provided username and sets cookie
      * @param string $username
      */
     private function newCookie($username, $rememberme) {
         $hash = md5(microtime()); // unique cookie hash
-        // Fetch User ID :		
+        // Fetch User ID :
         $queryUid = $this->db->select("SELECT userID FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
         $uid = $queryUid[0]->userID;
         // Delete all previous cookies :
@@ -285,7 +285,7 @@ class Auth {
     }
 
     /**
-     * Deletes a cookie based on a hash 
+     * Deletes a cookie based on a hash
      * @param string $hash
      */
     private function deleteCookie($hash) {
@@ -307,7 +307,7 @@ class Auth {
     }
 
     /**
-     * Register a new user into the database 
+     * Register a new user into the database
      * @param string $username
      * @param string $password
      * @param string $verifypassword
@@ -344,7 +344,7 @@ class Auth {
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $auth_error[] = $this->lang['register_email_invalid'];
             }
-            if (count($error) == 0) {
+            if (count($auth_error) == 0) {
                 // Input is valid
                 $query = $this->db->select("SELECT * FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
                 $count = count($query);
@@ -354,7 +354,7 @@ class Auth {
                     $auth_error[] = $this->lang['register_username_exist'];
                     return false;
                 } else {
-                    // Username is not taken 
+                    // Username is not taken
                     $query = $this->db->select('SELECT * FROM '.PREFIX.'users WHERE email=:email', array(':email' => $email));
                     $count = count($query);
                     if ($count != 0) {
@@ -403,7 +403,7 @@ class Auth {
                     }
                 }
             } else {
-                //some error 
+                //some error
                 return false;
             }
         } else {
@@ -414,19 +414,19 @@ class Auth {
     }
 
     /**
-     * Activates an account 
+     * Activates an account
      * @param string $username
      * @param string $key
      */
     public function activateAccount($username, $key) {
         // check lengst of keys and username strings since this can be directly called
-        //  if current account is active dont activate 
+        //  if current account is active dont activate
 
 		// Get Data from Database for requested user
         $query_active = $this->db->select("SELECT isactive,activekey FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
         $db_isactive = $query_active[0]->isactive;
 		$db_key = $query_active[0]->activekey;
-		
+
 		// Check to see if Keys Match Account and user is not already active
 		if(isset($username) && $db_isactive == "0" && $key == $db_key){
 			$this->db->update(PREFIX.'users', array('isactive' => 1, 'activekey' => 0), array('username' => $username));
@@ -440,7 +440,7 @@ class Auth {
     }
 
     /**
-     * Logs users actions on the site to database for future viewing 
+     * Logs users actions on the site to database for future viewing
      * @param string $username
      * @param string $action
      * @param string $additionalinfo
@@ -472,7 +472,7 @@ class Auth {
             $auth_error[] = $this->lang['logactivity_addinfo_long'];
             return false;
         }
-        if (count($error) == 0) {
+        if (count($auth_error) == 0) {
             $ip = $_SERVER['REMOTE_ADDR'];
             $date = date("Y-m-d H:i:s");
             $this->db->insert(PREFIX.'activitylog', array('date' => $date, 'username' => $username, 'action' => $action, 'additionalinfo' => $additionalinfo, 'ip' => $ip));
@@ -481,7 +481,7 @@ class Auth {
     }
 
     /**
-     * Hash user's password with PHP built in function ! 
+     * Hash user's password with PHP built in function !
      * @param string $password
      * @return string $hashed_password
      */
@@ -492,7 +492,7 @@ class Auth {
     }
 
     /**
-     * Returns a random string, length can be modified 
+     * Returns a random string, length can be modified
      * @param int $length
      * @return string $key
      */
@@ -506,7 +506,7 @@ class Auth {
     }
 
     /**
-     * Changes a user's password, providing the current password is known 
+     * Changes a user's password, providing the current password is known
      * @param string $username
      * @param string $currpass
      * @param string $newpass
@@ -539,7 +539,7 @@ class Auth {
         } elseif ($newpass !== $verifynewpass) {
             $auth_error[] = $this->lang['changepass_password_nomatch'];
         }
-        if (count($error) == 0) {
+        if (count($auth_error) == 0) {
             //$currpass = $this->hashPass($currpass);
             $newpass = $this->hashPass($newpass);
             $query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
@@ -568,7 +568,7 @@ class Auth {
     }
 
     /**
-     * Changes the stored email address based on username 
+     * Changes the stored email address based on username
      * @param string $username
      * @param string $email
      * @return boolean
@@ -600,9 +600,9 @@ class Auth {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $auth_error[] = $this->lang['changeemail_email_invalid'];
         }
-		
+
 		// Everything looks good.  Let user update their password
-        if (count($error) == 0) {
+        if (count($auth_error) == 0) {
             $query = $this->db->select("SELECT email FROM ".PREFIX."users WHERE userID=:userID", array(':userID' => $userID));
             $count = count($query);
             if ($count == 0) {
@@ -628,7 +628,7 @@ class Auth {
     }
 
     /**
-     * Give the user the ability to change their password if the current password is forgotten 
+     * Give the user the ability to change their password if the current password is forgotten
      * by sending email to the email address associated to that user
      * @param string $email
      * @param string $username
@@ -709,7 +709,7 @@ class Auth {
                 } elseif ($newpass !== $verifynewpass) {
                     $auth_error[] = $this->lang['resetpass_newpass_nomatch'];
                 }
-                if (count($error) == 0) {
+                if (count($auth_error) == 0) {
                     $query = $this->db->select("SELECT resetkey FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
                     $count = count($query);
                     if ($count == 0) {
@@ -748,7 +748,7 @@ class Auth {
     }
 
     /**
-     * Checks if the reset key is correct for provided username 
+     * Checks if the reset key is correct for provided username
      * @param string $username
      * @param string $key
      * @return boolean
@@ -822,7 +822,7 @@ class Auth {
         } elseif (strlen($password) < MIN_PASSWORD_LENGTH) {
             $auth_error[] = $this->lang['deleteaccount_password_short'];
         }
-        if (count($error) == 0) {
+        if (count($auth_error) == 0) {
 
             $query = $this->db->select("SELECT password FROM ".PREFIX."users WHERE username=:username", array(':username' => $username));
             $count = count($query);
@@ -863,7 +863,7 @@ class Auth {
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $auth_error[] = $this->lang['register_email_invalid'];
             }
-            if (count($error) == 0) {
+            if (count($auth_error) == 0) {
                 // Input is valid
 				// Check DataBase to see if email user is activated
                 $query = $this->db->select("SELECT * FROM ".PREFIX."users WHERE email=:email AND isactive=0", array(':email' => $email));
@@ -896,7 +896,7 @@ class Auth {
 					return false;
 				}
             } else {
-                //some error 
+                //some error
                 return false;
             }
         } else {
@@ -904,9 +904,9 @@ class Auth {
             $auth_error[] = $this->lang['register_email_loggedin'];
             return false;
         }
-    }	
+    }
 
-	
+
 	/**
 	 * Get current user's ID
 	 */
@@ -915,7 +915,7 @@ class Auth {
 			array(':username' => $username));
 		return $data[0]->userID;
 	}
-	
+
 	/**
 	 * Get username attached to email
 	 */
@@ -924,7 +924,7 @@ class Auth {
 			array(':email' => $email));
 		return $data[0]->username;
 	}
-	
+
 	/**
 	 * Check to see if email exists in users database
 	 */
@@ -939,19 +939,19 @@ class Auth {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Update given field in users table
 	 */
 	public function updateUser($data,$where){
 		$this->db->update(PREFIX."users",$data,$where);
 	}
-	
+
 	/**
 	 * Get Current Session Data
 	 */
     public function user_info(){
         return $this->currentCookieInfo()['uid'];
     }
-	
+
 }
