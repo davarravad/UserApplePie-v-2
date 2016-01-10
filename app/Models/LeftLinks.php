@@ -11,7 +11,7 @@ class LeftLinks extends \Core\Model {
 	*	Function to display Account Links
 	*/
 	public function AccountLinks(){
-		
+
 		$left_account_links = "
 			<div class='col-lg-4 col-md-4'>
 				<div class='panel panel-primary'>
@@ -19,15 +19,18 @@ class LeftLinks extends \Core\Model {
 						Account Settings
 					</div>
 					<ul class='list-group'>
+						<li class='list-group-item'><a href='${site_url_link}EditProfile' rel='nofollow'>Edit Profile</a></li>
 						<li class='list-group-item'><a href='${site_url_link}ChangeEmail' rel='nofollow'>Change Email</a></li>
 						<li class='list-group-item'><a href='${site_url_link}ChangePassword' rel='nofollow'>Change Password</a></li>
+						<li class='list-group-item'><a href='${site_url_link}PrivacySettings' rel='nofollow'>Privacy Settings</a></li>
 					</ul>
 				</div>
-			</div>";
+			</div>
+			";
 		return $left_account_links;
-		
-	}
-	
 
-	
+	}
+
+
+
 }

@@ -32,8 +32,8 @@ class Config
         /**
          * Define relative base path.
          */
-        define('DIR', 'http://testsite.userapplepie.com/');
-		define("BASE_URL", "http://testsite.userapplepie.com/"); // URL to Auth Class installation root WITH trailing slash
+        define('DIR', 'http://uap2demo.userapplepie.com/');
+		    define("BASE_URL", "http://uap2demo.userapplepie.com/"); // URL to Auth Class installation root WITH trailing slash
 
         /**
          * Set default controller and method for legacy calls.
@@ -50,8 +50,8 @@ class Config
          * Set a default language.
          */
         define('LANGUAGE_CODE', 'en');
-		define("LOC", "en"); // Language of Auth Class output : en / fr /es / de
-		
+		    define("LOC", "en"); // Language of Auth Class output : en / fr /es / de
+
         //database details ONLY NEEDED IF USING A DATABASE
 
         /**
@@ -72,7 +72,7 @@ class Config
         /**
          * Database username.
          */
-        define('DB_USER', 'userapplepie');
+        define('DB_USER', 'uapdemo');
 
         /**
          * Database password.
@@ -96,32 +96,32 @@ class Config
         /**
          * Optional create a constant for the name of the site.
          */
-        define('SITETITLE', 'UAP V2.0');
-		define("SITE_NAME", "UAP V2.0"); // Name of website to appear in emails
+        define('SITETITLE', 'UAP V2.0 Demo');
+		    define("SITE_NAME", "UAP V2.0 Demo"); // Name of website to appear in emails
 
         /**
          * User Registration Settings.
          */
-		define('NEW_USER_ACTIVATION', 'true'); // Define if new member has to Activate their account or not true=activate by email, false account is active
-		
+		    define('NEW_USER_ACTIVATION', 'true'); // Define if new member has to Activate their account or not true=activate by email, false account is active
+
         /**
          * Optional set a site email address.
          */
         define('SITEEMAIL', 'admin@userapplepie.com');
-		define("EMAIL_FROM", "welcome@userapplepie.com"); // Email FROM address for Auth emails (Activation, password reset...)
-		
-		/**
-		 * Setups for Auth Goodies
-		 */
-		define("ACTIVATION_ROUTE", 'Activate'); //  for activating an account should be implemented by you on any controller you can name it whatever you want
+		    define("EMAIL_FROM", "noreply@userapplepie.com"); // Email FROM address for Auth emails (Activation, password reset...)
+
+    		/**
+    		 * Setups for Auth Goodies
+    		 */
+    		define("ACTIVATION_ROUTE", 'Activate'); //  for activating an account should be implemented by you on any controller you can name it whatever you want
         define("RESET_PASSWORD_ROUTE", 'ResetPassword'); // for resetting a password and should be implemented  by you on any controller you can name it whatever you want
 
-		/**
-		 * reCAPTCHA settings
-		 */
-		define("RECAP_PUBLIC_KEY", '6LeLwQkTAAAAAJJkIcvbiuZ5j1HulqatLAjyv32U'); // reCAPCHA site key
-		define("RECAP_PRIVATE_KEY", '6LeLwQkTAAAAAGue6GABhTIbs2XOr6VpBFeXjptC'); // reCAPCHA secret key
-		
+    		/**
+    		 * reCAPTCHA settings
+    		 */
+    		define("RECAP_PUBLIC_KEY", '6LeLwQkTAAAAAJJkIcvbiuZ5j1HulqatLAjyv32U'); // reCAPCHA site key
+    		define("RECAP_PRIVATE_KEY", '6LeLwQkTAAAAAGue6GABhTIbs2XOr6VpBFeXjptC'); // reCAPCHA secret key
+
         /**
          * Turn on custom error handling.
          */
