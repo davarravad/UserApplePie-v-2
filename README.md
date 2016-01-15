@@ -1,6 +1,7 @@
 # UAP Version 2.0.0 - Coming Soon
 
-[![Join the chat at https://gitter.im/davarravad/UserApplePie-v-2](https://badges.gitter.im/davarravad/UserApplePie-v-2.svg)](https://gitter.im/davarravad/UserApplePie-v-2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/davarravad/UserApplePie-v-2](https://badges.gitter.im/davarravad/UserApplePie-v-2.svg)](https://gitter.im/davarravad/UserApplePie-v-2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+
 We are starting from scratch with UAP2.  This build is expected to take some time.  Check back soon for updates!
 
 [![Software License](http://img.shields.io/badge/License-BSD--3-brightgreen.svg?style=flat-square)](LICENSE)
