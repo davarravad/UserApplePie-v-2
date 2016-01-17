@@ -154,3 +154,10 @@ INSERT INTO `uap_groups` (`groupID`, `groupName`, `groupDescription`, `groupFont
 (2, 'Member', 'Site Members That Have Been Here a While.', 'BLUE', 'BOLD'),
 (3, 'Moderator', 'Site Members That Have a Little Extra Privilege on the Site.', 'ORANGE', 'BOLD'),
 (4, 'Administrator', 'Site Members That Have Full Access To The Site.', 'RED', 'BOLD');
+
+--
+-- Dumping data for table `uap_users_groups`
+--
+
+INSERT INTO `uap_users_groups` (`userID`, `groupID`) VALUES
+(1, 4);
