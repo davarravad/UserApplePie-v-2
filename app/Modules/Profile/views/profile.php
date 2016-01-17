@@ -1,6 +1,6 @@
 <?php
 /**
- * Sample layout
+ * Profile layout
  */
 
 use Core\Language;
