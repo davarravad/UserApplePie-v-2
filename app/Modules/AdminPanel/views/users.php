@@ -69,7 +69,7 @@ $orderby = $data['orderby'];
               echo "<td>$row->userID</td>";
 							echo "<td><a href='".DIR."AdminPanel-User/$row->userID'>$row->username</a></td>";
 							echo "<td>$row->firstName</td>";
-              echo "<td>$row->LastLogin</td>";
+              echo "<td>".date("F d, Y",strtotime($row->LastLogin))."</td>";
 							echo "</tr>";
 						}
 					}
