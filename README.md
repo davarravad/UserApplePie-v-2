@@ -61,6 +61,13 @@ Pages that Are Used From Email Link
  - ResetPassword  
  - Activate  
 
+Pages within the Admin Panel
+ - AdminPanel (Main Dashboard)
+ - AdminPanel-Users
+ - AdminPanel-User
+ - AdminPanel-Groups
+ - AdminPanel-Group
+
 ## Credit
 Thank You to All Who Make UAP Possible!
 - [Auth System](https://github.com/geomorillo/Auth) By: @geomorillo
