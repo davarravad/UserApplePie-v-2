@@ -13,15 +13,22 @@ use Helpers\CurrentUserData;
 $hooks = Hooks::get();
 
 // Check to see what page is being viewed
-// If not Home, Login, Register, etc.. 
+// If not Home, Login, Register, etc..
 // Send url to Session
 PageFunctions::prevpage();
 
 // Get user data if logged in
 $cur_userID = CUR_LOGGED_USERID;
-// Get User Data From Array
-// Get user data from user's database
+
+// Make sure user is logged in
 if(isset($cur_userID)){
+	// Get user's group status
+	$current_user_groups = CurrentUserData::getCUGroups($cur_userID);
+	foreach($current_user_groups as $user_group_data){
+		$cu_groupID[] = $user_group_data->groupID;
+	}
+	// Get User Data From Array
+	// Get user data from user's database
 	$current_user_data = CurrentUserData::getCUD($cur_userID);
 	foreach($current_user_data as $user_data){
 		$cu_username = $user_data->username;
@@ -56,14 +63,15 @@ if(isset($cur_userID)){
 	Assets::css(array(
 		'//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css',
 		Url::templatePath() . 'css/style.css',
+		Url::templatePath() . 'css/bootstrap-theme.css',
 	));
 
 	//hook for plugging in css
 	$hooks->run('css');
-	
+
 	// Setup the favicon
 	echo "<link rel='shortcut icon' href='".Url::templatePath() ."images/favicon.ico'>";
-	
+
 	?>
 
 </head>
@@ -129,6 +137,9 @@ if(isset($cur_userID)){
                                         <p>
 											<a href='<?php echo DIR; ?>AccountSettings' title='Change Your Account Settings' class='btn btn-info btn-block btn-xs'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Account Settings</a>
 											<!-- <a href='<?php echo DIR; ?>PrivacySettings' title='Change Your Privacy Settings' class='btn btn-warning btn-block btn-xs'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Privacy Settings</a>-->
+											<?php if(in_array(4,$cu_groupID)){ // Display Admin Panel Links if User Is Admin ?>
+												<a href='<?php echo DIR; ?>AdminPanel' title='Open Admin Panel' class='btn btn-warning btn-block btn-xs'> <span class='glyphicon glyphicon-dashboard' aria-hidden='true'></span> Admin Panel</a>
+											<?php } ?>
                                         </p>
                                     </div>
                                 </div>
@@ -145,7 +156,7 @@ if(isset($cur_userID)){
 <!-- Create Spacer For Navbar -->
 <div class='visible-lg visible-md visible-sm' style='height: 70px'></div>
 <div class='visible-xs' style='height: 110px'></div>
-   
+
 <?php
 //hook for running code after body tag
 $hooks->run('afterBody');
