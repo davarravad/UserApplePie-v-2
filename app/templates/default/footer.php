@@ -31,7 +31,7 @@ if(isset($data['sidebar'])){
 						<!-- Footer links / text -->
 						<a href='http://www.userapplepie.com' title='View UserApplePie Website' ALT='UserApplePie' target='_blank'>UserApplePie</a>
 
-						<!-- Display Copywrite stuff -->
+						<!-- Display Copywrite stuff with auto year -->
 						<Br> &copy; <?php echo date("Y") ?> <?php echo SITETITLE;?> All Rights Reserved.
 					</div>
 				</div>
