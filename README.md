@@ -61,6 +61,33 @@ Pages that Are Used From Email Link
  - ResetPassword  
  - Activate  
 
+Pages within the Admin Panel
+ - AdminPanel (Main Dashboard)
+ - AdminPanel-Users
+ - AdminPanel-User
+ - AdminPanel-Groups
+ - AdminPanel-Group
+
+## UAP Examples
+Login
+![Login](http://images.userapplepie.com/uap/uap2loginpage.jpg "Login")
+Register
+![Register](http://images.userapplepie.com/uap/uap2registerpage.jpg "Register")
+User Profile
+![User Profile](http://images.userapplepie.com/uap/uap2userprofile.jpg "User Profile")
+Edit User Profile
+![Edit User Profile](http://images.userapplepie.com/uap/uap2usereditprofile.jpg "Edit User Profile")
+
+## Admin Panel Examples
+Users List
+![Admin Panel Users List](http://images.userapplepie.com/uap/uap2adminpanelpreview3.jpg "Admin Panel Users List")
+User Edit
+![Admin Panel User Edit](http://images.userapplepie.com/uap/uap2adminpanelpreview.jpg "Admin Panel User Edit")
+Groups List
+![Admin Panel Groups List](http://images.userapplepie.com/uap/uap2adminpanelpreview2.jpg "Admin Panel Groups List")
+Group Edit
+![Admin Panel Group Edit](http://images.userapplepie.com/uap/uap2adminpanelpreview4.jpg "Admin Panel Group Edit")
+
 ## Credit
 Thank You to All Who Make UAP Possible!
 - [Auth System](https://github.com/geomorillo/Auth) By: @geomorillo
