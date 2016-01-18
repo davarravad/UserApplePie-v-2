@@ -68,7 +68,17 @@ Pages within the Admin Panel
  - AdminPanel-Groups
  - AdminPanel-Group
 
-## Admin Panel
+## UAP Examples
+Login
+![Login](http://images.userapplepie.com/uap/uap2loginpage.jpg "Login")
+Login
+![Register](http://images.userapplepie.com/uap/uap2registerpage.jpg "Register")
+Login
+![User Profile](http://images.userapplepie.com/uap/uap2userprofile.jpg "User Profile")
+Login
+![Edit User Profile](http://images.userapplepie.com/uap/uap2usereditprofile.jpg "Edit User Profile")
+
+## Admin Panel Examples
 Users List
 ![Admin Panel Users List](http://images.userapplepie.com/uap/uap2adminpanelpreview3.jpg "Admin Panel Users List")
 User Edit
