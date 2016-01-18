@@ -71,11 +71,11 @@ Pages within the Admin Panel
 ## UAP Examples
 Login
 ![Login](http://images.userapplepie.com/uap/uap2loginpage.jpg "Login")
-Login
+Register
 ![Register](http://images.userapplepie.com/uap/uap2registerpage.jpg "Register")
-Login
+User Profile
 ![User Profile](http://images.userapplepie.com/uap/uap2userprofile.jpg "User Profile")
-Login
+Edit User Profile
 ![Edit User Profile](http://images.userapplepie.com/uap/uap2usereditprofile.jpg "Edit User Profile")
 
 ## Admin Panel Examples
