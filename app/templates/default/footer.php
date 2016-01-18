@@ -27,12 +27,12 @@ if(isset($data['sidebar'])){
 			<footer class='navbar navbar-default'>
 				<div class='container'>
 					<div class='navbar-text'>
-						
-						<!-- Footer links / text -->
-						<a href='http://www.userapplepie.com' title='View UserApplePie Website' ALT='UserApplePie' target='_blank'>UserApplePie</a> 
 
-						<!-- Display Copywrite stuff -->
-						<Br> &copy; 2015 <?php echo SITETITLE;?> All Rights Reserved.
+						<!-- Footer links / text -->
+						<a href='http://www.userapplepie.com' title='View UserApplePie Website' ALT='UserApplePie' target='_blank'>UserApplePie</a>
+
+						<!-- Display Copywrite stuff with auto year -->
+						<Br> &copy; <?php echo date("Y") ?> <?php echo SITETITLE;?> All Rights Reserved.
 					</div>
 				</div>
 			</footer>
