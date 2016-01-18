@@ -69,7 +69,14 @@ Pages within the Admin Panel
  - AdminPanel-Group
 
 ## Admin Panel
+Users List
 ![Admin Panel Users List](http://images.userapplepie.com/uap/uap2adminpanelpreview3.jpg "Admin Panel Users List")
+User Edit
+![Admin Panel User Edit](http://images.userapplepie.com/uap/uap2adminpanelpreview.jpg "Admin Panel User Edit")
+Groups List
+![Admin Panel Groups List](http://images.userapplepie.com/uap/uap2adminpanelpreview2.jpg "Admin Panel Groups List")
+Group Edit
+![Admin Panel Group Edit](http://images.userapplepie.com/uap/uap2adminpanelpreview4.jpg "Admin Panel Group Edit")
 
 ## Credit
 Thank You to All Who Make UAP Possible!
