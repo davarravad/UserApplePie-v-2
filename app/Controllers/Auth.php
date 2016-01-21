@@ -1,6 +1,7 @@
 <?php namespace controllers;
 use Core\View,
 	Core\Controller,
+	Helpers\Hooks,
 	Helpers\Url,
 	Helpers\Csrf,
 	Core\Language,
@@ -32,7 +33,7 @@ class Auth extends Controller {
 		$this->OnlineUsers->check();
 
     }
-
+//----------------------------------------------------------------------------//
 	// Logs the user into the system
 	public function Login(){
 
@@ -140,7 +141,7 @@ class Auth extends Controller {
 		$this->auth->logout();
 		Url::redirect();
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Register Page
 	public function register(){
 		// Check to make sure user is not already logged in
@@ -213,11 +214,17 @@ class Auth extends Controller {
 			<li class='active'>".$data['title']."</li>
 		";
 
+		// Add JS Files requried for live checks
+		$data['js'] = "<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>";
+		$data['js'] .= "<script src='".Url::templatePath()."js/live_email.js'></script>";
+		$data['js'] .= "<script src='".Url::templatePath()."js/live_username_check.js'></script>";
+		$data['js'] .= "<script src='".Url::templatePath()."js/password_strength_match.js'></script>";
+
 		View::rendertemplate('header',$data);
 		View::render('auth/Register',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Activation Page
 	public function activate(){
 		// Check to make sure user is not already logged in
@@ -258,7 +265,7 @@ class Auth extends Controller {
 		View::render('welcome/info',$data,$error);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Account Settings Page
 	public function AccountSettings(){
 		// Check to make sure user is logged in
@@ -284,7 +291,7 @@ class Auth extends Controller {
 		View::render('auth/AccountSettings',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Change Password Page
 	public function ChangePassword(){
 		// Check to make sure user is logged in
@@ -331,11 +338,15 @@ class Auth extends Controller {
 			<li class='active'>".$data['title']."</li>
 		";
 
+		// Add JS Files requried for live checks
+		$data['js'] = "<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>";
+		$data['js'] .= "<script src='".Url::templatePath()."js/password_strength_match.js'></script>";
+
 		View::rendertemplate('header',$data);
 		View::render('auth/ChangePassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Change Email Page
 	public function ChangeEmail(){
 		// Check to make sure user is logged in
@@ -381,11 +392,15 @@ class Auth extends Controller {
 			<li class='active'>".$data['title']."</li>
 		";
 
+		// Add JS Files requried for live checks
+		$data['js'] = "<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js'></script>";
+		$data['js'] .= "<script src='".Url::templatePath()."js/live_email.js'></script>";
+
 		View::rendertemplate('header',$data);
 		View::render('auth/ChangeEmail',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Forgot Password Page
 	public function ForgotPassword(){
 		// Check to make sure user is NOT logged in
@@ -428,7 +443,7 @@ class Auth extends Controller {
 		View::render('auth/ForgotPassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Forgot Password Page
 	public function ResetPassword(){
 		// Check to make sure user is NOT logged in
@@ -478,7 +493,7 @@ class Auth extends Controller {
 		View::render('auth/ResetPassword',$data,$error,$success);
 		View::rendertemplate('footer',$data);
 	}
-
+//----------------------------------------------------------------------------//
 	// Setup the Resend Activation Page
 	public function ResendActivation(){
 		// Check to make sure user is NOT logged in
