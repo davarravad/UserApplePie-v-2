@@ -42,6 +42,8 @@ if(isset($data['sidebar'])){
 
 <!-- JS -->
 <?php
+echo $data['js'];
+
 Assets::js(array(
 	Url::templatePath() . 'js/jquery.js',
 	'//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'
