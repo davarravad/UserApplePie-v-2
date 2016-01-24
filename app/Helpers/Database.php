@@ -220,7 +220,7 @@ class Database extends PDO
         $stmt->execute();
         return $stmt->rowCount();
     }
-	
+
     /**
      * truncate table
      * @param  string $table table name

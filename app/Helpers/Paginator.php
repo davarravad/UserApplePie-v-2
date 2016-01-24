@@ -255,6 +255,12 @@ class Paginator
             }
             $pagination.= "</ul>";
             $pagination.= "</nav>\n";
+            // Display showing data
+            $start = ($this->perPage * $this->page) - $this->perPage + 1;
+            $end = $this->perPage * $this->page;
+            // Make sure we don't show any number greater than the total rows
+            if($end > $this->totalRows){$end = $this->totalRows;}
+            $pagination.= "Displaying $start-$end of $this->totalRows";
         }
 
         return $pagination;
