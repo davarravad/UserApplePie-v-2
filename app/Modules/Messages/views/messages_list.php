@@ -26,7 +26,8 @@ use Core\Language,
 					if(!empty($data['messages'])){
             echo Error::display($error);
             echo Success::display($success);
-            echo Form::open(array('method' => 'post'));
+            $this_url = DIR."Messages${data['what_box']}";
+            echo Form::open(array('method' => 'post', 'action' => $this_url));
 						foreach($data['messages'] as $row) {
 							echo "<tr>";
               echo "<td align='center' valign='middle'>";
@@ -52,12 +53,26 @@ use Core\Language,
 						}
             echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
             echo "</tr><td colspan='3'>";
-            echo "<div class='col-lg-7 col-md-7 col-sm-7 pull-left' style='font-size: 12px'>";
+            echo "<div class='col-lg-7 col-md-7 col-sm-7 pull-left' style='font-size:12px;margin-bottom:0px;'>";
               // Display Quta Info
-              echo "<b>${data['what_box']} Quota:</b> ${data['quota_msg_percentage']}&#37; Full<br>";
-              echo "<b>Total Messages:</b> ${data['quota_msg_ttl']} - <b>Limit:</b> ${data['quota_msg_limit']}";
+              echo "<b>Total ${data['what_box']} Messages:</b> ${data['quota_msg_ttl']} - <b>Limit:</b> ${data['quota_msg_limit']}";
+              // Check to see how full the inbox or outbox is and set color of progress bar
+              if($data['quota_msg_percentage'] >= '90'){
+                $set_prog_style = "progress-bar-danger";
+              }else if($data['quota_msg_percentage'] >= '80'){
+                $set_prog_style = "progress-bar-warning";
+              }else if($data['quota_msg_percentage'] >= '70'){
+                $set_prog_style = "progress-bar-info";
+              }else{
+                $set_prog_style = "progress-bar-success";
+              }
+              echo "<div class='progress'>
+                      <div class='progress-bar $set_prog_style' role='progressbar' aria-valuenow='${data['quota_msg_percentage']}' aria-valuemin='0' aria-valuemax='100' style='min-width: 2em; width:${data['quota_msg_percentage']}%'>
+                        ${data['quota_msg_percentage']}&#37;
+                      </div>
+                    </div>";
             echo "</div>";
-            echo "<div class='col-lg-5 col-md-5 col-sm-5 input-group pull-right'>";
+            echo "<div class='col-lg-5 col-md-5 col-sm-5 input-group pull-right' style='margin-bottom:0px;'>";
               echo "<span class='input-group-addon'>Actions</span>";
               echo "<select class='form-control' id='actions' name='actions'>";
                 echo "<option>Select Action</option>";
@@ -70,9 +85,12 @@ use Core\Language,
               echo "<span class='input-group-btn'><button class='btn btn-success' name='submit' type='submit'>GO</button></span>";
             echo "</div>";
             echo "</td></tr>";
-            echo "<tr><td colspan='3' align='center'>";
-            echo $data['pageLinks'];
-            echo "</td></tr>";
+            // Check to see if there is more than one page
+            if($data['pageLinks'] > "1"){
+              echo "<tr><td colspan='3' align='center'>";
+              echo $data['pageLinks'];
+              echo "</td></tr>";
+            }
             echo Form::close();
 					}else{
             echo "<tr><td>No Messages to Display</td></tr>";

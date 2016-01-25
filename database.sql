@@ -10,16 +10,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Database: `userapplepie`
---
-
 -- --------------------------------------------------------
 
 --
@@ -141,9 +131,22 @@ CREATE TABLE IF NOT EXISTS `uap_users_online` (
   KEY `lastAccess` (`lastAccess`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Table structure for table `uap_messages`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `to_userID` int(11) NOT NULL,
+  `from_userID` int(11) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `date_read` datetime DEFAULT NULL,
+  `date_sent` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `to_delete` varchar(5) NOT NULL DEFAULT 'false',
+  `from_delete` varchar(5) NOT NULL DEFAULT 'false',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `uap_groups`
