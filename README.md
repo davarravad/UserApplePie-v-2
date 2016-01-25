@@ -68,6 +68,14 @@ Pages within the Admin Panel
  - AdminPanel-Groups
  - AdminPanel-Group
 
+Pages For Messages Module (Not Linked In Navbar yet)
+ - Messages (Messages Home Page)
+ - MessagesInbox
+ - MessagesOutbox
+ - NewMessage
+ - ViewMessage/# (Displays Requested Message)
+ - ReplyMessage (Coming Soon)
+
 ## UAP Examples
 Login
 ![Login](http://images.userapplepie.com/uap/uap2loginpage.jpg "Login")
