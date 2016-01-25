@@ -25,14 +25,16 @@ class Messages extends Controller{
 	public function __construct(){
 		parent::__construct();
 		$this->model = new \Modules\Messages\Models\Messages();
-    $this->pages = new \Helpers\Paginator(MESSAGE_PAGEINATOR_LIMIT, 'p');
+    $this->pages = new \Helpers\Paginator(MESSAGE_PAGEINATOR_LIMIT);
 	}
 
 	public function routes(){
     Router::any('Messages', 'Modules\Messages\Controllers\Messages@messages');
 		Router::any('ViewMessage/(:any)', 'Modules\Messages\Controllers\Messages@view');
 		Router::any('MessagesInbox', 'Modules\Messages\Controllers\Messages@inbox');
+    Router::any('MessagesInbox/(:any)', 'Modules\Messages\Controllers\Messages@inbox');
 		Router::any('MessagesOutbox', 'Modules\Messages\Controllers\Messages@outbox');
+    Router::any('MessagesOutbox/(:any)', 'Modules\Messages\Controllers\Messages@outbox');
 		Router::any('NewMessage', 'Modules\Messages\Controllers\Messages@newmessage');
     Router::any('NewMessage/(:any)', 'Modules\Messages\Controllers\Messages@newmessage');
 	}
@@ -57,6 +59,7 @@ class Messages extends Controller{
 
     // Get total messages count
     $data['total_messages'] = $this->model->getTotalMessages($u_id);
+    $data['total_messages_outbox'] = $this->model->getTotalMessagesOutbox($u_id);
 
     // Let view know inbox is in use
     $data['inbox'] = "true";
@@ -68,6 +71,21 @@ class Messages extends Controller{
 		";
     $data['csrf_token'] = Csrf::makeToken();
 
+    // Check for new messages in inbox
+    $data['new_messages_inbox'] = $this->model->getUnreadMessages($u_id);
+
+    // Message Quota Goods
+    // Get total count of messages
+    $data['quota_msg_ttl'] = $data['total_messages'];
+    $data['quota_msg_limit'] = MESSAGE_QUOTA_LIMIT;
+    $data['quota_msg_percentage'] = $this->model->getPercentage($data['quota_msg_ttl'], $data['quota_msg_limit']);
+
+    // Message Quota Goods
+    // Get total count of messages
+    $data['quota_msg_ttl_ob'] = $data['total_messages_outbox'];
+    $data['quota_msg_limit_ob'] = MESSAGE_QUOTA_LIMIT;
+    $data['quota_msg_percentage_ob'] = $this->model->getPercentage($data['quota_msg_ttl_ob'], $data['quota_msg_limit_ob']);
+
     // Send data to view
 		View::renderTemplate('header', $data);
     View::renderModule('Messages/views/messages_sidebar', $data);
@@ -77,8 +95,7 @@ class Messages extends Controller{
 	}
 
 	// Inbox - Displays all
-	public function inbox($page = NULL){
-
+	public function inbox($current_page = null){
     // Check if user is logged in
 		if($this->auth->isLoggedIn()){
 			// Get Current User's ID
@@ -137,13 +154,14 @@ class Messages extends Controller{
     $data['tofrom'] = " by ";
 
     // Get all message that are to current user
-    $data['messages'] = $this->model->getInbox($u_id, $this->pages->getLimit());
+    $data['messages'] = $this->model->getInbox($u_id, $this->pages->getLimit($current_page, MESSAGE_PAGEINATOR_LIMIT));
 
     // Set total number of messages for paginator
     $total_num_messages = $this->model->getTotalMessages($u_id);
     $this->pages->setTotal($total_num_messages);
     // Send page links to view
-    $data['pageLinks'] = $this->pages->pageLinks();
+    $pageFormat = DIR."MessagesInbox/"; // URL page where pages are
+    $data['pageLinks'] = $this->pages->pageLinks($pageFormat, null, $current_page);
 
     // Message Quota Goods
     // Get total count of messages
@@ -155,7 +173,7 @@ class Messages extends Controller{
     if($data['quota_msg_percentage'] >= "100"){
       $error = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
                   <b>Your Inbox is Full!</b>  Other Site Members Can NOT send you any messages!";
-    }else if($data['quota_msg_percentage'] >= "80"){
+    }else if($data['quota_msg_percentage'] >= "90"){
       $error = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
                   <b>Warning!</b> Your Inbox is Almost Full!";
     }
@@ -176,6 +194,9 @@ class Messages extends Controller{
     // Include Java Script for check all feature
     $data['js'] = "<script src='".Url::templatePath()."js/form_check_all.js'></script>";
 
+    // Check for new messages in inbox
+    $data['new_messages_inbox'] = $this->model->getUnreadMessages($u_id);
+
     // Send data to view
 		View::renderTemplate('header', $data);
     View::renderModule('Messages/views/messages_sidebar', $data);
@@ -185,7 +206,7 @@ class Messages extends Controller{
 	}
 
   // Outbox - Displays all
-	public function outbox(){
+	public function outbox($current_page = null){
 
     // Check if user is logged in
 		if($this->auth->isLoggedIn()){
@@ -228,17 +249,18 @@ class Messages extends Controller{
     $data['tofrom'] = " to ";
 
     // Get all message that are to current user
-    $data['messages'] = $this->model->getOutbox($u_id, $this->pages->getLimit());
+    $data['messages'] = $this->model->getOutbox($u_id, $this->pages->getLimit($current_page, MESSAGE_PAGEINATOR_LIMIT));
 
     // Set total number of messages for paginator
     $total_num_messages = $this->model->getTotalMessagesOutbox($u_id);
     $this->pages->setTotal($total_num_messages);
     // Send page links to view
-    $data['pageLinks'] = $this->pages->pageLinks();
+    $pageFormat = DIR."MessagesOutbox/"; // URL page where pages are
+    $data['pageLinks'] = $this->pages->pageLinks($pageFormat, null, $current_page);
 
     // Message Quota Goods
     // Get total count of messages
-    $data['quota_msg_ttl'] = count($data['messages']);
+    $data['quota_msg_ttl'] = $total_num_messages;
     $data['quota_msg_limit'] = MESSAGE_QUOTA_LIMIT;
     $data['quota_msg_percentage'] = $this->model->getPercentage($data['quota_msg_ttl'], $data['quota_msg_limit']);
 
@@ -246,7 +268,7 @@ class Messages extends Controller{
     if($data['quota_msg_percentage'] >= "100"){
       $error[] = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
                   <b>Your Outbox is Full!</b>  You Can NOT send any messages!";
-    }else if($data['quota_msg_percentage'] >= "80"){
+    }else if($data['quota_msg_percentage'] >= "90"){
       $error[] = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
                   <b>Warning!</b> Your Outbox is Almost Full!";
     }
@@ -264,6 +286,9 @@ class Messages extends Controller{
 
     // Include Java Script for check all feature
     $data['js'] = "<script src='".Url::templatePath()."js/form_check_all.js'></script>";
+
+    // Check for new messages in inbox
+    $data['new_messages_inbox'] = $this->model->getUnreadMessages($u_id);
 
     // Send data to view
 		View::renderTemplate('header', $data);
@@ -305,6 +330,9 @@ class Messages extends Controller{
 			<li><a href='".DIR."Messages'>Messages</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
+
+    // Check for new messages in inbox
+    $data['new_messages_inbox'] = $this->model->getUnreadMessages($u_id);
 
     // Send data to view
 		View::renderTemplate('header', $data);
@@ -398,6 +426,9 @@ class Messages extends Controller{
 
     // Get requested message data
     //$data['message'] = $this->model->getMessage($m_id);
+
+    // Check for new messages in inbox
+    $data['new_messages_inbox'] = $this->model->getUnreadMessages($u_id);
 
     // Send data to view
 		View::renderTemplate('header', $data);

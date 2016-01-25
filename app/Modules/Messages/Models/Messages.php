@@ -236,7 +236,6 @@ class Messages extends Model {
   }
 
   // Gets total number of unread messages from database for selected user
-  // TODO Figure out how to get messages to show be marked as read when user reads them and all that good stuff
   public function getUnreadMessages($where_id){
     if(ctype_digit($where_id)){
 			$data = $this->db->select("
