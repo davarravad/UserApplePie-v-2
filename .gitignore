@@ -31,3 +31,6 @@ app/Modules/_notes/dwsync.xml
 app/Modules/AdminPanel/Controllers/_notes/dwsync.xml
 app/Modules/AdminPanel/views/_notes/dwsync.xml
 app/Helpers/Pageinator.php
+app/Modules/Messages/Controllers/_notes/dwsync.xml
+app/Modules/Messages/Models/_notes/dwsync.xml
+app/Modules/Messages/views/_notes/dwsync.xml

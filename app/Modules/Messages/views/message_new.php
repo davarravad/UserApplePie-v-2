@@ -4,21 +4,29 @@
 // Also works with message reply
 
 use Core\Language,
+  Helpers\ErrorHelper,
+  Helpers\SuccessHelper,
   Core\Error,
-  Core\Success,
   Helpers\Form;
 
 ?>
 
 <div class='col-lg-8 col-md-8'>
+
+  <?php
+  // Display Success and Error Messages if any (TODO: Move to header file)
+  echo ErrorHelper::display();
+  echo SuccessHelper::display();
+  echo ErrorHelper::display_raw($error);
+  echo SuccessHelper::display_raw($success);
+  ?>
+
 	<div class='panel panel-default'>
 		<div class='panel-heading'>
 			<h3 class='jumbotron-heading'><?php echo $data['title'] ?></h3>
 		</div>
 		<div class='panel-body'>
 			<p><?php echo $data['welcome_message'] ?></p>
-      <?php echo Error::display($error); ?>
-			<?php echo Success::display($success); ?>
 
 <?php
   // Check to see if message form is disabled

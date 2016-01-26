@@ -4,13 +4,22 @@
 // Only displays From Subject, Status, Date Read, Date Sent
 
 use Core\Language,
-  Core\Error,
-  Core\Success,
+  Helpers\ErrorHelper,
+  Helpers\SuccessHelper,
   Helpers\Form;
 
 ?>
 
 <div class='col-lg-8 col-md-8'>
+
+  <?php
+    // Display Success and Error Messages if any (TODO: Move to header file)
+    echo ErrorHelper::display();
+    echo SuccessHelper::display();
+    echo ErrorHelper::display_raw($error);
+    echo SuccessHelper::display_raw($success);
+  ?>
+
 	<div class='panel panel-default'>
 		<div class='panel-heading'>
 			<h3 class='jumbotron-heading'><?php echo $data['title'] ?></h3>

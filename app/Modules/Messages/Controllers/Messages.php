@@ -7,7 +7,9 @@ use Core\Controller,
   Helpers\Auth\Auth,
   Helpers\Csrf,
   Helpers\Request,
-  Helpers\Url;
+  Helpers\Url,
+  Helpers\SuccessHelper,
+  Helpers\ErrorHelper;
 
 // Move this to Core\Config.php
 /**
@@ -120,27 +122,37 @@ class Messages extends Controller{
         // Check to see if user is deleteing messages
         if($actions == "delete"){
   				// Delete selected messages from Inbox
-          foreach($msg_id as $del_msg_id){
-    				if($this->model->deleteMessageInbox($u_id, $del_msg_id)){
-    					// Success
-    					$success = "You Have Successfully Deleted Messages";
-    				}else{
-    					// Fail
-    					$error = "Messages Delete Failed";
-    				}
+          if(isset($msg_id)){
+            foreach($msg_id as $del_msg_id){
+      				if($this->model->deleteMessageInbox($u_id, $del_msg_id)){
+      					// Success
+                SuccessHelper::push('You Have Successfully Deleted Messages', 'MessagesInbox');
+      				}else{
+      					// Fail
+                ErrorHelper::push('Messages Delete Failed', 'MessagesInbox');
+      				}
+            }
+          }else{
+            // Fail
+            ErrorHelper::push('Nothing Was Selected to be Deleted', 'MessagesInbox');
           }
         }
         // Check to see if user is marking messages as read
         if($actions == "mark_read"){
   				// Mark messages as read for all requested messages
-          foreach($msg_id as $del_msg_id){
-    				if($this->model->markReadMessageInbox($u_id, $del_msg_id)){
-    					// Success
-    					$success = "You Have Successfully Marked Messages as Read";
-    				}else{
-    					// Fail
-    					$error = "Mark Messages Read Failed";
-    				}
+          if(isset($msg_id)){
+            foreach($msg_id as $del_msg_id){
+      				if($this->model->markReadMessageInbox($u_id, $del_msg_id)){
+      					// Success
+                SuccessHelper::push('You Have Successfully Marked Messages as Read', 'MessagesInbox');
+      				}else{
+      					// Fail
+                ErrorHelper::push('Mark Messages Read Failed', 'MessagesInbox');
+      				}
+            }
+          }else{
+            // Fail
+            ErrorHelper::push('Nothing Was Selected to be Marked as Read', 'MessagesInbox');
           }
         }
 			}
@@ -228,14 +240,19 @@ class Messages extends Controller{
         // Check to see if user is deleteing messages
         if($actions == "delete"){
   				// Delete selected messages from Outbox
-          foreach($msg_id as $del_msg_id){
-    				if($this->model->deleteMessageOutbox($u_id, $del_msg_id)){
-    					// Success
-    					$success = "You Have Successfully Deleted Messages";
-    				}else{
-    					// Fail
-    					$error = "Messages Delete Failed";
-    				}
+          if(isset($msg_id)){
+            foreach($msg_id as $del_msg_id){
+      				if($this->model->deleteMessageOutbox($u_id, $del_msg_id)){
+      					// Success
+                SuccessHelper::push('You Have Successfully Deleted Messages', 'MessagesOutbox');
+      				}else{
+      					// Fail
+                ErrorHelper::push('Messages Delete Failed', 'MessagesOutbox');
+      				}
+            }
+          }else{
+            // Fail
+            ErrorHelper::push('Nothing Was Selected to be Deleted', 'MessagesOutbox');
           }
         }
 			}
@@ -372,38 +389,55 @@ class Messages extends Controller{
 				$subject = Request::post('subject');
 				$content = Request::post('content');
 
-        // Get the userID of to username
-        $to_userID = $this->model->getUserIDFromUsername($to_username);
-        // Check to make sure user exists in Database
-        if(isset($to_userID)){
-          // Check to see if to user's inbox is not full
-          if($this->model->checkMessageQuotaToUser($to_userID)){
-    				// Run the Activation script
-    				if($this->model->sendmessage($to_userID, $u_id, $subject, $content)){
-    					// Success
-    					$success[] = "You Have Successfully Sent a Private Message";
-              $data['hide_form'] = "true";
-    				}else{
-    					// Fail
-    					$error[] = "Message Send Failed";
-    				}
-          }else{
-            // To user's inbox is full.  Let sender know message was not sent
-            $error[] = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>
-                        <b>${to_username}&#39;s Inbox is Full!</b>  Sorry, Message was NOT sent!";
-            // Auto Fill form to make things eaiser for user
-            $data['subject'] = Request::post('subject');
-            $data['content'] = Request::post('content');
-          }
-        }else{
-          // User does not exist
-          $error[] = "Message Send Failed - To User Does Not Exist";
-          // Auto Fill form to make things eaiser for user
-          $data['subject'] = Request::post('subject');
-          $data['content'] = Request::post('content');
+
+        // Check to make sure user completed all required fields in form
+        if(empty($to_username)){
+          // Username field is empty
+          $error[] = 'Username Field is Blank!';
         }
+        if(empty($subject)){
+          // Subject field is empty
+          $error[] = 'Subject Field is Blank!';
+        }
+        if(empty($content)){
+          // Username field is empty
+          $error[] = 'Message Content Field is Blank!';
+        }
+        // Check for errors before sending message
+        if(count($error) == 0){
+          // Get the userID of to username
+          $to_userID = $this->model->getUserIDFromUsername($to_username);
+          // Check to make sure user exists in Database
+          if(isset($to_userID)){
+            // Check to see if to user's inbox is not full
+            if($this->model->checkMessageQuotaToUser($to_userID)){
+      				// Run the Activation script
+      				if($this->model->sendmessage($to_userID, $u_id, $subject, $content)){
+      					// Success
+                SuccessHelper::push('You Have Successfully Sent a Private Message', 'Messages');
+                $data['hide_form'] = "true";
+      				}else{
+      					// Fail
+                $error[] = 'Message Send Failed';
+      				}
+            }else{
+              // To user's inbox is full.  Let sender know message was not sent
+              $error[] = '<b>${to_username}&#39;s Inbox is Full!</b>  Sorry, Message was NOT sent!';
+            }
+          }else{
+            // User does not exist
+            $error[] = 'Message Send Failed - To User Does Not Exist';
+          }
+        }// End Form Complete Check
 			}
 		}
+
+    // Check to see if there were any errors, if so then auto load form data
+    if(count($error) > 0){
+      // Auto Fill form to make things eaiser for user
+      $data['subject'] = Request::post('subject');
+      $data['content'] = Request::post('content');
+    }
 
 		// Collect Data for view
 		$data['title'] = "My Private Message";
