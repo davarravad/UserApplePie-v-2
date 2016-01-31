@@ -2,13 +2,25 @@
 
 // Display a given message as requested by post from inbox or outbox
 
-use Core\Language;
+use Core\Language,
+  Helpers\ErrorHelper,
+  Helpers\SuccessHelper,
+  Helpers\Form;
 
 if($data['msg_error'] == 'true'){$panelclass = "panel-danger";}else{$panelclass = "panel-default";}
 
 ?>
 
 <div class='col-lg-8 col-md-8'>
+
+	<?php
+	// Display Success and Error Messages if any (TODO: Move to header file)
+	echo ErrorHelper::display();
+	echo SuccessHelper::display();
+	echo ErrorHelper::display_raw($error);
+	echo SuccessHelper::display_raw($success);
+	?>
+
 	<div class='panel <?php echo $panelclass; ?>'>
 		<div class='panel-heading'>
 			<h3 class='jumbotron-heading'><?php echo $data['title'] ?></h3>

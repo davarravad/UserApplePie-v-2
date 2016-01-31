@@ -149,6 +149,18 @@ CREATE TABLE IF NOT EXISTS `uap_messages` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
+-- Table structure for table `uap_pages`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `page_url` varchar(255) NOT NULL,
+  `page_title` varchar(255) NOT NULL,
+  `page_content` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
 -- Dumping data for table `uap_groups`
 --
 
