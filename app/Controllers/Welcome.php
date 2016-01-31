@@ -14,6 +14,7 @@ use Core\View;
 use Core\Controller;
 use Helpers\Url;
 use Helpers\Auth\Auth;
+use Models\LoadPages;
 
 /**
  * Sample controller showing a construct and 2 methods and their typical usage.
@@ -21,39 +22,43 @@ use Helpers\Auth\Auth;
 class Welcome extends Controller
 {
 
+    public $LoadPages;
     /**
      * Call the parent construct
      */
     public function __construct()
     {
         parent::__construct();
-		
+
+        /** initialise the LoadPages object */
+    		$this->LoadPages = new \Models\LoadPages();
+
         $this->language->load('Welcome');
 
-		// Define if user is logged in
-		if($this->auth->isLoggedIn()){ 
-			// Define if user is logged in
-			define('ISLOGGEDIN', 'true'); 
-			// Define Current User's ID for header
-			$u_id = $this->auth->user_info();
-			define('CUR_LOGGED_USERID', $u_id);
-			$this->OnlineUsers->update($u_id);
-		}else{
-			define('ISLOGGEDIN', 'false');
-		}
-		// Run OnLine Status Checker
-		$this->OnlineUsers->check();
+    		// Define if user is logged in
+    		if($this->auth->isLoggedIn()){
+    			// Define if user is logged in
+    			define('ISLOGGEDIN', 'true');
+    			// Define Current User's ID for header
+    			$u_id = $this->auth->user_info();
+    			define('CUR_LOGGED_USERID', $u_id);
+    			$this->OnlineUsers->update($u_id);
+    		}else{
+    			define('ISLOGGEDIN', 'false');
+    		}
+    		// Run OnLine Status Checker
+    		$this->OnlineUsers->check();
     }
 
     /**
      * Define Index page title and load template files
      */
     public function index()
-    {	
+    {
         $data['title'] = $this->language->get('welcome_text');
-		
+
 		$data['sidebar'] = $this->RightLinks->DisplaySiteStats();
-		
+
 		if($this->auth->isLoggedIn()){
 			// Get current user's information
 			$u_id = $this->auth->user_info();
@@ -75,7 +80,7 @@ class Welcome extends Controller
 		}else{
 			$data['welcome_message'] = $this->language->get('welcome_message');
 		}
-		
+
         View::renderTemplate('header', $data);
         View::render('welcome/welcome', $data);
         View::renderTemplate('footer', $data);
@@ -95,12 +100,12 @@ class Welcome extends Controller
 			<li><a href='".DIR."'>Home</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
-		
+
         View::renderTemplate('header', $data);
         View::render('welcome/subpage', $data);
         View::renderTemplate('footer', $data);
     }
-	
+
     /**
      * Define About page title and load template files
      */
@@ -115,12 +120,12 @@ class Welcome extends Controller
 			<li><a href='".DIR."'>Home</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
-		
+
         View::renderTemplate('header', $data);
         View::render('welcome/subpage', $data);
         View::renderTemplate('footer', $data);
     }
-	
+
     /**
      * Define Members page title and load template files
      */
@@ -136,12 +141,12 @@ class Welcome extends Controller
 			<li><a href='".DIR."'>Home</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
-		
+
         View::renderTemplate('header', $data);
         View::render('welcome/members', $data);
         View::renderTemplate('footer', $data);
     }
-	
+
     /**
      * Define Members page title and load template files
      */
@@ -151,18 +156,18 @@ class Welcome extends Controller
 		$data['sidebar'] = $this->RightLinks->DisplaySiteStats();
         $data['welcome_message'] = $this->language->get('membersonline_message');
 		$data['members'] = $this->OnlineUsers->getMembersOnline();
-		
+
 		// Setup Breadcrumbs
 		$data['breadcrumbs'] = "
 			<li><a href='".DIR."'>Home</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
-		
+
         View::renderTemplate('header', $data);
         View::render('welcome/members', $data);
         View::renderTemplate('footer', $data);
     }
-	
+
     /**
      * Define live check email
      */
@@ -170,4 +175,25 @@ class Welcome extends Controller
     {
         View::render('welcome/LiveCheckEmail', $data);
     }
+
+    /**
+     * Ready the pages data for requested page and load template files
+     */
+    public function pages($page_url)
+    {
+        $data['title'] = $this->LoadPages->getPageTitle($page_url);
+        $data['welcome_message'] = $this->LoadPages->getPageContent($page_url);
+        $data['sidebar'] = $this->RightLinks->DisplaySiteStats();
+
+    		// Setup Breadcrumbs
+    		$data['breadcrumbs'] = "
+    			<li><a href='".DIR."'>Home</a></li>
+    			<li class='active'>".$data['title']."</li>
+    		";
+
+        View::renderTemplate('header', $data);
+        View::render('welcome/subpage', $data);
+        View::renderTemplate('footer', $data);
+    }
+
 }

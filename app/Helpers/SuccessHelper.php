@@ -18,6 +18,7 @@ class SuccessHelper
 {
   /**
    * Get and display recent success message from success session
+   * @return string
    */
   public static function display(){
     // Check to see if session success_message exists
@@ -38,6 +39,8 @@ class SuccessHelper
 
   /**
   * Push Success Message to Session for display on page user is redirected to
+  * @param $error_msg  string  Message Text
+  * @param $redirect_to_page  string  URL Page Name for Redirect
   */
   public static function push($success_msg, $redirect_to_page = null){
     // Check to see if there is already a success message session
@@ -56,6 +59,8 @@ class SuccessHelper
 
   /**
   * Displays Message without sessions to keep form data for retry
+  * @param $e_msg  string  Message Text
+  * @return string
   */
   public static function display_raw($s_msg = null){
     // Make sure an Error Message should be displayed

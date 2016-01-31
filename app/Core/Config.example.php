@@ -118,8 +118,8 @@ class Config
     		/**
     		 * reCAPTCHA settings
     		 */
-    		define("RECAP_PUBLIC_KEY", ''); // reCAPCHA site key  
-    		define("RECAP_PRIVATE_KEY", ''); // reCAPCHA secret key
+    		define("RECAP_PUBLIC_KEY", '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'); // reCAPCHA site key  
+    		define("RECAP_PRIVATE_KEY", '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'); // reCAPCHA secret key
 
         /**
          * Turn on custom error handling.

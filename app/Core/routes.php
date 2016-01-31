@@ -40,6 +40,9 @@ Router::any('MembersOnline', 'Controllers\Welcome@MembersOnline');
 Router::any('LiveCheckEmail', 'Controllers\LiveCheck@emailCheck');
 Router::any('LiveCheckUserName', 'Controllers\LiveCheck@userNameCheck');
 
+/** Pages */
+Router::any('p/(:any)', 'Controllers\Welcome@pages');
+
 /** Module routes. */
 $hooks = Hooks::get();
 $hooks->run('routes');

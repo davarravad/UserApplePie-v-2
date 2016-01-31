@@ -16,8 +16,9 @@ class ErrorHelper
 {
   /**
    * Get and display recent error message from error session
+   * @return string
    */
-  public static function display($show_no_redir = null){
+  public static function display(){
     // Check to see if session error_message exists
     if(isset($_SESSION['error_message'])){
       // Get data from session then display it
@@ -36,6 +37,8 @@ class ErrorHelper
 
   /**
   * Push Error Message to Session for display on page user is redirected to
+  * @param $error_msg  string  Message Text
+  * @param $redirect_to_page  string  URL Page Name for Redirect
   */
   public static function push($error_msg, $redirect_to_page = null){
     // Check to see if there is already a error message session
@@ -54,6 +57,8 @@ class ErrorHelper
 
   /**
   * Displays Message without sessions to keep form data for retry
+  * @param $e_msg  string  Message Text
+  * @return string
   */
   public static function display_raw($e_msg = null){
     // Make sure an Error Message should be displayed
