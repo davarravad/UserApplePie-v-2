@@ -69,7 +69,7 @@ class Messages extends Controller{
     // Setup Breadcrumbs
 		$data['breadcrumbs'] = "
 			<li><a href='".DIR."'>Home</a></li>
-			<li class='active'>Messages</li>
+			<li class='active'>Private Messages</li>
 		";
     $data['csrf_token'] = Csrf::makeToken();
 
@@ -198,7 +198,7 @@ class Messages extends Controller{
     // Setup Breadcrumbs
 		$data['breadcrumbs'] = "
 			<li><a href='".DIR."'>Home</a></li>
-			<li><a href='".DIR."Messages'>Messages</a></li>
+			<li><a href='".DIR."Messages'>Private Messages</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
     $data['csrf_token'] = Csrf::makeToken();
@@ -296,7 +296,7 @@ class Messages extends Controller{
     // Setup Breadcrumbs
 		$data['breadcrumbs'] = "
 			<li><a href='".DIR."'>Home</a></li>
-			<li><a href='".DIR."Messages'>Messages</a></li>
+			<li><a href='".DIR."Messages'>Private Messages</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
     $data['csrf_token'] = Csrf::makeToken();
@@ -344,7 +344,7 @@ class Messages extends Controller{
     // Setup Breadcrumbs
 		$data['breadcrumbs'] = "
 			<li><a href='".DIR."'>Home</a></li>
-			<li><a href='".DIR."Messages'>Messages</a></li>
+			<li><a href='".DIR."Messages'>Private Messages</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
 
@@ -454,7 +454,7 @@ class Messages extends Controller{
     // Setup Breadcrumbs
 		$data['breadcrumbs'] = "
 			<li><a href='".DIR."'>Home</a></li>
-			<li><a href='".DIR."Messages'>Messages</a></li>
+			<li><a href='".DIR."Messages'>Private Messages</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
 
