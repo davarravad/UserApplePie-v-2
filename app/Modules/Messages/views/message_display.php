@@ -42,7 +42,19 @@ if($data['msg_error'] == 'true'){$panelclass = "panel-danger";}else{$panelclass 
 							echo "<b>From:</b> <a href='".DIR."Profile/$row->username'>$row->username</a>";
               echo "</td></tr><tr>";
 							echo "<td>$row->content</td>";
-							echo "</tr>";
+							echo "</tr><tr><td>";
+                echo Form::open(array('method' => 'post', 'action' => DIR.'NewMessage'));
+                  echo "<input type='hidden' name='csrf_token' value='${data['csrf_token']}' />";
+                  echo "<input type='hidden' name='reply' value='true' />";
+                  echo "<input type='hidden' name='to_username' value='$row->username' />";
+                  echo "<input type='hidden' name='subject' value=\"$row->subject\" />";
+                  echo "<input type='hidden' name='content' value=\"$row->content\" />";
+                  echo "<input type='hidden' name='date_sent' value='".date("F d, Y - g:i A",strtotime($row->date_sent))."' />";
+                  echo "<button class='btn btn-md btn-success' name='submit' type='submit'>";
+                    echo "Reply";
+                  echo "</button>";
+                echo Form::close();
+              echo "</td></tr>";
 						}
             echo "</table>";
 					}
