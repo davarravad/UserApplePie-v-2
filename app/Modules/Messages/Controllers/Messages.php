@@ -347,6 +347,7 @@ class Messages extends Controller{
 			<li><a href='".DIR."Messages'>Private Messages</a></li>
 			<li class='active'>".$data['title']."</li>
 		";
+    $data['csrf_token'] = Csrf::makeToken();
 
     // Check for new messages in inbox
     $data['new_messages_inbox'] = $this->model->getUnreadMessages($u_id);
@@ -354,7 +355,7 @@ class Messages extends Controller{
     // Send data to view
 		View::renderTemplate('header', $data);
     View::renderModule('Messages/views/messages_sidebar', $data);
-		View::renderModule('Messages/views/message_display', $data);
+		View::renderModule('Messages/views/message_display', $data,$error,$success);
 		View::renderTemplate('footer', $data);
 
 	}
@@ -388,47 +389,65 @@ class Messages extends Controller{
 				$to_username = Request::post('to_username');
 				$subject = Request::post('subject');
 				$content = Request::post('content');
-
-
-        // Check to make sure user completed all required fields in form
-        if(empty($to_username)){
-          // Username field is empty
-          $error[] = 'Username Field is Blank!';
-        }
-        if(empty($subject)){
-          // Subject field is empty
-          $error[] = 'Subject Field is Blank!';
-        }
-        if(empty($content)){
-          // Username field is empty
-          $error[] = 'Message Content Field is Blank!';
-        }
-        // Check for errors before sending message
-        if(count($error) == 0){
-          // Get the userID of to username
-          $to_userID = $this->model->getUserIDFromUsername($to_username);
-          // Check to make sure user exists in Database
-          if(isset($to_userID)){
-            // Check to see if to user's inbox is not full
-            if($this->model->checkMessageQuotaToUser($to_userID)){
-      				// Run the Activation script
-      				if($this->model->sendmessage($to_userID, $u_id, $subject, $content)){
-      					// Success
-                SuccessHelper::push('You Have Successfully Sent a Private Message', 'Messages');
-                $data['hide_form'] = "true";
-      				}else{
-      					// Fail
-                $error[] = 'Message Send Failed';
-      				}
-            }else{
-              // To user's inbox is full.  Let sender know message was not sent
-              $error[] = '<b>${to_username}&#39;s Inbox is Full!</b>  Sorry, Message was NOT sent!';
-            }
-          }else{
-            // User does not exist
-            $error[] = 'Message Send Failed - To User Does Not Exist';
+        $reply = Request::post('reply');
+        // Check to see if this is coming from a reply button
+        if($reply != "true"){
+          // Check to make sure user completed all required fields in form
+          if(empty($to_username)){
+            // Username field is empty
+            $error[] = 'Username Field is Blank!';
           }
-        }// End Form Complete Check
+          if(empty($subject)){
+            // Subject field is empty
+            $error[] = 'Subject Field is Blank!';
+          }
+          if(empty($content)){
+            // Username field is empty
+            $error[] = 'Message Content Field is Blank!';
+          }
+          // Check for errors before sending message
+          if(count($error) == 0){
+            // Get the userID of to username
+            $to_userID = $this->model->getUserIDFromUsername($to_username);
+            // Check to make sure user exists in Database
+            if(isset($to_userID)){
+              // Check to see if to user's inbox is not full
+              if($this->model->checkMessageQuotaToUser($to_userID)){
+        				// Run the Activation script
+        				if($this->model->sendmessage($to_userID, $u_id, $subject, $content)){
+        					// Success
+                  SuccessHelper::push('You Have Successfully Sent a Private Message', 'Messages');
+                  $data['hide_form'] = "true";
+        				}else{
+        					// Fail
+                  $error[] = 'Message Send Failed';
+        				}
+              }else{
+                // To user's inbox is full.  Let sender know message was not sent
+                $error[] = '<b>${to_username}&#39;s Inbox is Full!</b>  Sorry, Message was NOT sent!';
+              }
+            }else{
+              // User does not exist
+              $error[] = 'Message Send Failed - To User Does Not Exist';
+            }
+          }// End Form Complete Check
+        }else{
+          // Get data from reply $_POST
+          $subject = Request::post('subject');
+          $content = Request::post('content');
+          $date_sent = Request::post('date_sent');
+          // Add Reply details to subject ex: RE:
+          $data['subject'] = "RE: ".$subject;
+          // Clean up content so it looks pretty
+          $content_reply = "&#10;&#10;&#10;&#10; ##########";
+          $content_reply .= "&#10; # PREVIOUS MESSAGE";
+          $content_reply .= "&#10; # From: $to_username";
+          $content_reply .= "&#10; # Sent: $date_sent ";
+          $content_reply .= "&#10; ########## &#10;&#10;";
+          $content_reply .= $content;
+          $content_reply = str_replace("<br />", " ", $content_reply);
+          $data['content'] = $content_reply;
+        }// End Reply Check
 			}
 		}
 
