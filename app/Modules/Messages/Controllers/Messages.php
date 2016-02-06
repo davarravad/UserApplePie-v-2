@@ -126,11 +126,18 @@ class Messages extends Controller{
             foreach($msg_id as $del_msg_id){
       				if($this->model->deleteMessageInbox($u_id, $del_msg_id)){
       					// Success
-                SuccessHelper::push('You Have Successfully Deleted Messages', 'MessagesInbox');
+                $m_del_success[] = true;
       				}else{
       					// Fail
-                ErrorHelper::push('Messages Delete Failed', 'MessagesInbox');
+                $m_del_error[] = true;
       				}
+            }
+            if(count($m_del_success) >= 1){
+              // Message Delete Success Display
+              SuccessHelper::push('You Have Successfully Deleted Messages', 'MessagesInbox');
+            }else if(count($m_del_error) >= 1){
+              // Message Delete Error Display
+              ErrorHelper::push('Messages Delete Failed', 'MessagesInbox');
             }
           }else{
             // Fail
@@ -144,12 +151,20 @@ class Messages extends Controller{
             foreach($msg_id as $del_msg_id){
       				if($this->model->markReadMessageInbox($u_id, $del_msg_id)){
       					// Success
-                SuccessHelper::push('You Have Successfully Marked Messages as Read', 'MessagesInbox');
+                $m_read_success[] = true;
       				}else{
       					// Fail
-                ErrorHelper::push('Mark Messages Read Failed', 'MessagesInbox');
+                $m_read_error[] = true;
       				}
             }
+            if(count($m_read_success) >= 1){
+              // Message Delete Success Display
+              SuccessHelper::push('You Have Successfully Marked Messages as Read', 'MessagesInbox');
+            }else if(count($m_read_error) >= 1){
+              // Message Delete Error Display
+              ErrorHelper::push('Mark Messages Read Failed', 'MessagesInbox');
+            }
+
           }else{
             // Fail
             ErrorHelper::push('Nothing Was Selected to be Marked as Read', 'MessagesInbox');
@@ -244,12 +259,20 @@ class Messages extends Controller{
             foreach($msg_id as $del_msg_id){
       				if($this->model->deleteMessageOutbox($u_id, $del_msg_id)){
       					// Success
-                SuccessHelper::push('You Have Successfully Deleted Messages', 'MessagesOutbox');
+                $m_del_success[] = true;
       				}else{
       					// Fail
-                ErrorHelper::push('Messages Delete Failed', 'MessagesOutbox');
+                $m_del_error[] = true;
       				}
             }
+            if(count($m_del_success) >= 1){
+              // Message Delete Success Display
+              SuccessHelper::push('You Have Successfully Deleted Messages', 'MessagesOutbox');
+            }else if(count($m_del_error) >= 1){
+              // Message Delete Error Display
+              ErrorHelper::push('Messages Delete Failed', 'MessagesOutbox');
+            }
+
           }else{
             // Fail
             ErrorHelper::push('Nothing Was Selected to be Deleted', 'MessagesOutbox');

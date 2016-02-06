@@ -55,8 +55,8 @@ use Core\Controller,
 
       // Send data to view
   		View::renderTemplate('header', $data);
-      View::renderModule('Forum/views/forum_sidebar', $data);
   		View::renderModule('Forum/views/forum_home', $data,$error,$success);
+      View::renderModule('Forum/views/forum_sidebar', $data);
   		View::renderTemplate('footer', $data);
     }
 
