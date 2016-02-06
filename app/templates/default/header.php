@@ -89,13 +89,14 @@ if(isset($cur_userID)){
 				<a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>
 				<img style='max-height: 20px; border-radius: 5px' alt='Brand' src='<?php echo Url::templatePath();?>images/logo.gif'>
 				</a>
-				<a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'>UserApplePie</a>
+				<a class='navbar-brand' href='<?php echo DIR; ?>' title='Home'><?php echo SITETITLE; ?></a>
 			</div>
 
 			<!-- Collect Left Main Links -->
 			<div id='navbar' class='navbar-collapse collapse'>
 				<ul class='nav navbar-nav'>
 				<li><a href='<?php echo DIR; ?>About'>About</a></li>
+				<li><a href='<?php echo DIR; ?>Forum'>Forum</a></li>
 				</ul>
 				<ul class='nav navbar-nav navbar-right'>
 				<?php if(ISLOGGEDIN != "true"){ ?>
@@ -136,7 +137,7 @@ if(isset($cur_userID)){
                                     <div class="col-lg-12">
                                         <p>
 											<a href='<?php echo DIR; ?>AccountSettings' title='Change Your Account Settings' class='btn btn-info btn-block btn-xs'> <span class='glyphicon glyphicon-briefcase' aria-hidden='true'></span> Account Settings</a>
-											<!-- <a href='<?php echo DIR; ?>PrivacySettings' title='Change Your Privacy Settings' class='btn btn-warning btn-block btn-xs'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Privacy Settings</a>-->
+											<a href='<?php echo DIR; ?>Messages' title='Private Messages' class='btn btn-danger btn-block btn-xs'> <span class='glyphicon glyphicon-envelope' aria-hidden='true'></span> Private Messages</a>
 											<?php if(in_array(4,$cu_groupID)){ // Display Admin Panel Links if User Is Admin ?>
 												<a href='<?php echo DIR; ?>AdminPanel' title='Open Admin Panel' class='btn btn-warning btn-block btn-xs'> <span class='glyphicon glyphicon-dashboard' aria-hidden='true'></span> Admin Panel</a>
 											<?php } ?>
