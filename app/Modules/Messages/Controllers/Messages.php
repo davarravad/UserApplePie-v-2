@@ -71,6 +71,8 @@ class Messages extends Controller{
 			<li><a href='".DIR."'>Home</a></li>
 			<li class='active'>Private Messages</li>
 		";
+
+    // Ready the token!
     $data['csrf_token'] = Csrf::makeToken();
 
     // Check for new messages in inbox
@@ -186,6 +188,7 @@ class Messages extends Controller{
     // Set total number of messages for paginator
     $total_num_messages = $this->model->getTotalMessages($u_id);
     $this->pages->setTotal($total_num_messages);
+    
     // Send page links to view
     $pageFormat = DIR."MessagesInbox/"; // URL page where pages are
     $data['pageLinks'] = $this->pages->pageLinks($pageFormat, null, $current_page);

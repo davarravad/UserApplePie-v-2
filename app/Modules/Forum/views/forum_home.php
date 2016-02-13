@@ -26,36 +26,78 @@ use Core\Language,
 		<div class='panel-body'>
 			<p><?php echo $data['welcome_message'] ?></p>
 				<?php
-					if(isset($data['message'])){
-            echo "<table class='table table-bordered table-striped responsive'>";
-						foreach($data['message'] as $row) {
-							echo "<tr>";
-              echo "<td>$row->subject</td>";
-              echo "</tr><tr><td>";
-              echo "<b>Date Sent:</b> ".date("F d, Y - g:i A",strtotime($row->date_sent))."<br>";
-              // Check to see if message is marked as read yet
-              if(isset($row->date_read)){
-                echo "<b>Date Read:</b> ".date("F d, Y - g:i A",strtotime($row->date_read))."<br>";
-              }
-							echo "<b>From:</b> <a href='".DIR."Profile/$row->username'>$row->username</a>";
-              echo "</td></tr><tr>";
-							echo "<td>$row->content</td>";
-							echo "</tr><tr><td>";
-                echo Form::open(array('method' => 'post', 'action' => DIR.'NewMessage'));
-                  echo "<input type='hidden' name='csrf_token' value='${data['csrf_token']}' />";
-                  echo "<input type='hidden' name='reply' value='true' />";
-                  echo "<input type='hidden' name='to_username' value='$row->username' />";
-                  echo "<input type='hidden' name='subject' value=\"$row->subject\" />";
-                  echo "<input type='hidden' name='content' value=\"$row->content\" />";
-                  echo "<input type='hidden' name='date_sent' value='".date("F d, Y - g:i A",strtotime($row->date_sent))."' />";
-                  echo "<button class='btn btn-md btn-success' name='submit' type='submit'>";
-                    echo "Reply";
-                  echo "</button>";
-                echo Form::close();
-              echo "</td></tr>";
-						}
-            echo "</table>";
-					}
+        foreach($data['forum_categories'] as $row)
+      	{
+      		$f_title = $row->forum_title;
+      		$f_id = $row->forum_id;
+      		$f_order_title = $row->forum_order_title;
+
+      		echo "<div class='panel panel-default'>";
+      			echo "<div class='panel-heading' style='font-weight: bold'>";
+
+              // Title Output
+              echo "$f_title";
+
+      			echo "</div>";
+      			echo "<ul class='list-group'>";
+      				foreach($data['forum_titles'] as $row2)
+      				{
+                if($f_title == $row2->forum_title){
+        					echo "<ul class='list-group-item'>";
+        						$f_cat = $row2->forum_cat;
+        						$f_des = $row2->forum_des;
+        						$f_id2 = $row2->forum_id;
+        						$cat_order_id = $row2->forum_order_cat;
+
+        						$f_des = stripslashes($f_des);
+        						$f_cat = stripslashes($f_cat);
+
+        						echo "<div class='media'>";
+        							echo "<div class='media-body'>";
+        								// Display Link To View Topics for Category.
+                        echo "<h4><a href='".DIR."Topics/$f_id2/' title='$f_cat' ALT='$f_cat'>$f_cat</a></h4>";
+        							echo "</div>";
+
+
+        								// Displays when on mobile device
+        								echo "<button href='#Bar$f_id2' class='btn btn-default btn-sm visible-xs' data-toggle='collapse' style='position: absolute; top: 3px; right: 3px'>";
+        									echo "<span class='glyphicon glyphicon-plus' aria-hidden='true'></span>";
+        								echo "</button>";
+
+        								echo "<div id='Bar$f_id2' class='collapse hidden-sm hidden-md hidden-lg'>";
+        								echo "<div style='text-align: center'>";
+        									// Display total number of topics for this category
+                          echo "<div class='btn btn-info btn-xs' style='margin-top: 5px'>";
+                          echo "Topics <span class='badge'>$row2->total_topics_display</span>";
+                          echo "</div>";
+        									echo " ";
+        									// Display total number of topic replys for this category
+                          echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'>";
+                          echo "Replies <span class='badge'>$row2->total_topic_replys_display</span>";
+                          echo "</div>";
+        								echo "</div>";
+        								echo "</div>";
+
+        								// Displays when not on mobile device
+        								echo "<div class='media-right hidden-xs' style='text-align: right'>";
+                        // Display total number of topics for this category
+                        echo "<div class='btn btn-info btn-xs' style='margin-top: 5px'>";
+                        echo "Topics <span class='badge'>$row2->total_topics_display</span>";
+                        echo "</div>";
+                        echo "<br>";
+                        // Display total number of topic replys for this category
+                        echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'>";
+                        echo "Replies <span class='badge'>$row2->total_topic_replys_display</span>";
+                        echo "</div>";
+        								echo "</div>";
+
+        						echo "</div>";
+        					echo "</ul>";
+                }
+      				}
+      			echo "</ul>";
+      		echo "</div>";
+      	}
 				?>
 		</div>
 	</div>

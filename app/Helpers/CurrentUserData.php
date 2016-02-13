@@ -54,4 +54,13 @@ class CurrentUserData
     return $user_groups;
   }
 
+  /**
+	 * Get current user's username from database
+	 */
+	public static function getUserName($where_id){
+		$data = self::$db->select("SELECT username FROM ".PREFIX."users WHERE userID = :userID",
+			array(':userID' => $where_id));
+		return $data[0]->username;
+	}
+
 }

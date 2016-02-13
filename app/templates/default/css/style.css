@@ -21,3 +21,14 @@
 {
     font-size: 87px;
 }
+.forum{
+	white-space: pre-line;
+	display: block;
+	unicode-bidi: embed;
+}
+pre.code {
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:11px;
+	width:100%;
+	overflow:auto;
+}
