@@ -165,6 +165,7 @@ class Paginator
      *
      * @param string $path optionally set the path for the link
      * @param string $ext optionally pass in extra parameters to the GET
+     * @param string $currentPage gets current page number for display
      *
      * @return string returns the html menu
      */
