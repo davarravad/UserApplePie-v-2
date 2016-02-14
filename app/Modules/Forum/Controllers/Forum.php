@@ -156,10 +156,14 @@ use Core\Controller,
       $data['topic_date'] = $this->model->topic_date($id);
       $data['topic_content'] = $this->model->topic_content($id);
       $data['topic_edit_date'] = $this->model->topic_edit_date($id);
+      $data['topic_status'] = $this->model->topic_status($id);
 
       // Check to see if current user owns the origianal post
       $data['current_userID'] = $u_id;
       $data['topic_userID'] = $this->model->topic_userID($id);
+
+      // Check to see if current user is admin
+      $data['is_admin'] = $this->auth->checkIsAdmin($u_id);
 
       // Get replys that are related to Requested Topic
       $data['topic_replys'] = $this->model->forum_topic_replys($id, $this->pagesReply->getLimit($current_page, FORUM_REPLY_PAGEINATOR_LIMIT));
@@ -264,7 +268,17 @@ use Core\Controller,
                     $error[] = 'New Topic Reply Create Failed';
           				}
               }// End Form Complete Check
-          }// End edit else
+          }else if($data['action'] == "lock_topic" && $data['is_admin'] == true){
+            // Update database with topic locked (2)
+            if($this->model->updateTopicLockStatus($id, "2")){
+              SuccessHelper::push('You Have Successfully Locked This Topic', 'Topic/'.$id);
+            }
+          }else if($data['action'] == "unlock_topic" && $data['is_admin'] == true){
+            // Update the database with topic unlocked (1)
+            if($this->model->updateTopicLockStatus($id, "1")){
+              SuccessHelper::push('You Have Successfully UnLocked This Topic', 'Topic/'.$id);
+            }
+          }// End Action Check
   			} // End token check
   		} // End post check
 

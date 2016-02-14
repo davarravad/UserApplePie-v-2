@@ -235,6 +235,18 @@ class Forum extends Model {
       return $data[0]->forum_user_id;
     }
 
+    // Function to get Topic Status (Locked = 2 or Open = 1)
+    public function topic_status($where_id){
+      $data = $this->db->select("
+        SELECT forum_status
+        FROM ".PREFIX."forum_posts
+        WHERE forum_post_id = :where_id
+        LIMIT 1
+      ",
+      array(':where_id' => $where_id));
+      return $data[0]->forum_status;
+    }
+
     // Function to get requested Topic Replys
     public function forum_topic_replys($where_id, $limit = null){
       $data = $this->db->select("
@@ -359,6 +371,19 @@ class Forum extends Model {
       ",
       array(':where_id' => $where_id));
       return $data[0]->fpr_user_id;
+    }
+
+    // Function to Edit Topic
+    public function updateTopicLockStatus($id, $setting){
+      // Update messages table
+      $query = $this->db->update(PREFIX.'forum_posts', array('forum_status' => $setting), array('forum_post_id' => $id));
+      $count = count($query);
+      // Check to make sure Topic was Created
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
     }
 
 }
