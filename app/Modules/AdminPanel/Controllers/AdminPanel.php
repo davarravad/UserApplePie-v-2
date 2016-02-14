@@ -233,7 +233,7 @@ class AdminPanel extends Controller{
     $data['welcome_message'] = "Welcome to the Groups Admin Panel";
     $data['groups_list'] = $this->model->getGroups($data['orderby']);
     $data['csrf_token'] = Csrf::makeToken();
-    
+
     // Setup Breadcrumbs
     $data['breadcrumbs'] = "
       <li><a href='".DIR."AdminPanel'><i class='fa fa-fw fa-cog'></i> Admin Panel</a></li>
@@ -248,7 +248,7 @@ class AdminPanel extends Controller{
         if($_POST['create_group'] == "true"){
           // Catch password inputs using the Request helper
           $ag_groupName = Request::post('ag_groupName');
-echo "$ag_groupName";
+//echo "$ag_groupName";
           // Run the update group script
           if($this->model->createGroup($ag_groupName)){
             // Success

@@ -961,4 +961,36 @@ class Auth {
         return $this->currentCookieInfo()['uid'];
     }
 
+    /**
+  	 * Check to see if Current User is Admin
+     * @param int $where_id (current user's userID)
+     * @return boolean (true/false)
+  	 */
+  	public function checkIsAdmin($where_id){
+      $user_groups = $this->db->select("
+          SELECT
+            groupID
+          FROM
+            ".PREFIX."users_groups
+          WHERE
+            userID = :userID
+          ",
+        array(':userID' => $where_id));
+        // Make sure user is logged in
+        if(isset($where_id)){
+        	// Get user's group status
+        	foreach($user_groups as $user_group_data){
+        		$cu_groupID[] = $user_group_data->groupID;
+        	}
+        }
+        // Set which group(s) are admin (4)
+        if(in_array(4,$cu_groupID)){
+          // User is Admin
+          return true;
+        }else{
+          // User Not Admin
+          return false;
+        }
+  	}
+
 }

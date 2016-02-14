@@ -25,6 +25,12 @@ use Core\Language,
 	<div class='panel panel-default'>
 		<div class='panel-heading'>
 			<h3 class='jumbotron-heading'><?php echo $data['title'] ?></h3>
+      <?php
+          // Display Locked Message if Topic has been locked by admin
+          if($data['topic_status'] == 2){
+            echo " <strong><font color='red'>Topic Locked</font></strong> ";
+          }
+       ?>
 		</div>
 		<div class='panel-body'>
 				<?php
@@ -198,28 +204,33 @@ use Core\Language,
 
       	}
 
-        // Display Create New Topic Reply Button if user is logged in
-        if(isset($data['current_userID'])){
+        // Display Locked Message if Topic has been locked by admin
+        if($data['topic_status'] == 2){
+          echo " <strong><font color='red'>Topic Locked - Replies are Disabled</font></strong> ";
+        }else{
+          // Display Create New Topic Reply Button if user is logged in
+          if(isset($data['current_userID'])){
 ?>
-          <hr>
-          <?php echo Form::open(array('method' => 'post')); ?>
+            <hr>
+            <?php echo Form::open(array('method' => 'post')); ?>
 
-          <!-- Topic Reply Content -->
-          <div class='input-group' style='margin-bottom: 25px'>
-            <span class='input-group-addon'><i class='glyphicon glyphicon-pencil'></i> </span>
-            <?php echo Form::textBox(array('type' => 'text', 'name' => 'fpr_content', 'class' => 'form-control', 'value' => $data['fpr_content'], 'placeholder' => 'Topic Reply Content', 'rows' => '6')); ?>
-          </div>
+            <!-- Topic Reply Content -->
+            <div class='input-group' style='margin-bottom: 25px'>
+              <span class='input-group-addon'><i class='glyphicon glyphicon-pencil'></i> </span>
+              <?php echo Form::textBox(array('type' => 'text', 'name' => 'fpr_content', 'class' => 'form-control', 'value' => $data['fpr_content'], 'placeholder' => 'Topic Reply Content', 'rows' => '6')); ?>
+            </div>
 
-            <!-- CSRF Token -->
-            <input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
-            <input type='hidden' name='action' value='new_reply' />
-            <button class="btn btn-md btn-success" name="submit" type="submit">
-              <?php // echo Language::show('update_profile', 'Auth'); ?>
-              Submit New Reply
-            </button>
-          <?php echo Form::close(); ?>
-          <hr>
+              <!-- CSRF Token -->
+              <input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
+              <input type='hidden' name='action' value='new_reply' />
+              <button class="btn btn-md btn-success" name="submit" type="submit">
+                <?php // echo Language::show('update_profile', 'Auth'); ?>
+                Submit New Reply
+              </button>
+            <?php echo Form::close(); ?>
+            <hr>
 <?php
+          }
         }
 
         // Display Paginator Links
@@ -232,6 +243,23 @@ use Core\Language,
           echo "</div>";
         }
 
+        // Display Admin Lock/UnLock Button
+        // Check if Admin
+        if($data['is_admin'] == true){
+          echo Form::open(array('method' => 'post'));
+            if($data['topic_status'] == 2){
+              // UnLock Button
+              echo "<input type='hidden' name='action' value='unlock_topic' />";
+              echo "<button class='btn btn-xs btn-warning' name='submit' type='submit'>UnLock Topic</button>";
+            }else{
+              // Lock Button
+              echo "<input type='hidden' name='action' value='lock_topic' />";
+              echo "<button class='btn btn-xs btn-danger' name='submit' type='submit'>Lock Topic</button>";
+            }
+          // CSRF Token
+          echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
+          echo Form::close();
+        }
 				?>
 		</div>
 	</div>
