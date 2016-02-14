@@ -34,7 +34,7 @@ foreach($data['forum_recent_posts'] as $row_rp)
   // Set the incrament of each post
   if(isset($vm_id_a_rp)){ $vm_id_a_rp++; }else{ $vm_id_a_rp = "1"; };
 
-  $f_p_title = strlen($f_p_title) > 30 ? substr($f_p_title, 0, 30) . ".." : $f_p_title;
+  $f_p_title = strlen($f_p_title) > 30 ? substr($f_p_title, 0, 34) . ".." : $f_p_title;
 
   //If no reply show created by
   if($rp_timestamp2 == NULL){
@@ -45,9 +45,10 @@ foreach($data['forum_recent_posts'] as $row_rp)
     echo "</strong>";
     echo "<br>";
     //Display how long ago this was posted
-    $timestart = "$f_p_timestamp";  //Time of post
+    $timestart = $f_p_timestamp;  //Time of post
     echo " <font color=green> " . TimeDiff::dateDiff("now", "$timestart", 1) . " ago</font> ";
     //echo "($f_p_timestamp)"; // Test timestamp
+    unset($timestart, $f_p_timestamp);
     echo "</ul>";
   }else{
     $rp_user_name2 = CurrentUserData::getUserName($rp_user_id2);
@@ -58,7 +59,7 @@ foreach($data['forum_recent_posts'] as $row_rp)
     echo "<a href='".DIR."Topic/$f_p_id/' title='$f_p_title' ALT='$f_p_title'>$f_p_title</a>";
     echo "</strong>";
     //Display how long ago this was posted
-    $timestart = "$rp_timestamp2";  //Time of post
+    $timestart = $rp_timestamp2;  //Time of post
     echo "<br><font color=green> " . TimeDiff::dateDiff("now", "$timestart", 1) . " ago</font> ";
     unset($timestart, $rp_timestamp2);
     echo "</ul>";
