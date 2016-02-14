@@ -1,6 +1,12 @@
 <?php
-
-// Display a given message as requested by post from inbox or outbox
+/**
+ * Forum Topics List View
+ *
+ * @author David "DaVaR" Sargent - davar@thedavar.net
+ * @version 2.0
+ * @date Jan 13, 2016
+ * @date updated Jan 13, 2016
+ */
 
 use Core\Language,
   Helpers\ErrorHelper,

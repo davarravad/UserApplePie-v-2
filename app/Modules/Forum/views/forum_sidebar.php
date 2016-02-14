@@ -1,6 +1,12 @@
 <?php
-
-  // View to display message sidebar
+/**
+ * Forum Recent Posts Side Bar View
+ *
+ * @author David "DaVaR" Sargent - davar@thedavar.net
+ * @version 2.0
+ * @date Jan 13, 2016
+ * @date updated Jan 13, 2016
+ */
 
   use Core\Language;
   use Helpers\TimeDiff;
