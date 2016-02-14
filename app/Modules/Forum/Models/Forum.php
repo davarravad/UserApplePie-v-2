@@ -1,6 +1,12 @@
 <?php
-
-// Forum Model Class Database Goods
+/**
+ * Forum model
+ *
+ * @author David "DaVaR" Sargent - davar@thedavar.net
+ * @version 2.0
+ * @date Jan 13, 2016
+ * @date updated Jan 13, 2016
+ */
 
 namespace Modules\Forum\Models;
 
@@ -8,7 +14,13 @@ use Core\Model;
 
 class Forum extends Model {
 
-// Function to get list of all enabled forum categories
+  /**
+   * forum_categories
+   *
+   * get list of all enabled forum categories.
+   *
+   * @return array returns all categories
+   */
   public function forum_categories(){
     $data = $this->db->select("
         SELECT
@@ -26,7 +38,13 @@ class Forum extends Model {
     return $data;
   }
 
-  // Function to get list of all enabled forum categories
+  /**
+   * forum_titles
+   *
+   * get list of all enabled forum titles.
+   *
+   * @return array returns all titles
+   */
     public function forum_titles(){
       $data = $this->db->select("
           SELECT
@@ -52,7 +70,13 @@ class Forum extends Model {
       return $data;
     }
 
-    // Function to get list of newest recent forum posts and replys.
+    /**
+     * forum_recent_posts
+     *
+     * get list of all recent posts in forum ordered by date.
+     *
+     * @return array returns all recent forum posts
+     */
     public function forum_recent_posts(){
       $data = $this->db->select("
         SELECT sub.*
@@ -80,7 +104,15 @@ class Forum extends Model {
       return $data;
     }
 
-    // Function to get category data for current topic (Category)
+    /**
+     * forum_cat
+     *
+     * get category data for current topic (Category)
+     *
+     * @param int $where_id = forum_id
+     *
+     * @return string returns forum category data (forum_cat)
+     */
     public function forum_cat($where_id){
       $data = $this->db->select("
         SELECT forum_cat
@@ -92,7 +124,15 @@ class Forum extends Model {
       return $data[0]->forum_cat;
     }
 
-    // Function to get category data for current topic (Description)
+    /**
+     * forum_cat_des
+     *
+     * get category data for current topic (Description)
+     *
+     * @param int $where_id = forum_id
+     *
+     * @return string returns forum category data (forum_des)
+     */
     public function forum_cat_des($where_id){
       $data = $this->db->select("
         SELECT forum_des
@@ -104,7 +144,15 @@ class Forum extends Model {
       return $data[0]->forum_des;
     }
 
-    // Function to get category data for current topic (Title)
+    /**
+     * forum_title
+     *
+     * get category data for current topic (Title)
+     *
+     * @param int $where_id = forum_id
+     *
+     * @return string returns forum category data (forum_title)
+     */
     public function forum_title($where_id){
       $data = $this->db->select("
         SELECT forum_title
@@ -116,7 +164,16 @@ class Forum extends Model {
       return $data[0]->forum_title;
     }
 
-    // Function to get list of topics for given category
+    /**
+     * forum_topics
+     *
+     * get list of topics for given category
+     *
+     * @param int $where_id = forum_id
+     * @param string $limit data from Paginator class
+     *
+     * @return array returns forum topics list data
+     */
     public function forum_topics($where_id, $limit = null){
       $data = $this->db->select("
       SELECT
@@ -151,7 +208,15 @@ class Forum extends Model {
       return $data;
     }
 
-    // Function to get category ID that Topic is related to
+    /**
+     * forum_topic_cat_id
+     *
+     * get category ID that Topic is related to
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum category data (forum_id)
+     */
     public function forum_topic_cat_id($where_id){
       $data = $this->db->select("
         SELECT forum_id
@@ -163,7 +228,15 @@ class Forum extends Model {
       return $data[0]->forum_id;
     }
 
-    // Function to get Topic Title for header
+    /**
+     * topic_title
+     *
+     * get Topic Title for header
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_title)
+     */
     public function topic_title($where_id){
       $data = $this->db->select("
         SELECT forum_title
@@ -175,7 +248,15 @@ class Forum extends Model {
       return $data[0]->forum_title;
     }
 
-    // Function to get Topic Creator userID
+    /**
+     * topic_creator
+     *
+     * get Topic Creator userID
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_user_id)
+     */
     public function topic_creator($where_id){
       $data = $this->db->select("
         SELECT forum_user_id
@@ -187,7 +268,15 @@ class Forum extends Model {
       return $data[0]->forum_user_id;
     }
 
-    // Function to get Topic Creator userID
+    /**
+     * topic_date
+     *
+     * get Topic timestamp for age
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_timestamp)
+     */
     public function topic_date($where_id){
       $data = $this->db->select("
         SELECT forum_timestamp
@@ -199,7 +288,15 @@ class Forum extends Model {
       return $data[0]->forum_timestamp;
     }
 
-    // Function to get Topic Creator userID
+    /**
+     * topic_content
+     *
+     * get Topic Content data
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_content)
+     */
     public function topic_content($where_id){
       $data = $this->db->select("
         SELECT forum_content
@@ -211,7 +308,15 @@ class Forum extends Model {
       return $data[0]->forum_content;
     }
 
-    // Function to get Topic Creator userID
+    /**
+     * topic_edit_date
+     *
+     * get Topic Content last edit date for age
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_edit_date)
+     */
     public function topic_edit_date($where_id){
       $data = $this->db->select("
         SELECT forum_edit_date
@@ -223,7 +328,15 @@ class Forum extends Model {
       return $data[0]->forum_edit_date;
     }
 
-    // Function to get Topic Creator userID
+    /**
+     * topic_userID
+     *
+     * get Topic Content owner userID
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_user_id)
+     */
     public function topic_userID($where_id){
       $data = $this->db->select("
         SELECT forum_user_id
@@ -235,7 +348,15 @@ class Forum extends Model {
       return $data[0]->forum_user_id;
     }
 
-    // Function to get Topic Status (Locked = 2 or Open = 1)
+    /**
+     * topic_status
+     *
+     * get Topic Status (Locked = 2 or Open = 1)
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_status)
+     */
     public function topic_status($where_id){
       $data = $this->db->select("
         SELECT forum_status
@@ -247,7 +368,16 @@ class Forum extends Model {
       return $data[0]->forum_status;
     }
 
-    // Function to get requested Topic Replys
+    /**
+     * forum_topic_replys
+     *
+     * get list of topic replies for given topic
+     *
+     * @param int $where_id = fpr_post_id
+     * @param string $limit data from Paginator class
+     *
+     * @return array returns forum topic reply list data
+     */
     public function forum_topic_replys($where_id, $limit = null){
       $data = $this->db->select("
         SELECT
@@ -265,7 +395,15 @@ class Forum extends Model {
       return $data;
     }
 
-    // Function to get total count of topic replys for topic
+    /**
+     * getTotalReplys
+     *
+     * get total count of topic replys for topic
+     *
+     * @param int $where_id = fpr_post_id
+     *
+     * @return int returns forum topic reply count
+     */
     public function getTotalReplys($where_id){
       $data = $this->db->select("
         SELECT
@@ -282,7 +420,18 @@ class Forum extends Model {
       return count($data);
     }
 
-    // Function to Create New Topic
+    /**
+     * sendTopic
+     *
+     * create new topic
+     *
+     * @param int $forum_user_id Current user's ID
+     * @param int $forum_id Current Category's ID
+     * @param string $forum_title New topic's title
+     * @param string $forum_content New topic's content
+     *
+     * @return booleen true/false
+     */
     public function sendTopic($forum_user_id, $forum_id, $forum_title, $forum_content){
       // Format the Content for database
       $forum_content = nl2br($forum_content);
@@ -297,7 +446,17 @@ class Forum extends Model {
       }
     }
 
-    // Function to Edit Topic
+    /**
+     * updateTopic
+     *
+     * edit/update topic
+     *
+     * @param int $id Current Topic's ID
+     * @param string $forum_title Topic's title
+     * @param string $forum_content Topic's content
+     *
+     * @return booleen true/false
+     */
     public function updateTopic($id, $forum_title, $forum_content){
       // Update messages table
       $query = $this->db->update(PREFIX.'forum_posts', array('forum_title' => $forum_title, 'forum_content' => $forum_content, 'forum_edit_date' => date('Y-m-d H:i:s')), array('forum_post_id' => $id));
@@ -310,7 +469,15 @@ class Forum extends Model {
       }
     }
 
-    // Function to get topic userID
+    /**
+     * getTotalOwner
+     *
+     * get topic owner's user ID
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string returns forum topic data (forum_user_id)
+     */
     public function getTopicOwner($where_id){
       $data = $this->db->select("
         SELECT forum_user_id
@@ -322,7 +489,18 @@ class Forum extends Model {
       return $data[0]->forum_user_id;
     }
 
-    // Function to Create New Topic Reply
+    /**
+     * sendTopicReply
+     *
+     * create new topic reply
+     *
+     * @param int $fpr_user_id Current user ID
+     * @param int $fpr_post_id Current Category ID
+     * @param int $fpr_id Current Topic ID
+     * @param string $forum_content New Reply's Content
+     *
+     * @return booleen true/false
+     */
     public function sendTopicReply($fpr_user_id, $fpr_post_id, $fpr_id, $fpr_content){
       // Update messages table
       $query = $this->db->insert(PREFIX.'forum_posts_replys', array('fpr_post_id' => $fpr_post_id, 'fpr_user_id' => $fpr_user_id, 'fpr_id' => $fpr_id, 'fpr_content' => $fpr_content));
@@ -335,7 +513,15 @@ class Forum extends Model {
       }
     }
 
-    // Function to get last topic reply inserted ID
+    /**
+     * lastTopicReplyID
+     *
+     * get last topic reply inserted ID
+     *
+     * @param int $where_id = fpr_post_id
+     *
+     * @return string returns forum topic reply data (id)
+     */
     public function lastTopicReplyID($where_id){
       $data = $this->db->select("
         SELECT id
@@ -348,7 +534,16 @@ class Forum extends Model {
       return $data[0]->id;
     }
 
-    // Function to Edit Topic Reply
+    /**
+     * updateTopicReply
+     *
+     * edit topic reply
+     *
+     * @param int $id Current Topic ID
+     * @param string $fpr_content New Reply's Content
+     *
+     * @return booleen true/false
+     */
     public function updateTopicReply($id, $fpr_content){
       // Update messages table
       $query = $this->db->update(PREFIX.'forum_posts_replys', array('fpr_content' => $fpr_content, 'fpr_edit_date' => date('Y-m-d H:i:s')), array('id' => $id));
@@ -361,7 +556,15 @@ class Forum extends Model {
       }
     }
 
-    // Function to get topic reply userID
+    /**
+     * getReplyOwner
+     *
+     * get topic reply owner user ID
+     *
+     * @param int $where_id = id
+     *
+     * @return string returns forum topic reply data (fpr_user_id)
+     */
     public function getReplyOwner($where_id){
       $data = $this->db->select("
         SELECT fpr_user_id
@@ -373,7 +576,16 @@ class Forum extends Model {
       return $data[0]->fpr_user_id;
     }
 
-    // Function to Edit Topic
+    /**
+     * updateTopicLockStatus
+     *
+     * edit topic lock/unlock status
+     *
+     * @param int $id Current Topic ID
+     * @param int $setting (1)Open (2)Locked 
+     *
+     * @return booleen true/false
+     */
     public function updateTopicLockStatus($id, $setting){
       // Update messages table
       $query = $this->db->update(PREFIX.'forum_posts', array('forum_status' => $setting), array('forum_post_id' => $id));
