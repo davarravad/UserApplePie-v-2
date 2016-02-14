@@ -40,6 +40,8 @@ use Core\Language,
 		</div>
 		<div class='panel-body'>
 				<?php
+        // Display Views Count
+        echo "<div class='btn btn-xs btn-info'>Views <span class='badge'>".$data['PageViews']."</span></div><hr>";
 
         // Topic Display
     		echo "<div class='panel panel-default'>";

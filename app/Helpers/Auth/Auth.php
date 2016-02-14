@@ -982,6 +982,8 @@ class Auth {
         	foreach($user_groups as $user_group_data){
         		$cu_groupID[] = $user_group_data->groupID;
         	}
+        }else{
+          $cu_groupID[] = "0";
         }
         // Set which group(s) are admin (4)
         if(in_array(4,$cu_groupID)){

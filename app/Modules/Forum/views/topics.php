@@ -13,7 +13,8 @@ use Core\Language,
   Helpers\SuccessHelper,
   Helpers\Form,
   Helpers\TimeDiff,
-  Helpers\CurrentUserData;
+  Helpers\CurrentUserData,
+  Helpers\PageViews;
 
 ?>
 
@@ -100,14 +101,15 @@ use Core\Language,
                       echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'>";
                   		  echo "Replies <span class='badge'>$row2->total_topic_replys</span>";
                   		echo "</div>";
-//                      total_topic_replys_display_a($f_p_id);
                       echo "<br>";
                       // Display total sweets
                       // ex=(sweet_id, sweet_sec_id, 'sweet_sub', 'sweet_location')
 //                      total_topic_sweets($f_p_id, NULL, 'sweet', 'forum_posts');
                       echo "<Br>";
                       // Display total views
-//                      total_topic_views($f_p_id, NULL, 'views', 'diy');
+                      echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'> Views <span class='badge'>";
+                        echo PageViews::views('false', $f_p_id, 'Forum_Topic', $data['current_userID']);
+                      echo "</span></div>";
                     echo "</div>";
                     echo "<div class='col-md-3 col-sm-3 col-xs-6' style='text-align: right'>";
                       // Check to see if there has been a reply for this topic.  If not then don't show anything.
