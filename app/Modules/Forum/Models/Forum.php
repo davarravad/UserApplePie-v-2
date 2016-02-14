@@ -70,7 +70,7 @@ class Forum extends Model {
           FROM ".PREFIX."forum_posts fp
           LEFT JOIN ".PREFIX."forum_posts_replys fpr
           ON fp.forum_post_id = fpr.fpr_post_id
-          ORDER BY tstamp DESC
+          ORDER BY fp.forum_timestamp, fpr.fpr_timestamp DESC
         ) sub
 
         GROUP BY forum_post_id
