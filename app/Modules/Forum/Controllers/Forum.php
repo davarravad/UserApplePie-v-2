@@ -18,7 +18,8 @@ use Core\Controller,
   Helpers\Request,
   Helpers\Url,
   Helpers\SuccessHelper,
-  Helpers\ErrorHelper;
+  Helpers\ErrorHelper,
+  Helpers\PageViews;
 
   // Move this to Core\Config.php
   /**
@@ -290,6 +291,9 @@ use Core\Controller,
           }// End Action Check
   			} // End token check
   		} // End post check
+
+      // Update and Get Views Data
+      $data['PageViews'] = PageViews::views('true', $id, 'Forum_Topic', $u_id);
 
       // Get Recent Posts List for Sidebar
       $data['forum_recent_posts'] = $this->model->forum_recent_posts();
