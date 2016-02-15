@@ -19,7 +19,8 @@ use Core\Controller,
   Helpers\Url,
   Helpers\SuccessHelper,
   Helpers\ErrorHelper,
-  Helpers\PageViews;
+  Helpers\PageViews,
+  Helpers\Sweets;
 
   // Move this to Core\Config.php
   /**
@@ -161,6 +162,7 @@ use Core\Controller,
       $data['forum_topics'] = $this->model->forum_topics($topic_forum_id);
 
       // Get Requested Topic Information
+      $data['topic_id'] = $id;
       $data['title'] = $this->model->topic_title($id);
       $data['topic_creator'] = $this->model->topic_creator($id);
       $data['topic_date'] = $this->model->topic_date($id);
@@ -171,6 +173,11 @@ use Core\Controller,
       // Check to see if current user owns the origianal post
       $data['current_userID'] = $u_id;
       $data['topic_userID'] = $this->model->topic_userID($id);
+
+      // Get current page number
+      if($current_page > 1){
+        $data['current_page'] = $current_page;
+      }
 
       // Check to see if current user is admin
       $data['is_admin'] = $this->auth->checkIsAdmin($u_id);

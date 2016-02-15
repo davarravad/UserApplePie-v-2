@@ -5,9 +5,9 @@
  * Automaticly adds view count to db when enabled
  *
  * @author David "DaVaR" Sargent - davar@thedavar.net
- * @version 2.0
- * @date Jan 13, 2016
- * @date updated Jan 13, 2016
+ * @version 2.2
+ * @date Jan 14, 2016
+ * @date updated Jan 14, 2016
  */
 
 namespace Helpers;
@@ -29,7 +29,7 @@ class PageViews
  * @param int $view_id (ID of post where view is)
  * @param int $view_owner_userid (ID of user viewing)
  *
- * @return string returns forum category data (forum_id)
+ * @return string returns views count
  */
   public static function views($addView = null, $view_id = null, $view_location = null, $view_owner_userid = "0"){
     // Get data from server
@@ -41,7 +41,7 @@ class PageViews
 
     // Check to see if user is a guest... then set their id to 0
     if($view_owner_userid == null){$view_owner_userid = "0";};
-    
+
     // Check to see if current user has already viewed page
     self::$db = Database::get();
     $already_view_data = self::$db->select("

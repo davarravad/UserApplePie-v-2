@@ -14,7 +14,8 @@ use Core\Language,
   Helpers\Form,
   Helpers\TimeDiff,
   Helpers\CurrentUserData,
-  Helpers\PageViews;
+  Helpers\PageViews,
+  Helpers\Sweets;
 
 ?>
 
@@ -103,8 +104,7 @@ use Core\Language,
                   		echo "</div>";
                       echo "<br>";
                       // Display total sweets
-                      // ex=(sweet_id, sweet_sec_id, 'sweet_sub', 'sweet_location')
-//                      total_topic_sweets($f_p_id, NULL, 'sweet', 'forum_posts');
+                      echo Sweets::getTotalSweets($f_p_id, 'Forum_Topic', 'Forum_Topic_Reply');
                       echo "<Br>";
                       // Display total views
                       echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'> Views <span class='badge'>";
@@ -127,23 +127,22 @@ use Core\Language,
                   echo "<div class='col-xs-12'>";
                     // Display total replys
                     // Display total topic replys
-                    echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'>";
+                    echo "<div class='btn btn-info btn-xs'>";
                       echo "Replies <span class='badge'>$row2->total_topic_replys</span>";
                     echo "</div>";
-                    echo "<br>";
                     // Display total sweets
-                    // ex=(sweet_id, sweet_sec_id, 'sweet_sub', 'sweet_location')
-  //                      total_topic_sweets($f_p_id, NULL, 'sweet', 'forum_posts');
-//                    echo "<Br>";
+                    echo Sweets::getTotalSweets($f_p_id, 'Forum_Topic', 'Forum_Topic_Reply');
                     // Display total views
-  //                      total_topic_views($f_p_id, NULL, 'views', 'diy');
+                    echo "<div class='btn btn-info btn-xs'> Views <span class='badge'>";
+                      echo PageViews::views('false', $f_p_id, 'Forum_Topic', $data['current_userID']);
+                    echo "</span></div>";
 
                     // Check to see if there has been a reply for this topic.  If not then don't show anything.
                     if(isset($row2->LR_UserID)){
                       // Display Last Reply User Name
                       $rp_user_name2 = CurrentUserData::getUserName($row2->LR_UserID);
                       //Display how long ago this was posted
-                      echo " Last Reply by <a href='".DIR."Profile/$row2->LR_UserID/' style='font-weight: bold'>$rp_user_name2</a> " . TimeDiff::dateDiff("now", "$row2->LR_TimeStamp", 1) . " ago ";
+                      echo "<Br> Last Reply by <a href='".DIR."Profile/$row2->LR_UserID/' style='font-weight: bold'>$rp_user_name2</a> " . TimeDiff::dateDiff("now", "$row2->LR_TimeStamp", 1) . " ago ";
                     }
                   echo "</div>";
                 echo "</div>";
