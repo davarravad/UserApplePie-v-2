@@ -14,7 +14,8 @@ use Core\Language,
   Helpers\Form,
   Helpers\TimeDiff,
   Helpers\CurrentUserData,
-  Helpers\BBCode;
+  Helpers\BBCode,
+  Helpers\Sweets;
 
 ?>
 
@@ -41,7 +42,10 @@ use Core\Language,
 		<div class='panel-body'>
 				<?php
         // Display Views Count
-        echo "<div class='btn btn-xs btn-info'>Views <span class='badge'>".$data['PageViews']."</span></div><hr>";
+        echo "<div class='btn btn-xs btn-info'>Views <span class='badge'>".$data['PageViews']."</span></div>";
+        // Display Total Sweets Count for Topic and All Replys
+        echo Sweets::getTotalSweets($data['topic_id'], 'Forum_Topic', 'Forum_Topic_Reply');
+        echo "<hr>";
 
         // Topic Display
     		echo "<div class='panel panel-default'>";
@@ -94,17 +98,19 @@ use Core\Language,
   					echo "</div>";
   					echo "<div class='col-lg-6 col-md-6 col-sm-6' style='text-align:right'>";
   						//Start Sweet
-
+              $sweet_url = "Topic/".$data['topic_id'];
+              echo Sweets::displaySweetsButton($data['topic_id'], 'Forum_Topic', $data['current_userID'], "0", $sweet_url);
+              echo Sweets::getSweets($data['topic_id'], 'Forum_Topic');
               // If user owns this content show forum buttons for edit and delete
               // Hide button if they are currently editing this topic or any replys
               if($data['action'] != "edit_reply" && $data['action'] != "edit_topic" && $data['current_userID'] == $data['topic_userID']){
-                echo Form::open(array('method' => 'post'));
+                echo Form::open(array('method' => 'post', 'style' => 'display:inline'));
                 // Topic Reply Edit True
                 echo "<input type='hidden' name='action' value='edit_topic' />";
                 // CSRF Token
                 echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
                 // Display Submit Button
-                echo "<button class='btn btn-xs btn-success' name='submit' type='submit'>Edit Topic</button>";
+                echo "<button class='btn btn-xs btn-info' name='submit' type='submit'>Edit Topic</button>";
                 echo Form::close();
               }
   					echo "</div>";
@@ -190,11 +196,13 @@ use Core\Language,
 								echo "</div>";
 								echo "<div class='col-lg-6 col-md-6 col-sm-6' style='text-align:right'>";
 									//Start Sweet
-
+                  $sweet_url = "Topic/".$data['topic_id']."/".$data['current_page']."/#topicreply".$rf_p_main_id;
+                  echo Sweets::displaySweetsButton($data['topic_id'], 'Forum_Topic_Reply', $data['current_userID'], $rf_p_main_id, $sweet_url);
+                  echo Sweets::getSweets($data['topic_id'], 'Forum_Topic_Reply', $rf_p_main_id);
                   // If user owns this content show forum buttons for edit and delete
                   // Hide button if they are currently editing this reply
                   if($data['action'] != "edit_reply" && $data['action'] != "edit_topic" && $data['current_userID'] == $rf_p_user_id){
-                    echo Form::open(array('method' => 'post', 'action' => '#topicreply'.$rf_p_main_id));
+                    echo Form::open(array('method' => 'post', 'action' => '#topicreply'.$rf_p_main_id, 'style' => 'display:inline'));
                     // Topic Reply Edit True
                     echo "<input type='hidden' name='action' value='edit_reply' />";
                     // Topic Reply ID for editing
@@ -202,7 +210,7 @@ use Core\Language,
                     // CSRF Token
                     echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
                     // Display Submit Button
-                    echo "<button class='btn btn-xs btn-success' name='submit' type='submit'>Edit Reply</button>";
+                    echo "<button class='btn btn-xs btn-info' name='submit' type='submit'>Edit Reply</button>";
                     echo Form::close();
                   }
 								echo "</div>";
