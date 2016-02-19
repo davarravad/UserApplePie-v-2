@@ -582,7 +582,7 @@ class Forum extends Model {
      * edit topic lock/unlock status
      *
      * @param int $id Current Topic ID
-     * @param int $setting (1)Open (2)Locked 
+     * @param int $setting (1)Open (2)Locked
      *
      * @return booleen true/false
      */
@@ -597,5 +597,186 @@ class Forum extends Model {
         return false;
       }
     }
+
+    /**
+     * checkUserPosted
+     *
+     * checks if current user has posted to topic
+     *
+     * @param int $post_id = current topic ID
+     * @param int $userID = current user ID
+     *
+     * @return boolean has user posted (true/false)
+     */
+    public function checkUserPosted($post_id, $user_id){
+      $data = $this->db->select("
+      SELECT * FROM (
+  			 (
+  			 SELECT *
+  			 FROM ".PREFIX."forum_posts_replys
+  			 WHERE fpr_post_id = :post_id
+  			 AND fpr_user_id = :user_id
+  			 )
+  			 UNION ALL
+  			 (
+  			 SELECT *
+  			 FROM ".PREFIX."forum_posts
+  			 WHERE forum_post_id = :post_id
+  			 AND forum_user_id = :user_id
+  			 )
+  		) AS uniontable
+      ",
+      array(':post_id' => $post_id, ':user_id' => $user_id));
+      $count = count($data);
+      if($count > 0){
+        return true;
+      }else {
+        return false;
+      }
+    }
+
+    /**
+     * checkTopicSubcribe
+     *
+     * checks if current user is subcribed to topic
+     *
+     * @param int $post_id = current topic ID
+     * @param int $userID = current user ID
+     *
+     * @return boolean is user subcribed (true/false)
+     */
+    public function checkTopicSubcribe($post_id, $user_id){
+      $data = $this->db->select("
+      SELECT * FROM (
+  			 (
+  			 SELECT *
+  			 FROM ".PREFIX."forum_posts_replys
+  			 WHERE fpr_post_id = :post_id
+  			 AND fpr_user_id = :user_id
+         AND subcribe_email = 'true'
+  			 )
+  			 UNION ALL
+  			 (
+  			 SELECT *
+  			 FROM ".PREFIX."forum_posts
+  			 WHERE forum_post_id = :post_id
+  			 AND forum_user_id = :user_id
+         AND subcribe_email = 'true'
+  			 )
+  		) AS uniontable
+      ",
+      array(':post_id' => $post_id, ':user_id' => $user_id));
+      $count = count($data);
+      if($count > 0){
+        return true;
+      }else {
+        return false;
+      }
+    }
+
+    /**
+     * updateTopicSubcrition
+     *
+     * edit user's topic subcrition status (true/false)
+     *
+     * @param int $id Current Topic ID
+     * @param int $user_id
+     * @param int $setting (1)Open (2)Locked
+     *
+     * @return booleen true/false
+     */
+    public function updateTopicSubcrition($id, $user_id, $setting){
+      // Update messages table
+      $query_a = $this->db->update(PREFIX.'forum_posts', array('subcribe_email' => $setting), array('forum_post_id' => $id, 'forum_user_id' => $user_id));
+      $query_b = $this->db->update(PREFIX.'forum_posts_replys', array('subcribe_email' => $setting), array('fpr_post_id' => $id, 'fpr_user_id' => $user_id));
+      $count_a = count($query_a);
+      $count_b = count($query_b);
+      $count = $count_a + $count_b;
+      // Check to make sure Topic was Created
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    /**
+     * getTopicSubcribeEmail
+     *
+     * get list of emails of all subcribed users to topic
+     * sends email to all the users subcribed
+     *
+     * @param int $post_id = current topic ID
+     * @param int $userID = current user ID
+     *
+     */
+    public function sendTopicSubcribeEmails($post_id, $user_id, $topic_title, $topic_cat, $reply_content){
+      // Get userID's for all that are set to be notified except current user
+      $data = $this->db->select("
+        SELECT * FROM (
+          (
+          SELECT fpr_user_id AS F_UID
+          FROM ".PREFIX."forum_posts_replys
+          WHERE fpr_post_id = :post_id
+          AND subcribe_email = 'true'
+          AND NOT fpr_user_id = :userID
+          GROUP BY fpr_user_id
+          ORDER BY fpr_timestamp DESC
+          )
+          UNION ALL
+          (
+          SELECT forum_user_id AS F_UID
+          FROM ".PREFIX."forum_posts
+          WHERE forum_post_id = :post_id
+          AND subcribe_email = 'true'
+          AND NOT forum_user_id = :userID
+          GROUP BY forum_user_id
+          ORDER BY forum_timestamp DESC
+          )
+        ) AS uniontable
+        GROUP BY `F_UID`
+        ORDER BY `F_UID` ASC
+      ",
+      array(':post_id' => $post_id, ':userID' => $user_id));
+      foreach($data as $row){
+        // Get to user data
+        $email_data = $this->db->select("
+          SELECT email, username
+          FROM ".PREFIX."users
+          WHERE userID = :where_id
+          LIMIT 1
+        ",
+        array(':where_id' => $row->F_UID));
+        // Get from user data
+        $email_from_data = $this->db->select("
+          SELECT username
+          FROM ".PREFIX."users
+          WHERE userID = :where_id
+          LIMIT 1
+        ",
+        array(':where_id' => $user_id));
+        //EMAIL MESSAGE USING PHPMAILER
+        $mail = new \Helpers\PhpMailer\Mail();
+        $mail->setFrom(EMAIL_FROM);
+        $mail->addAddress($email_data[0]->email);
+        $mail_subject = SITE_NAME . " - Forum - ".$email_from_data[0]->username." replied to {$topic_title}";
+        $mail->subject($mail_subject);
+        $body = "Hello ".$email_data[0]->username."<br/><br/>";
+        $body .= SITE_NAME . " - Forum Notification<br/>
+                              <br/>
+															Category: $topic_cat<br/>
+															Topic: $topic_title<br/>
+															Reply by: ".$email_from_data[0]->username."<br/>
+                              <br/>
+															Reply Content:<br/>
+															************************<br/>
+															$reply_content<br/>
+															************************<br/>";
+        $body .= "You may check the reply at: <b><a href=\"" . DIR . "/Topic/$id\">" . SITE_NAME . " Forum - $topic_title</a></b>";
+        $mail->body($body);
+        $mail->send();
+      }
+    }
+
 
 }

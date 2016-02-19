@@ -179,11 +179,17 @@ use Core\Controller,
         $data['current_page'] = $current_page;
       }
 
+      // Chec to see if current user is subcribed to this topic
+      $data['is_user_subcribed'] = $this->model->checkTopicSubcribe($id, $u_id);
+
       // Check to see if current user is admin
       $data['is_admin'] = $this->auth->checkIsAdmin($u_id);
 
       // Get replys that are related to Requested Topic
       $data['topic_replys'] = $this->model->forum_topic_replys($id, $this->pagesReply->getLimit($current_page, FORUM_REPLY_PAGEINATOR_LIMIT));
+
+      // Check to see if user has posted on this topic
+      $data['checkUserPosted'] = $this->model->checkUserPosted($id, $u_id);
 
       // Set total number of messages for paginator
       $total_num_replys = $this->model->getTotalReplys($id);
@@ -277,8 +283,10 @@ use Core\Controller,
                     // Check to see if post is going on a new page
                     $page_reply_limit = FORUM_REPLY_PAGEINATOR_LIMIT;
                     $redirect_page_num = ceil(($total_num_replys + 1) / $page_reply_limit);
+                    // Send emails to those who are subcribed to this topic
+                    $this->model->sendTopicSubcribeEmails($id, $u_id, $data['title'], $data['forum_cat'], $data['fpr_content']);
           					// Success
-                    SuccessHelper::push('You Have Successfully Created a New Topic Reply', 'Topic/'.$id.'/'.$redirect_page_num.'/#topicreply'.$reply_id);
+                  //  SuccessHelper::push('You Have Successfully Created a New Topic Reply', 'Topic/'.$id.'/'.$redirect_page_num.'/#topicreply'.$reply_id);
                     $data['hide_form'] = "true";
           				}else{
           					// Fail
@@ -294,6 +302,16 @@ use Core\Controller,
             // Update the database with topic unlocked (1)
             if($this->model->updateTopicLockStatus($id, "1")){
               SuccessHelper::push('You Have Successfully UnLocked This Topic', 'Topic/'.$id);
+            }
+          }else if($data['action'] == "subcribe" && isset($u_id)){
+            // Update users topic subcrition status as true
+            if($this->model->updateTopicSubcrition($id, $u_id, "true")){
+              SuccessHelper::push('You Have Successfully Subcribed to this Topic', 'Topic/'.$id);
+            }
+          }else if($data['action'] == "unsubcribe" && isset($u_id)){
+            // Update users topic subcrition status as false
+            if($this->model->updateTopicSubcrition($id, $u_id, "false")){
+              SuccessHelper::push('You Have Successfully UnSubcribed from this Topic', 'Topic/'.$id);
             }
           }// End Action Check
   			} // End token check

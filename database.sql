@@ -7,9 +7,6 @@
 -- Server version: 5.5.46-0ubuntu0.14.04.2
 -- PHP Version: 5.5.9-1ubuntu4.14
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
 -- --------------------------------------------------------
 
 --
@@ -41,6 +38,62 @@ CREATE TABLE IF NOT EXISTS `uap_attempts` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `uap_forum_cat`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_forum_cat` (
+  `forum_id` int(20) NOT NULL AUTO_INCREMENT COMMENT 'id of form thingy',
+  `forum_name` varchar(255) NOT NULL COMMENT 'name of the full forum',
+  `forum_title` varchar(255) NOT NULL COMMENT 'title of the forum sections',
+  `forum_cat` varchar(255) NOT NULL COMMENT 'title of forum category',
+  `forum_des` text NOT NULL COMMENT 'forum section description',
+  `forum_perm` int(20) NOT NULL DEFAULT '1' COMMENT 'user permissions',
+  `forum_order_title` int(11) NOT NULL,
+  `forum_order_cat` int(11) NOT NULL,
+  PRIMARY KEY (`forum_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_forum_posts`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_forum_posts` (
+  `forum_post_id` int(20) NOT NULL AUTO_INCREMENT,
+  `forum_id` int(20) NOT NULL,
+  `forum_user_id` int(20) NOT NULL,
+  `forum_title` varchar(255) NOT NULL,
+  `forum_content` text NOT NULL,
+  `forum_edit_date` varchar(20) DEFAULT NULL,
+  `forum_status` int(11) NOT NULL DEFAULT '1',
+  `subcribe_email` varchar(10) NOT NULL DEFAULT 'true',
+  `forum_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`forum_post_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_forum_posts_replys`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_forum_posts_replys` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `fpr_post_id` int(20) NOT NULL,
+  `fpr_id` int(20) NOT NULL,
+  `fpr_user_id` int(20) NOT NULL,
+  `fpr_title` varchar(255) NOT NULL,
+  `fpr_content` text NOT NULL,
+  `subcribe_email` varchar(10) NOT NULL DEFAULT 'true',
+  `fpr_edit_date` varchar(20) DEFAULT NULL,
+  `fpr_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `uap_groups`
 --
 
@@ -52,6 +105,39 @@ CREATE TABLE IF NOT EXISTS `uap_groups` (
   `groupFontWeight` varchar(20) NOT NULL,
   PRIMARY KEY (`groupID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_messages`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `to_userID` int(11) NOT NULL,
+  `from_userID` int(11) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `date_read` datetime DEFAULT NULL,
+  `date_sent` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `to_delete` varchar(5) NOT NULL DEFAULT 'false',
+  `from_delete` varchar(5) NOT NULL DEFAULT 'false',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_pages`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `page_url` varchar(255) NOT NULL,
+  `page_title` varchar(255) NOT NULL,
+  `page_content` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -68,6 +154,25 @@ CREATE TABLE IF NOT EXISTS `uap_sessions` (
   `ip` varchar(39) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_sweets`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_sweets` (
+  `sid` int(10) NOT NULL AUTO_INCREMENT,
+  `sweet_id` int(10) DEFAULT NULL,
+  `sweet_sec_id` int(10) DEFAULT NULL,
+  `sweet_location` varchar(255) DEFAULT NULL,
+  `sweet_user_ip` varchar(50) DEFAULT NULL,
+  `sweet_server` varchar(255) DEFAULT NULL,
+  `sweet_uri` varchar(255) DEFAULT NULL,
+  `sweet_owner_userid` int(10) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`sid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -131,34 +236,26 @@ CREATE TABLE IF NOT EXISTS `uap_users_online` (
   KEY `lastAccess` (`lastAccess`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
---
--- Table structure for table `uap_messages`
---
-
-CREATE TABLE IF NOT EXISTS `uap_messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `to_userID` int(11) NOT NULL,
-  `from_userID` int(11) NOT NULL,
-  `subject` varchar(255) NOT NULL,
-  `content` text NOT NULL,
-  `date_read` datetime DEFAULT NULL,
-  `date_sent` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `to_delete` varchar(5) NOT NULL DEFAULT 'false',
-  `from_delete` varchar(5) NOT NULL DEFAULT 'false',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+-- --------------------------------------------------------
 
 --
--- Table structure for table `uap_pages`
+-- Table structure for table `uap_views`
 --
 
-CREATE TABLE IF NOT EXISTS `uap_pages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `page_url` varchar(255) NOT NULL,
-  `page_title` varchar(255) NOT NULL,
-  `page_content` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+CREATE TABLE IF NOT EXISTS `uap_views` (
+  `vid` int(10) NOT NULL AUTO_INCREMENT,
+  `view_id` int(10) NOT NULL,
+  `view_sec_id` int(10) DEFAULT NULL,
+  `view_location` varchar(255) NOT NULL,
+  `view_user_ip` varchar(50) NOT NULL,
+  `view_server` varchar(255) NOT NULL,
+  `view_uri` varchar(255) NOT NULL,
+  `view_owner_userid` int(10) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`vid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
 
 --
 -- Dumping data for table `uap_groups`
@@ -170,9 +267,20 @@ INSERT INTO `uap_groups` (`groupID`, `groupName`, `groupDescription`, `groupFont
 (3, 'Moderator', 'Site Members That Have a Little Extra Privilege on the Site.', 'ORANGE', 'BOLD'),
 (4, 'Administrator', 'Site Members That Have Full Access To The Site.', 'RED', 'BOLD');
 
+-- --------------------------------------------------------
+
 --
 -- Dumping data for table `uap_users_groups`
 --
 
 INSERT INTO `uap_users_groups` (`userID`, `groupID`) VALUES
 (1, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `uap_forum_cat`
+--
+
+INSERT INTO `uap_forum_cat` (`forum_id`, `forum_name`, `forum_title`, `forum_cat`, `forum_des`, `forum_perm`, `forum_order_title`, `forum_order_cat`) VALUES
+(1, 'forum', 'Forum', 'Welcome', 'Welcome to the Forum.', 1, 1, 1);

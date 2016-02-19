@@ -259,18 +259,42 @@ use Core\Language,
           echo "</div>";
         }
 
+        // Check to see if user is logged in
+        if($data['current_userID']){
+          // Display Subcribe UnSubcribe Button for Email Notifications.
+          if($data['is_user_subcribed'] == true){
+            echo " You are subscribed to receive E-Mail notifications on this topic. ";
+            echo Form::open(array('method' => 'post'));
+            echo "<input type='hidden' name='action' value='unsubcribe' />";
+            echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
+            echo "<button type='submit' name='submit' class='btn btn-warning btn-xs'>UnSubcribe</button>";
+            echo Form::close();
+          }else {
+            if($data['checkUserPosted'] == true){
+              echo " You are NOT subscribed to receive E-Mail notifications on this topic. ";
+              // Display subcribe button if user has posted in this topic
+              echo Form::open(array('method' => 'post'));
+              echo "<input type='hidden' name='action' value='subcribe' />";
+              echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
+              echo "<button type='submit' name='submit' class='btn btn-success btn-xs'>Subcribe</button>";
+              echo Form::close();
+            }
+          }
+        }
+
         // Display Admin Lock/UnLock Button
         // Check if Admin
         if($data['is_admin'] == true){
+          echo "<br>";
           echo Form::open(array('method' => 'post'));
             if($data['topic_status'] == 2){
               // UnLock Button
               echo "<input type='hidden' name='action' value='unlock_topic' />";
-              echo "<button class='btn btn-xs btn-warning' name='submit' type='submit'>UnLock Topic</button>";
+              echo "<button name='submit' type='submit' class='btn btn-xs btn-warning'>UnLock Topic</button>";
             }else{
               // Lock Button
               echo "<input type='hidden' name='action' value='lock_topic' />";
-              echo "<button class='btn btn-xs btn-danger' name='submit' type='submit'>Lock Topic</button>";
+              echo "<button name='submit' type='submit' class='btn btn-xs btn-danger'>Lock Topic</button>";
             }
           // CSRF Token
           echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
