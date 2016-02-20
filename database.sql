@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `uap_forum_posts` (
   `forum_content` text NOT NULL,
   `forum_edit_date` varchar(20) DEFAULT NULL,
   `forum_status` int(11) NOT NULL DEFAULT '1',
-  `subcribe_email` varchar(10) NOT NULL DEFAULT 'true',
+  `subscribe_email` varchar(10) NOT NULL DEFAULT 'true',
   `forum_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`forum_post_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `uap_forum_posts_replys` (
   `fpr_user_id` int(20) NOT NULL,
   `fpr_title` varchar(255) NOT NULL,
   `fpr_content` text NOT NULL,
-  `subcribe_email` varchar(10) NOT NULL DEFAULT 'true',
+  `subscribe_email` varchar(10) NOT NULL DEFAULT 'true',
   `fpr_edit_date` varchar(20) DEFAULT NULL,
   `fpr_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
