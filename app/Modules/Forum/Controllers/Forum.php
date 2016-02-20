@@ -5,7 +5,7 @@
  * @author David "DaVaR" Sargent - davar@thedavar.net
  * @version 2.0
  * @date Jan 13, 2016
- * @date updated Jan 13, 2016
+ * @date updated Feb 19, 2016
  */
 
 namespace Modules\Forum\Controllers;

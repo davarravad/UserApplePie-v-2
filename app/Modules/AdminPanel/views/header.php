@@ -134,18 +134,19 @@ if(!ctype_digit($cur_userID) && !ctype_digit($cu_groupID)){
           <li <?php if($data['current_page'] == "admin_wm"){echo "class='active'";} ?>  >
             <a href='<?php echo DIR; ?>AdminPanel/admin_wm'><i class='glyphicon glyphicon-envelope'></i> Register Message</a>
           </li>
+      -->
           <li>
-            <a href='javascript:;' data-toggle='collapse' data-target='#demo'><i class='fa fa-fw fa-arrows-v'></i> Forum <i class='fa fa-fw fa-caret-down'></i></a>
+            <a href='javascript:;' data-toggle='collapse' data-target='#demo'><i class='glyphicon glyphicon-tasks'></i> Forum <i class='glyphicon glyphicon-menu-down'></i></a>
             <ul id='demo' class='collapse'>
-              <li>
-                <a href='#'>Coming Soon!</a>
+              <li <?php if($data['current_page'] == "AdminPanel-Forum-Settings"){echo "class='active'";} ?>>
+                <a href='<?php echo DIR; ?>AdminPanel-Forum-Settings'><i class='glyphicon glyphicon-cog'></i> Global Settings</a>
               </li>
-              <li>
-                <a href='#'>Coming Soon!</a>
+              <li <?php if($data['current_page'] == "AdminPanel-Forum-Categories"){echo "class='active'";} ?>>
+                <a href='<?php echo DIR; ?>AdminPanel-Forum-Categories'><i class='glyphicon glyphicon-list'></i> Categories</a>
               </li>
             </ul>
           </li>
-    -->
+
         </ul>
       </div>
       <!-- /.navbar-collapse -->
