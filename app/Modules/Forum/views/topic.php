@@ -261,22 +261,22 @@ use Core\Language,
 
         // Check to see if user is logged in
         if($data['current_userID']){
-          // Display Subcribe UnSubcribe Button for Email Notifications.
-          if($data['is_user_subcribed'] == true){
+          // Display Subscribe UnSubscribe Button for Email Notifications.
+          if($data['is_user_subscribed'] == true){
             echo " You are subscribed to receive E-Mail notifications on this topic. ";
             echo Form::open(array('method' => 'post'));
-            echo "<input type='hidden' name='action' value='unsubcribe' />";
+            echo "<input type='hidden' name='action' value='unsubscribe' />";
             echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
-            echo "<button type='submit' name='submit' class='btn btn-warning btn-xs'>UnSubcribe</button>";
+            echo "<button type='submit' name='submit' class='btn btn-warning btn-xs'>UnSubscribe</button>";
             echo Form::close();
           }else {
             if($data['checkUserPosted'] == true){
               echo " You are NOT subscribed to receive E-Mail notifications on this topic. ";
-              // Display subcribe button if user has posted in this topic
+              // Display subscribe button if user has posted in this topic
               echo Form::open(array('method' => 'post'));
-              echo "<input type='hidden' name='action' value='subcribe' />";
+              echo "<input type='hidden' name='action' value='subscribe' />";
               echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
-              echo "<button type='submit' name='submit' class='btn btn-success btn-xs'>Subcribe</button>";
+              echo "<button type='submit' name='submit' class='btn btn-success btn-xs'>Subscribe</button>";
               echo Form::close();
             }
           }

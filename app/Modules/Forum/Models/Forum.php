@@ -94,7 +94,7 @@ class Forum extends Model {
           FROM ".PREFIX."forum_posts fp
           LEFT JOIN ".PREFIX."forum_posts_replys fpr
           ON fp.forum_post_id = fpr.fpr_post_id
-          ORDER BY fp.forum_timestamp, fpr.fpr_timestamp DESC
+          ORDER BY fpr.fpr_timestamp, fp.forum_timestamp DESC
         ) sub
 
         GROUP BY forum_post_id
@@ -501,9 +501,11 @@ class Forum extends Model {
      *
      * @return booleen true/false
      */
-    public function sendTopicReply($fpr_user_id, $fpr_post_id, $fpr_id, $fpr_content){
+    public function sendTopicReply($fpr_user_id, $fpr_post_id, $fpr_id, $fpr_content, $subscribe){
+      // Check for email subscription status
+      if($subscribe == true){$subscribe = "true";}else{$subscribe = "false";}
       // Update messages table
-      $query = $this->db->insert(PREFIX.'forum_posts_replys', array('fpr_post_id' => $fpr_post_id, 'fpr_user_id' => $fpr_user_id, 'fpr_id' => $fpr_id, 'fpr_content' => $fpr_content));
+      $query = $this->db->insert(PREFIX.'forum_posts_replys', array('fpr_post_id' => $fpr_post_id, 'fpr_user_id' => $fpr_user_id, 'fpr_id' => $fpr_id, 'fpr_content' => $fpr_content, 'subscribe_email' => $subscribe));
       $count = count($query);
       // Check to make sure Topic was Created
       if($count > 0){
@@ -636,16 +638,16 @@ class Forum extends Model {
     }
 
     /**
-     * checkTopicSubcribe
+     * checkTopicSubscribe
      *
-     * checks if current user is subcribed to topic
+     * checks if current user is subscribed to topic
      *
      * @param int $post_id = current topic ID
      * @param int $userID = current user ID
      *
-     * @return boolean is user subcribed (true/false)
+     * @return boolean is user subscribed (true/false)
      */
-    public function checkTopicSubcribe($post_id, $user_id){
+    public function checkTopicSubscribe($post_id, $user_id){
       $data = $this->db->select("
       SELECT * FROM (
   			 (
@@ -653,7 +655,7 @@ class Forum extends Model {
   			 FROM ".PREFIX."forum_posts_replys
   			 WHERE fpr_post_id = :post_id
   			 AND fpr_user_id = :user_id
-         AND subcribe_email = 'true'
+         AND subscribe_email = 'true'
   			 )
   			 UNION ALL
   			 (
@@ -661,7 +663,7 @@ class Forum extends Model {
   			 FROM ".PREFIX."forum_posts
   			 WHERE forum_post_id = :post_id
   			 AND forum_user_id = :user_id
-         AND subcribe_email = 'true'
+         AND subscribe_email = 'true'
   			 )
   		) AS uniontable
       ",
@@ -687,8 +689,8 @@ class Forum extends Model {
      */
     public function updateTopicSubcrition($id, $user_id, $setting){
       // Update messages table
-      $query_a = $this->db->update(PREFIX.'forum_posts', array('subcribe_email' => $setting), array('forum_post_id' => $id, 'forum_user_id' => $user_id));
-      $query_b = $this->db->update(PREFIX.'forum_posts_replys', array('subcribe_email' => $setting), array('fpr_post_id' => $id, 'fpr_user_id' => $user_id));
+      $query_a = $this->db->update(PREFIX.'forum_posts', array('subscribe_email' => $setting), array('forum_post_id' => $id, 'forum_user_id' => $user_id));
+      $query_b = $this->db->update(PREFIX.'forum_posts_replys', array('subscribe_email' => $setting), array('fpr_post_id' => $id, 'fpr_user_id' => $user_id));
       $count_a = count($query_a);
       $count_b = count($query_b);
       $count = $count_a + $count_b;
@@ -701,16 +703,16 @@ class Forum extends Model {
     }
 
     /**
-     * getTopicSubcribeEmail
+     * getTopicSubscribeEmail
      *
-     * get list of emails of all subcribed users to topic
-     * sends email to all the users subcribed
+     * get list of emails of all subscribed users to topic
+     * sends email to all the users subscribed
      *
      * @param int $post_id = current topic ID
      * @param int $userID = current user ID
      *
      */
-    public function sendTopicSubcribeEmails($post_id, $user_id, $topic_title, $topic_cat, $reply_content){
+    public function sendTopicSubscribeEmails($post_id, $user_id, $topic_title, $topic_cat, $reply_content){
       // Get userID's for all that are set to be notified except current user
       $data = $this->db->select("
         SELECT * FROM (
@@ -718,7 +720,7 @@ class Forum extends Model {
           SELECT fpr_user_id AS F_UID
           FROM ".PREFIX."forum_posts_replys
           WHERE fpr_post_id = :post_id
-          AND subcribe_email = 'true'
+          AND subscribe_email = 'true'
           AND NOT fpr_user_id = :userID
           GROUP BY fpr_user_id
           ORDER BY fpr_timestamp DESC
@@ -728,7 +730,7 @@ class Forum extends Model {
           SELECT forum_user_id AS F_UID
           FROM ".PREFIX."forum_posts
           WHERE forum_post_id = :post_id
-          AND subcribe_email = 'true'
+          AND subscribe_email = 'true'
           AND NOT forum_user_id = :userID
           GROUP BY forum_user_id
           ORDER BY forum_timestamp DESC
