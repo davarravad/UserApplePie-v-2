@@ -23,6 +23,8 @@ class AdminPanel extends Controller{
     Router::any('AdminPanel-User/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@user');
     Router::any('AdminPanel-Groups', 'Modules\AdminPanel\Controllers\AdminPanel@groups');
     Router::any('AdminPanel-Group/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@group');
+    Router::any('AdminPanel-Forum-Settings', 'Modules\AdminPanel\Controllers\AdminPanel@forum_settings');
+    Router::any('AdminPanel-Forum-Categories', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
   }
 
   public function dashboard(){
@@ -368,6 +370,44 @@ class AdminPanel extends Controller{
 
     View::renderModule('AdminPanel/views/header', $data);
     View::renderModule('AdminPanel/views/group', $data,$error,$success);
+    View::renderModule('AdminPanel/views/footer', $data);
+  }
+
+  // Forum Settings Admin Panel
+  public function forum_settings(){
+
+    // Get data for users
+    $data['current_page'] = $_SERVER['REQUEST_URI'];
+    $data['title'] = "Forum Global Settings";
+    $data['welcome_message'] = "Welcome to the Forum Settings Admin Panel";
+
+    // Setup Breadcrumbs
+    $data['breadcrumbs'] = "
+      <li><a href='".DIR."AdminPanel'><i class='fa fa-fw fa-cog'></i> Admin Panel</a></li>
+      <li class='active'><i class='fa fa-fw fa-user'></i>".$data['title']."</li>
+    ";
+
+    View::renderModule('AdminPanel/views/header', $data);
+    View::renderModule('AdminPanel/views/forum_settings', $data, $success, $errors);
+    View::renderModule('AdminPanel/views/footer', $data);
+  }
+
+  // Forum Categories Admin Panel
+  public function forum_categories(){
+
+    // Get data for users
+    $data['current_page'] = $_SERVER['REQUEST_URI'];
+    $data['title'] = "Forum Categories";
+    $data['welcome_message'] = "Welcome to the Forum Categories Admin Panel";
+
+    // Setup Breadcrumbs
+    $data['breadcrumbs'] = "
+      <li><a href='".DIR."AdminPanel'><i class='fa fa-fw fa-cog'></i> Admin Panel</a></li>
+      <li class='active'><i class='fa fa-fw fa-user'></i>".$data['title']."</li>
+    ";
+
+    View::renderModule('AdminPanel/views/header', $data);
+    View::renderModule('AdminPanel/views/forum_categories', $data, $success, $errors);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
