@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 19, 2016
+-- Generation Time: Feb 22, 2016
 -- Server version: 5.5.46-0ubuntu0.14.04.2
 -- PHP Version: 5.5.9-1ubuntu4.14
 
@@ -56,6 +56,19 @@ CREATE TABLE IF NOT EXISTS `uap_forum_cat` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `uap_forum_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_forum_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `forum_group` varchar(50) NOT NULL,
+  `groupID` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `uap_forum_posts`
 --
 
@@ -88,6 +101,20 @@ CREATE TABLE IF NOT EXISTS `uap_forum_posts_replys` (
   `subscribe_email` varchar(10) NOT NULL DEFAULT 'true',
   `fpr_edit_date` varchar(20) DEFAULT NULL,
   `fpr_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uap_forum_settings`
+--
+
+CREATE TABLE IF NOT EXISTS `uap_forum_settings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `setting_title` varchar(255) NOT NULL,
+  `setting_value` varchar(255) NOT NULL,
+  `setting_value_2` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -284,3 +311,16 @@ INSERT INTO `uap_users_groups` (`userID`, `groupID`) VALUES
 
 INSERT INTO `uap_forum_cat` (`forum_id`, `forum_name`, `forum_title`, `forum_cat`, `forum_des`, `forum_perm`, `forum_order_title`, `forum_order_cat`) VALUES
 (1, 'forum', 'Forum', 'Welcome', 'Welcome to the Forum.', 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Dumping data for table `uap_forum_settings`
+--
+
+INSERT INTO `uap_forum_settings` (`id`, `setting_title`, `setting_value`, `setting_value_2`) VALUES
+(1, 'forum_on_off', 'Disabled', ''),
+(2, 'forum_title', 'Forum', ''),
+(3, 'forum_description', 'Welcome to the Forum', ''),
+(4, 'forum_topic_limit', '20', ''),
+(5, 'forum_topic_reply_limit', '10', '');
