@@ -264,7 +264,15 @@ class AdminPanel extends Model {
     }
   }
 
-  // Create Group
+  /**
+   * createGroup
+   *
+   * inserts new user group to database.
+   *
+   * @param string $groupName Name of New User Group
+   *
+   * @return boolean returns true/false
+   */
   public function createGroup($groupName){
     $data = $this->db->insert(PREFIX.'groups', array('groupName' => $groupName));
     $new_group_id = $this->db->lastInsertId('groupID');
@@ -275,6 +283,121 @@ class AdminPanel extends Model {
     }else{
       return false;
     }
+  }
+
+  /**
+   * checkForumGroup
+   *
+   * get forum group data.
+   *
+   * @param string $forum_group Name of Forum Group
+   * @param int $groupID ID of User Group
+   *
+   * @return boolean returns true/false
+   */
+  public function checkGroupForum($forum_group, $groupID){
+    $data = $this->db->select("
+        SELECT
+          forum_group,
+          groupID
+        FROM
+          ".PREFIX."forum_groups
+        WHERE
+          forum_group = :forum_group
+          AND
+          groupID = :groupID
+        ORDER BY
+          groupID DESC
+        ",
+        array(':forum_group' => $forum_group, ':groupID' => $groupID));
+      $count = count($data);
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
+  }
+
+  /**
+   * editForumGroup
+   *
+   * create or delete forum group.
+   *
+   * @param string $groupName Name of Forum Group
+   * @param string $action Add/Remove
+   * @param int $groupID ID of User Group
+   *
+   * @return boolean returns true/false
+   */
+  public function editForumGroup($groupName, $action, $groupID){
+    if($action == "add"){
+      // Add Forum Group to Group
+      $data = $this->db->insert(PREFIX.'forum_groups', array('forum_group' => $groupName, 'groupID' => $groupID));
+      $count = count($data);
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if($action == "remove"){
+      // Remove Forum Group from Group
+      $data = $this->db->delete(PREFIX.'forum_groups', array('forum_group' => $groupName, 'groupID' => $groupID));
+      $count = count($data);
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+  }
+
+  /**
+   * globalForumSetting
+   *
+   * get setting for requested setting.
+   *
+   * @param string $action which setting to get
+   *
+   * @return string returns requested setting
+   */
+  public function globalForumSetting($action){
+    $data = $this->db->select("
+      SELECT setting_value
+      FROM ".PREFIX."forum_settings
+      WHERE setting_title = :action
+      LIMIT 1
+    ",
+    array(':action' => $action));
+    return $data[0]->setting_value;
+  }
+
+  /**
+   * updateGlobalSettings
+   *
+   * update Forum Global Settings to database.
+   *
+   * @param string $forum_on_off Enable/Disable True/Fale
+   * @param string $forum_title Title/Name
+   * @param string $forum_description Forum Description
+   * @param int $forum_topic_limit Topic Per Page Limit
+   * @param int $forum_topic_reply_limit Topic Rely Per Page Limit
+   *
+   * @return boolean returns true/false
+   */
+  public function updateGlobalSettings($forum_on_off,$forum_title,$forum_description,$forum_topic_limit,$forum_topic_reply_limit){
+    // Update groups table
+		$query[] = $this->db->update(PREFIX.'forum_settings', array('setting_value' => $forum_on_off), array('setting_title' => 'forum_on_off'));
+    $query[] = $this->db->update(PREFIX.'forum_settings', array('setting_value' => $forum_title), array('setting_title' => 'forum_title'));
+    $query[] = $this->db->update(PREFIX.'forum_settings', array('setting_value' => $forum_description), array('setting_title' => 'forum_description'));
+    $query[] = $this->db->update(PREFIX.'forum_settings', array('setting_value' => $forum_topic_limit), array('setting_title' => 'forum_topic_limit'));
+    $query[] = $this->db->update(PREFIX.'forum_settings', array('setting_value' => $forum_topic_reply_limit), array('setting_title' => 'forum_topic_reply_limit'));
+		$count = count($query);
+		// Check to make sure something was updated
+		if($count > 0){
+			return true;
+		}else{
+			return false;
+		}
   }
 
 }
