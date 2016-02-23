@@ -67,14 +67,21 @@ Pages within the Admin Panel
  - AdminPanel-User
  - AdminPanel-Groups
  - AdminPanel-Group
+ - AdminPanel-Forum-Settings
+ - AdminPanel-Forum-Categories
 
-Pages For Messages Module (Not Linked In Navbar yet)
+Pages For Messages Module
  - Messages (Messages Home Page)
  - MessagesInbox
  - MessagesOutbox
- - NewMessage
+ - NewMessage (Create New Message/Reply)
  - ViewMessage/# (Displays Requested Message)
- - ReplyMessage (Coming Soon)
+
+Pages For Forum Module (Disabled in Admin Panel by Default)
+ - Forum (Forum Home Page)
+ - Topics/# (Display Topics by Category ID)
+ - NewTopic/# (Category ID Topic is Related to)
+ - Topic/# (Topic and Replies Related to Topic ID)
 
 ## UAP Examples
 Login
