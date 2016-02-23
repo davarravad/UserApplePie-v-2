@@ -22,33 +22,40 @@ use Core\Controller,
   Helpers\PageViews,
   Helpers\Sweets;
 
-  // Move this to Core\Config.php
-  /**
-  *  Define Topic Posts pages Limit for Forum
-  */
-  define('FORUM_TOPIC_PAGEINATOR_LIMIT','20');  // How many topics to display per page
-  define('FORUM_REPLY_PAGEINATOR_LIMIT','10');  // How many topic replys to display per page
-
   class Forum extends Controller{
 
   	private $model;
     private $pagesTopic;
     private $pagesReply;
+    private $forum_on_off;
+    private $forum_title;
+    private $forum_description;
+    private $forum_topic_limit;
+    private $forum_topic_reply_limit;
 
   	public function __construct(){
   		parent::__construct();
   		$this->model = new \Modules\Forum\Models\Forum();
-      $this->pagesTopic = new \Helpers\Paginator(FORUM_TOPIC_PAGEINATOR_LIMIT);
-      $this->pagesReply = new \Helpers\Paginator(FORUM_REPLY_PAGEINATOR_LIMIT);
+      // Get data for global forum settings
+      $this->forum_on_off = $this->model->globalForumSetting('forum_on_off');
+      $this->forum_title = $this->model->globalForumSetting('forum_title');
+      $this->forum_description = $this->model->globalForumSetting('forum_description');
+      $this->forum_topic_limit = $this->model->globalForumSetting('forum_topic_limit');
+      $this->forum_topic_reply_limit = $this->model->globalForumSetting('forum_topic_reply_limit');
+      $this->pagesTopic = new \Helpers\Paginator($this->forum_topic_limit);
+      $this->pagesReply = new \Helpers\Paginator($this->forum_topic_reply_limit);
   	}
 
   	public function routes(){
-      Router::any('Forum', 'Modules\Forum\Controllers\Forum@forum');
-      Router::any('Topics/(:num)', 'Modules\Forum\Controllers\Forum@topics');
-  		Router::any('Topics/(:num)/(:num)', 'Modules\Forum\Controllers\Forum@topics');
-      Router::any('Topic/(:num)', 'Modules\Forum\Controllers\Forum@topic');
-  		Router::any('Topic/(:num)/(:num)', 'Modules\Forum\Controllers\Forum@topic');
-      Router::any('NewTopic/(:num)', 'Modules\Forum\Controllers\Forum@newtopic');
+      // Check to make sure Forum is Enabled, otherwise hide it
+      if($this->forum_on_off == 'Enabled'){
+        Router::any('Forum', 'Modules\Forum\Controllers\Forum@forum');
+        Router::any('Topics/(:num)', 'Modules\Forum\Controllers\Forum@topics');
+    		Router::any('Topics/(:num)/(:num)', 'Modules\Forum\Controllers\Forum@topics');
+        Router::any('Topic/(:num)', 'Modules\Forum\Controllers\Forum@topic');
+    		Router::any('Topic/(:num)/(:num)', 'Modules\Forum\Controllers\Forum@topic');
+        Router::any('NewTopic/(:num)', 'Modules\Forum\Controllers\Forum@newtopic');
+      }
   	}
 
 
@@ -63,8 +70,8 @@ use Core\Controller,
       }
 
   		// Collect Data for view
-  		$data['title'] = SITETITLE." Forum";
-  		$data['welcome_message'] = "Welcome to ".SITETITLE." Forum";
+  		$data['title'] = $this->forum_title;
+  		$data['welcome_message'] = $this->forum_description;
 
       // Get list of all forum categories
       $data['forum_categories'] = $this->model->forum_categories();
@@ -78,7 +85,7 @@ use Core\Controller,
       // Setup Breadcrumbs
   		$data['breadcrumbs'] = "
   			<li><a href='".DIR."'>Home</a></li>
-  			<li class='active'>Forum</li>
+  			<li class='active'>".$this->forum_title."</li>
   		";
       $data['csrf_token'] = Csrf::makeToken();
 
@@ -103,7 +110,7 @@ use Core\Controller,
       $data['forum_title'] = $this->model->forum_title($id);
       $data['forum_cat'] = $this->model->forum_cat($id);
       $data['forum_cat_des'] = $this->model->forum_cat_des($id);
-      $data['forum_topics'] = $this->model->forum_topics($id, $this->pagesTopic->getLimit($current_page, FORUM_TOPIC_PAGEINATOR_LIMIT));
+      $data['forum_topics'] = $this->model->forum_topics($id, $this->pagesTopic->getLimit($current_page, $this->forum_topic_limit));
 
       // Set total number of messages for paginator
       $total_num_topics = count($this->model->forum_topics($id));
@@ -129,7 +136,7 @@ use Core\Controller,
       // Setup Breadcrumbs
   		$data['breadcrumbs'] = "
   			<li><a href='".DIR."'>Home</a></li>
-        <li><a href='".DIR."Forum'>Forum</a></li>
+        <li><a href='".DIR."Forum'>".$this->forum_title."</a></li>
   			<li class='active'>".$data['title']."</li>
   		";
 
@@ -186,7 +193,7 @@ use Core\Controller,
       $data['is_admin'] = $this->auth->checkIsAdmin($u_id);
 
       // Get replys that are related to Requested Topic
-      $data['topic_replys'] = $this->model->forum_topic_replys($id, $this->pagesReply->getLimit($current_page, FORUM_REPLY_PAGEINATOR_LIMIT));
+      $data['topic_replys'] = $this->model->forum_topic_replys($id, $this->pagesReply->getLimit($current_page, $this->forum_topic_reply_limit));
 
       // Check to see if user has posted on this topic
       $data['checkUserPosted'] = $this->model->checkUserPosted($id, $u_id);
@@ -281,7 +288,7 @@ use Core\Controller,
                     // Get Submitted Reply ID
                     $reply_id = $this->model->lastTopicReplyID($id);
                     // Check to see if post is going on a new page
-                    $page_reply_limit = FORUM_REPLY_PAGEINATOR_LIMIT;
+                    $page_reply_limit = $this->forum_topic_reply_limit;
                     $redirect_page_num = ceil(($total_num_replys + 1) / $page_reply_limit);
                     // Send emails to those who are subscribed to this topic
                     $this->model->sendTopicSubscribeEmails($id, $u_id, $data['title'], $data['forum_cat'], $data['fpr_content']);
@@ -326,7 +333,7 @@ use Core\Controller,
       // Setup Breadcrumbs
   		$data['breadcrumbs'] = "
   			<li><a href='".DIR."'>Home</a></li>
-        <li><a href='".DIR."Forum'>Forum</a></li>
+        <li><a href='".DIR."Forum'>".$this->forum_title."</a></li>
         <li><a href='".DIR."Topics/$topic_forum_id'>".$data['forum_cat']."</a>
   			<li class='active'>".$data['title']."</li>
   		";
@@ -403,7 +410,7 @@ use Core\Controller,
       // Setup Breadcrumbs
   		$data['breadcrumbs'] = "
   			<li><a href='".DIR."'>Home</a></li>
-        <li><a href='".DIR."Forum'>Forum</a></li>
+        <li><a href='".DIR."Forum'>".$this->forum_title."</a></li>
         <li><a href='".DIR."Topics/$id'>".$data['forum_cat']."</a>
   			<li class='active'>".$data['title']."</li>
   		";

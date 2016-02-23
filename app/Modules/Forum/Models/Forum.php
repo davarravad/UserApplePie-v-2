@@ -5,7 +5,7 @@
  * @author David "DaVaR" Sargent - davar@thedavar.net
  * @version 2.0
  * @date Jan 13, 2016
- * @date updated Feb 19, 2016
+ * @date updated Feb 21, 2016
  */
 
 namespace Modules\Forum\Models;
@@ -13,6 +13,26 @@ namespace Modules\Forum\Models;
 use Core\Model;
 
 class Forum extends Model {
+
+  /**
+   * globalForumSetting
+   *
+   * get setting for requested setting.
+   *
+   * @param $action which setting to get
+   *
+   * @return string returns requested setting
+   */
+  public function globalForumSetting($action){
+    $data = $this->db->select("
+      SELECT setting_value
+      FROM ".PREFIX."forum_settings
+      WHERE setting_title = :action
+      LIMIT 1
+    ",
+    array(':action' => $action));
+    return $data[0]->setting_value;
+  }
 
   /**
    * forum_categories

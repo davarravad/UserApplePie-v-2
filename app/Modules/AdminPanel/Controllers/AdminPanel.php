@@ -40,7 +40,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/adminpanel', $data);
+    View::renderModule('AdminPanel/views/adminpanel', $data,$errors,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -62,7 +62,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/users', $data);
+    View::renderModule('AdminPanel/views/users', $data,$errors,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -219,7 +219,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/user', $data,$error,$success);
+    View::renderModule('AdminPanel/views/user', $data,$errors,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -265,7 +265,7 @@ class AdminPanel extends Controller{
     }
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/groups', $data);
+    View::renderModule('AdminPanel/views/groups', $data,$errors, $success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -369,17 +369,167 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/group', $data,$error,$success);
+    View::renderModule('AdminPanel/views/group', $data,$errors,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
   // Forum Settings Admin Panel
   public function forum_settings(){
 
+    // Check to make sure admin is trying to update user profile
+		if(isset($_POST['submit'])){
+			// Check to make sure the csrf token is good
+			if (Csrf::isTokenValid()) {
+        // Check to see if admin is editing forum global settings
+        if($_POST['update_global_settings'] == "true"){
+          // Get data from post
+          $forum_on_off = Request::post('forum_on_off');
+          $forum_title = Request::post('forum_title');
+          $forum_description = Request::post('forum_description');
+          $forum_topic_limit = Request::post('forum_topic_limit');
+          $forum_topic_reply_limit = Request::post('forum_topic_reply_limit');
+          if($this->model->updateGlobalSettings($forum_on_off,$forum_title,$forum_description,$forum_topic_limit,$forum_topic_reply_limit)){
+            // Success
+            \Helpers\SuccessHelper::push('You Have Successfully Updated Forum Global Settings', 'AdminPanel-Forum-Settings');
+          }else{
+            $errors[] = "There was an Error Updating Forum Global Settings";
+          }
+        }
+        // Check to see if admin is editing forum groups
+        if($_POST['remove_group_user'] == "true"){
+          $forum_edit_group = "users";
+          $forum_edit_group_action = "remove";
+        }else if($_POST['add_group_user'] == "true"){
+          $forum_edit_group = "users";
+          $forum_edit_group_action = "add";
+        }else if($_POST['remove_group_mod'] == "true"){
+          $forum_edit_group = "mods";
+          $forum_edit_group_action = "remove";
+        }else if($_POST['add_group_mod'] == "true"){
+          $forum_edit_group = "mods";
+          $forum_edit_group_action = "add";
+        }else if($_POST['remove_group_admin'] == "true"){
+          $forum_edit_group = "admins";
+          $forum_edit_group_action = "remove";
+        }else if($_POST['add_group_admin'] == "true"){
+          $forum_edit_group = "admins";
+          $forum_edit_group_action = "add";
+        }
+        if(isset($forum_edit_group) && isset($forum_edit_group_action)){
+          // Get data from post
+          $groupID = Request::post('groupID');
+          // Updates current user's group
+          if($this->model->editForumGroup($forum_edit_group, $forum_edit_group_action, $groupID)){
+            // Success
+            \Helpers\SuccessHelper::push('You Have Successfully Updated Forum Group ('.$forum_edit_group.')', 'AdminPanel-Forum-Settings');
+          }else{
+            // Fail
+            $error[] = "Edit Forum Group Failed";
+          }
+        }
+      }
+    }
+
+
     // Get data for users
     $data['current_page'] = $_SERVER['REQUEST_URI'];
     $data['title'] = "Forum Global Settings";
     $data['welcome_message'] = "Welcome to the Forum Settings Admin Panel";
+
+    // Get data for global forum settings
+    $data['forum_on_off'] = $this->model->globalForumSetting('forum_on_off');
+    $data['forum_title'] = $this->model->globalForumSetting('forum_title');
+    $data['forum_description'] = $this->model->globalForumSetting('forum_description');
+    $data['forum_topic_limit'] = $this->model->globalForumSetting('forum_topic_limit');
+    $data['forum_topic_reply_limit'] = $this->model->globalForumSetting('forum_topic_reply_limit');
+
+    // Get user groups data
+    $data_groups = $this->model->getAllGroups();
+    ////////////////////////////////////////////////////////////////////////////
+    // Forum Users
+    // Get groups forum user is and is not member of
+    foreach ($data_groups as $value) {
+      $data_forum_users_groups = $this->model->checkGroupForum('users', $value->groupID);
+      if($data_forum_users_groups){
+        $f_users_member[] = $value->groupID;
+      }else{
+        $f_users_notmember[] = $value->groupID;
+      }
+    }
+    // Gether group data for group user is member of
+    if(isset($f_users_member)){
+      foreach ($f_users_member as $value) {
+        $f_users_member_data[] = $this->model->getGroupData($value);
+      }
+    }
+    // Push group data to view
+    $data['f_users_member_groups'] = $f_users_member_data;
+    // Gether group data for group user is not member of
+    if(isset($f_users_notmember)){
+      foreach ($f_users_notmember as $value) {
+        $f_users_notmember_groups[] = $this->model->getGroupData($value);
+      }
+    }
+    // Push group data to view
+    $data['f_users_notmember_groups'] = $f_users_notmember_groups;
+    ////////////////////////////////////////////////////////////////////////////
+    // Forum Mods
+    // Get groups forum user is and is not member of
+    foreach ($data_groups as $value) {
+      $data_forum_mods_groups = $this->model->checkGroupForum('mods', $value->groupID);
+      if($data_forum_mods_groups){
+        $f_mods_member[] = $value->groupID;
+      }else{
+        $f_mods_notmember[] = $value->groupID;
+      }
+    }
+    // Gether group data for group user is member of
+    if(isset($f_mods_member)){
+      foreach ($f_mods_member as $value) {
+        $f_mods_member_data[] = $this->model->getGroupData($value);
+      }
+    }
+    // Push group data to view
+    $data['f_mods_member_groups'] = $f_mods_member_data;
+    // Gether group data for group user is not member of
+    if(isset($f_mods_notmember)){
+      foreach ($f_mods_notmember as $value) {
+        $f_mods_notmember_groups[] = $this->model->getGroupData($value);
+      }
+    }
+    // Push group data to view
+    $data['f_mods_notmember_groups'] = $f_mods_notmember_groups;
+    ////////////////////////////////////////////////////////////////////////////
+    // Forum Admins
+    // Get groups forum user is and is not member of
+    foreach ($data_groups as $value) {
+      $data_forum_admins_groups = $this->model->checkGroupForum('admins', $value->groupID);
+      if($data_forum_admins_groups){
+        $f_admins_member[] = $value->groupID;
+      }else{
+        $f_admins_notmember[] = $value->groupID;
+      }
+    }
+    // Gether group data for group user is member of
+    if(isset($f_admins_member)){
+      foreach ($f_admins_member as $value) {
+        $f_admins_member_data[] = $this->model->getGroupData($value);
+      }
+    }
+    // Push group data to view
+    $data['f_admins_member_groups'] = $f_admins_member_data;
+    // Gether group data for group user is not member of
+    if(isset($f_admins_notmember)){
+      foreach ($f_admins_notmember as $value) {
+        $f_admins_notmember_groups[] = $this->model->getGroupData($value);
+      }
+    }
+    // Push group data to view
+    $data['f_admins_notmember_groups'] = $f_admins_notmember_groups;
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Setup CSRF token
+    $data['csrf_token'] = Csrf::makeToken();
 
     // Setup Breadcrumbs
     $data['breadcrumbs'] = "
@@ -388,7 +538,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/forum_settings', $data, $success, $errors);
+    View::renderModule('AdminPanel/views/forum_settings', $data, $errors, $success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -407,7 +557,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/forum_categories', $data, $success, $errors);
+    View::renderModule('AdminPanel/views/forum_categories', $data, $errors, $success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
