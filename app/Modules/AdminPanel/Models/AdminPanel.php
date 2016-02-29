@@ -400,4 +400,168 @@ class AdminPanel extends Model {
 		}
   }
 
+  /**
+   * catMainList
+   *
+   * get main forum categories.
+   *
+   * @return array returns list from db
+   */
+  public function catMainList(){
+    // Get main categories list from db
+    $data = $this->db->select("
+        SELECT
+          *
+        FROM
+          ".PREFIX."forum_cat
+        GROUP BY
+          forum_title
+        ORDER BY
+          forum_order_title ASC
+        ");
+    return $data;
+  }
+
+  /**
+   * getCatMain
+   *
+   * get data for selected Main Category.
+   *
+   * @param string gets data based on forum_title
+   *
+   * @return array returns list from db
+   */
+  public function getCatMain($id){
+    // Get main categories list from db
+    $data = $this->db->select("
+        SELECT
+          *
+        FROM
+          ".PREFIX."forum_cat
+        WHERE
+          forum_id = :forum_id
+        LIMIT 1
+        ",
+        array(':forum_id' => $id));
+    return $data;
+  }
+
+  /**
+   * updateCatMainTitle
+   *
+   * update data for selected Main Category.
+   *
+   * @param string gets data based on prev_forum_title
+   * @param string puts data from $new_forum_title
+   *
+   * @return boolean returns true/false
+   */
+  public function updateCatMainTitle($prev_forum_title,$new_forum_title){
+    // Update groups table
+		$query = $this->db->update(PREFIX.'forum_cat', array('forum_title' => $new_forum_title), array('forum_title' => $prev_forum_title));
+		$count = count($query);
+		// Check to make sure something was updated
+		if($count > 0){
+			return true;
+		}else{
+			return false;
+		}
+  }
+
+  /**
+   * moveUpCatMain
+   *
+   * update position of given object.
+   *
+   * @param int id of the object
+   *
+   * @return boolean returns true/false
+   */
+  public function moveUpCatMain($old){
+    // Moving up one spot
+    $new = $old - 1;
+    // Make sure this object is not already at top
+    if($new > 0){
+      // Update groups table
+  		$query = $this->db->raw("
+        UPDATE
+          ".PREFIX."forum_cat
+        SET
+          `forum_order_title` = CASE
+          WHEN (`forum_order_title` = $old) THEN
+            $new
+          WHEN (`forum_order_title` > $old and `forum_order_title` <= $new) THEN
+            `forum_order_title`- 1
+          WHEN (`forum_order_title` < $old and `forum_order_title` >= $new) THEN
+            `forum_order_title`+ 1
+          ELSE
+            `forum_order_title`
+        END
+        ");
+  		$count = count($query);
+  		// Check to make sure something was updated
+  		if($count > 0){
+  			return true;
+  		}else{
+  			return false;
+  		}
+    }else{
+      return false;
+    }
+  }
+
+  /**
+   * moveDownCatMain
+   *
+   * update position of given object.
+   *
+   * @param int id of the object
+   *
+   * @return boolean returns true/false
+   */
+  public function moveDownCatMain($old){
+    // Moving down one spot
+    $new = $old + 1;
+    // Update groups table
+		$query = $this->db->raw("
+      UPDATE
+        ".PREFIX."forum_cat
+      SET
+        `forum_order_title` = CASE
+        WHEN (`forum_order_title` = $old) THEN
+          $new
+        WHEN (`forum_order_title` < $old and `forum_order_title` >= $new) THEN
+          `forum_order_title`+ 1
+        WHEN (`forum_order_title` > $old and `forum_order_title` <= $new) THEN
+          `forum_order_title`- 1
+        ELSE
+          `forum_order_title`
+      END
+      ");
+		$count = count($query);
+		// Check to make sure something was updated
+		if($count > 0){
+			return true;
+		}else{
+			return false;
+		}
+  }
+
+  /**
+   * getLastCatMain
+   *
+   * get last order number.
+   *
+   * @return int returns last order id
+   */
+  public function getLastCatMain(){
+    $data = $this->db->select("
+      SELECT forum_order_title
+      FROM ".PREFIX."forum_cat
+      ORDER BY forum_order_title DESC
+      LIMIT 1
+    ");
+    return $data[0]->forum_order_title;
+  }
+
 }

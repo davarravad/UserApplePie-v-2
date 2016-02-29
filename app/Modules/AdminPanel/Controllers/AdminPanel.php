@@ -25,6 +25,7 @@ class AdminPanel extends Controller{
     Router::any('AdminPanel-Group/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@group');
     Router::any('AdminPanel-Forum-Settings', 'Modules\AdminPanel\Controllers\AdminPanel@forum_settings');
     Router::any('AdminPanel-Forum-Categories', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
+    Router::any('AdminPanel-Forum-Categories/(:any)/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
   }
 
   public function dashboard(){
@@ -40,7 +41,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/adminpanel', $data,$errors,$success);
+    View::renderModule('AdminPanel/views/adminpanel', $data,$error,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -62,7 +63,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/users', $data,$errors,$success);
+    View::renderModule('AdminPanel/views/users', $data,$error,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -219,7 +220,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/user', $data,$errors,$success);
+    View::renderModule('AdminPanel/views/user', $data,$error,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -265,7 +266,7 @@ class AdminPanel extends Controller{
     }
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/groups', $data,$errors, $success);
+    View::renderModule('AdminPanel/views/groups', $data,$error, $success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -369,7 +370,7 @@ class AdminPanel extends Controller{
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/group', $data,$errors,$success);
+    View::renderModule('AdminPanel/views/group', $data,$error,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
@@ -534,30 +535,91 @@ class AdminPanel extends Controller{
     // Setup Breadcrumbs
     $data['breadcrumbs'] = "
       <li><a href='".DIR."AdminPanel'><i class='fa fa-fw fa-cog'></i> Admin Panel</a></li>
-      <li class='active'><i class='fa fa-fw fa-user'></i>".$data['title']."</li>
+      <li class='active'><i class='glyphicon glyphicon-cog'></i> ".$data['title']."</li>
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/forum_settings', $data, $errors, $success);
+    View::renderModule('AdminPanel/views/forum_settings', $data, $error, $success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
   // Forum Categories Admin Panel
-  public function forum_categories(){
+  public function forum_categories($action = null, $id = null){
 
     // Get data for users
     $data['current_page'] = $_SERVER['REQUEST_URI'];
     $data['title'] = "Forum Categories";
     $data['welcome_message'] = "Welcome to the Forum Categories Admin Panel";
 
-    // Setup Breadcrumbs
-    $data['breadcrumbs'] = "
-      <li><a href='".DIR."AdminPanel'><i class='fa fa-fw fa-cog'></i> Admin Panel</a></li>
-      <li class='active'><i class='fa fa-fw fa-user'></i>".$data['title']."</li>
-    ";
+    // Check to see if there is an action
+    if($action != null && $id != null){
+      // Check to see if action is edit
+      if($action == 'CatMainEdit'){
+        // Check to make sure admin is trying to update
+        if(isset($_POST['submit'])){
+          // Check to make sure the csrf token is good
+          if (Csrf::isTokenValid()) {
+            if($_POST['action'] == "update_cat_main_title"){
+              // Catch password inputs using the Request helper
+              $new_forum_title = Request::post('forum_title');
+              $prev_forum_title = Request::post('prev_forum_title');
+              if($this->model->updateCatMainTitle($prev_forum_title,$new_forum_title)){
+                // Success
+                \Helpers\SuccessHelper::push('You Have Successfully Updated Forum Main Category Title to <b>'.$new_forum_title.'</b>', 'AdminPanel-Forum-Categories');
+              }else{
+                // Fail
+                $error[] = "Edit Forum Main Category Failed";
+              }
+            }
+          }
+        }else{
+          // Get data for CatMainEdit Form
+          $data['edit_cat_main'] = true;
+          $data['data_cat_main'] = $this->model->getCatMain($id);
+
+          // Setup Breadcrumbs
+          $data['breadcrumbs'] = "
+            <li><a href='".DIR."AdminPanel'><i class='glyphicon glyphicon-cog'></i> Admin Panel</a></li>
+            <li><a href='".DIR."AdminPanel-Forum-Categories'><i class='glyphicon glyphicon-list'></i> ".$data['title']."</a></li>
+            <li class='active'><i class='glyphicon glyphicon-pencil'></i> Edit Main Category</li>
+          ";
+        }
+      }else if($action == "CatMainUp"){
+        if($this->model->moveUpCatMain($id)){
+          // Success
+          \Helpers\SuccessHelper::push('You Have Successfully Moved Up Forum Main Category', 'AdminPanel-Forum-Categories');
+        }else{
+          // Fail
+          $error[] = "Move Up Forum Main Category Failed";
+        }
+      }else if($action == "CatMainDown"){
+        if($this->model->moveDownCatMain($id)){
+          // Success
+          \Helpers\SuccessHelper::push('You Have Successfully Moved Down Forum Main Category', 'AdminPanel-Forum-Categories');
+        }else{
+          // Fail
+          $error[] = "Move Down Forum Main Category Failed";
+        }
+      }
+    }else{
+      // Get data for main categories
+      $data['cat_main'] = $this->model->catMainList();
+
+      // Setup Breadcrumbs
+      $data['breadcrumbs'] = "
+        <li><a href='".DIR."AdminPanel'><i class='glyphicon glyphicon-cog'></i> Admin Panel</a></li>
+        <li class='active'><i class='glyphicon glyphicon-list'></i> ".$data['title']."</li>
+      ";
+    }
+
+    // Get Last main cat order number
+    $data['fourm_cat_main_last'] = $this->model->getLastCatMain();
+
+    // Setup CSRF token
+    $data['csrf_token'] = Csrf::makeToken();
 
     View::renderModule('AdminPanel/views/header', $data);
-    View::renderModule('AdminPanel/views/forum_categories', $data, $errors, $success);
+    View::renderModule('AdminPanel/views/forum_categories', $data, $error, $success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
