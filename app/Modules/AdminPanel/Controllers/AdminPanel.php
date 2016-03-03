@@ -26,6 +26,7 @@ class AdminPanel extends Controller{
     Router::any('AdminPanel-Forum-Settings', 'Modules\AdminPanel\Controllers\AdminPanel@forum_settings');
     Router::any('AdminPanel-Forum-Categories', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
     Router::any('AdminPanel-Forum-Categories/(:any)/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
+    Router::any('AdminPanel-Forum-Categories/(:any)/(:any)/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
   }
 
   public function dashboard(){
@@ -543,13 +544,20 @@ class AdminPanel extends Controller{
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
-  // Forum Categories Admin Panel
-  public function forum_categories($action = null, $id = null){
-
+  /**
+  * forum_categories
+  *
+  * Function that handles all the Admin Functions for Forum Categories
+  *
+  * @param string $action - action to take within function
+  * @param int/string
+  * @param int/string
+  *
+  */
+  public function forum_categories($action = null, $id = null, $id2 = null){
     // Get data for users
     $data['current_page'] = $_SERVER['REQUEST_URI'];
     $data['title'] = "Forum Categories";
-    $data['welcome_message'] = "Welcome to the Forum Categories Admin Panel";
 
     // Check to see if there is an action
     if($action != null && $id != null){
@@ -577,6 +585,8 @@ class AdminPanel extends Controller{
           $data['edit_cat_main'] = true;
           $data['data_cat_main'] = $this->model->getCatMain($id);
 
+          $data['welcome_message'] = "You are about to Edit Selected Forum Main Category.";
+
           // Setup Breadcrumbs
           $data['breadcrumbs'] = "
             <li><a href='".DIR."AdminPanel'><i class='glyphicon glyphicon-cog'></i> Admin Panel</a></li>
@@ -600,10 +610,207 @@ class AdminPanel extends Controller{
           // Fail
           $error[] = "Move Down Forum Main Category Failed";
         }
+      }else if($action == 'CatMainNew'){
+        // Check to make sure admin is trying to update
+        if(isset($_POST['submit'])){
+          // Check to make sure the csrf token is good
+          if (Csrf::isTokenValid()) {
+            // Add new cate main title to database
+            if($_POST['action'] == "new_cat_main_title"){
+              // Catch inputs using the Request helper
+              $forum_title = Request::post('forum_title');
+              // Get last order title number from db
+              $last_order_num = $this->model->getLastCatMain();
+              // Attempt to add new Main Category Title to DB
+              if($this->model->newCatMainTitle($forum_title,'forum',$last_order_num)){
+                // Success
+                \Helpers\SuccessHelper::push('You Have Successfully Created New Forum Main Category Title <b>'.$new_forum_title.'</b>', 'AdminPanel-Forum-Categories');
+              }else{
+                // Fail
+                $error[] = "New Forum Main Category Failed";
+              }
+            }
+          }
+        }
+      }else if($action == "CatSubList"){
+        // Check to make sure admin is trying to update
+        if(isset($_POST['submit'])){
+          // Check to make sure the csrf token is good
+          if (Csrf::isTokenValid()) {
+            // Add new cate main title to database
+            if($_POST['action'] == "new_cat_sub"){
+              // Catch inputs using the Request helper
+              $forum_title = Request::post('forum_title');
+              $forum_cat = Request::post('forum_cat');
+              $forum_des = Request::post('forum_des');
+              // Check to see if we are adding to a new main cat
+              if($this->model->checkSubCat($forum_title)){
+                // Get last cat sub order id
+                $last_cat_order_id = $this->model->getLastCatSub($forum_title);
+                // Get forum order title id
+                $forum_order_title = $this->model->getForumOrderTitle($forum_title);
+                // Run insert for new sub cat
+                $run_sub_cat = $this->model->newSubCat($forum_title,$forum_cat,$forum_des,$last_cat_order_id,$forum_order_title);
+              }else{
+                // Run update for new main cat
+                $run_sub_cat = $this->model->updateSubCat($id,$forum_cat,$forum_des);
+              }
+              // Attempt to update/insert sub cat in db
+              if($run_sub_cat){
+                // Success
+                \Helpers\SuccessHelper::push('You Have Successfully Created Forum Sub Category', 'AdminPanel-Forum-Categories/CatSubList/'.$id);
+              }else{
+                // Fail
+                $error[] = "Create Forum Sub Category Failed";
+              }
+            }
+          }
+        }else{
+          // Set goods for Forum Sub Categories Listing
+          $data['cat_sub_list'] = true;
+          $data['cat_main_title'] = $this->model->getCatMain($id);
+          $data['cat_sub_titles'] = $this->model->getCatSubs($data['cat_main_title']);
+          $data['fourm_cat_sub_last'] = $this->model->getLastCatSub($data['cat_main_title']);
+
+          $data['welcome_message'] = "You are viewing a complete list of sub categories for requeted main category.";
+
+          // Setup Breadcrumbs
+          $data['breadcrumbs'] = "
+            <li><a href='".DIR."AdminPanel'><i class='glyphicon glyphicon-cog'></i> Admin Panel</a></li>
+            <li><a href='".DIR."AdminPanel-Forum-Categories'><i class='glyphicon glyphicon-list'></i> ".$data['title']."</a></li>
+            <li class='active'><i class='glyphicon glyphicon-pencil'></i> Sub Categories List</li>
+          ";
+        }
+      }else if($action == "CatSubEdit"){
+        // Check to make sure admin is trying to update
+        if(isset($_POST['submit'])){
+          // Check to make sure the csrf token is good
+          if (Csrf::isTokenValid()) {
+            // Add new cate main title to database
+            if($_POST['action'] == "edit_cat_sub"){
+              // Catch inputs using the Request helper
+              $forum_cat = Request::post('forum_cat');
+              $forum_des = Request::post('forum_des');
+              // Attempt to update sub cat in db
+              if($this->model->updateSubCat($id,$forum_cat,$forum_des)){
+                // Success
+                \Helpers\SuccessHelper::push('You Have Successfully Updated Forum Sub Category', 'AdminPanel-Forum-Categories/CatSubList/'.$id);
+              }else{
+                // Fail
+                $error[] = "Update Forum Sub Category Failed";
+              }
+            }
+          }
+        }else{
+          // Display Edit Forum for Selected Sub Cat
+          $data['cat_sub_edit'] = true;
+          $data['cat_sub_data'] = $this->model->getCatSubData($id);
+
+          $data['welcome_message'] = "You are about to edit requeted sub category.";
+
+          // Setup Breadcrumbs
+          $data['breadcrumbs'] = "
+            <li><a href='".DIR."AdminPanel'><i class='glyphicon glyphicon-cog'></i> Admin Panel</a></li>
+            <li><a href='".DIR."AdminPanel-Forum-Categories'><i class='glyphicon glyphicon-list'></i> ".$data['title']."</a></li>
+            <li><a href='".DIR."AdminPanel-Forum-Categories/CatSubList/$id'><i class='glyphicon glyphicon-list'></i> Sub Categories List</a></li>
+            <li class='active'><i class='glyphicon glyphicon-pencil'></i> Edit Sub Category</li>
+          ";
+        }
+      }else if($action == "CatSubUp"){
+        // Get forum_title for cat
+        $data['cat_main_title'] = $this->model->getCatMain($id);
+        // Try to move up
+        if($this->model->moveUpCatSub($data['cat_main_title'],$id2)){
+          // Success
+          \Helpers\SuccessHelper::push('You Have Successfully Moved Up Forum Sub Category', 'AdminPanel-Forum-Categories/CatSubList/'.$id);
+        }else{
+          // Fail
+          $error[] = "Move Up Forum Main Category Failed";
+        }
+      }else if($action == "CatSubDown"){
+        // Get forum_title for cat
+        $data['cat_main_title'] = $this->model->getCatMain($id);
+        // Try to move down
+        if($this->model->moveDownCatSub($data['cat_main_title'],$id2)){
+          // Success
+          \Helpers\SuccessHelper::push('You Have Successfully Moved Down Forum Sub Category', 'AdminPanel-Forum-Categories/CatSubList/'.$id);
+        }else{
+          // Fail
+          $error[] = "Move Down Forum Main Category Failed";
+        }
+      }else if($action == "DeleteMainCat"){
+        // Check to make sure admin is trying to update
+        if(isset($_POST['submit'])){
+          // Check to make sure the csrf token is good
+          if (Csrf::isTokenValid()) {
+            // Add new cate main title to database
+            if($_POST['action'] == "delete_cat_main"){
+              // Catch inputs using the Request helper
+              $delete_cat_main_action = Request::post('delete_cat_main_action');
+
+              // Get title basted on forum_id
+              $forum_title = $this->model->getCatMain($id);
+
+              // Check to see what delete function admin has selected
+              if($delete_cat_main_action == "delete_all"){
+                // Admin wants to delete Main Cat and Everything Within it
+                // Get list of all forum_id's for this Main Cat
+                $forum_id_all = $this->model->getAllForumTitleIDs($forum_title);
+                $success_count = "0";
+                if(isset($forum_id_all)){
+                  foreach ($forum_id_all as $row) {
+                    // First we delete all related topic Replies
+                    if($this->model->deleteTopicsForumID($row->forum_id)){
+                      $success_count = $success_count + 1;
+                    }
+                    // Second we delete all topics
+                    if($this->model->deleteTopicRepliesForumID($row->forum_id)){
+                      $success_count = $success_count + 1;
+                    }
+                    // Finally we delete the main cat and all related sub cats
+                    if($this->model->deleteCatForumID($row->forum_id)){
+                      $success_count = $success_count + 1;
+                    }
+                  }
+                }
+                if($success_count > 0){
+                  // Success
+                  \Helpers\SuccessHelper::push('You Have Successfully Deleted Main Category: <b>'.$forum_title.'</b> and Everything Within it!', 'AdminPanel-Forum-Categories');
+                }
+              }else{
+                // Extract forum_id from move_to_# string
+                $forum_id = str_replace("move_to_", "", $delete_cat_main_action);
+                // Get new and old forum titles
+                $new_forum_title = $this->model->getCatMain($forum_id);
+                $old_forum_title = $this->model->getCatMain($id);
+                // Get forum_order_title id for forum_title we are moving to
+                $new_forum_order_title = $this->model->getForumOrderTitle($new_forum_title);
+                // Get last order id for new forum_title we are moving to
+                $new_forum_order_cat = $this->model->getLastCatSub($new_forum_title);
+                // Update with the new forum title from the old one
+                if($this->model->moveForumSubCat($old_forum_title,$new_forum_title,$new_forum_order_title,$new_forum_order_cat)){
+                  // Success
+                  \Helpers\SuccessHelper::push('You Have Successfully Moved Main Category From <b>'.$old_forum_title.'</b> to <b>'.$new_forum_title.'</b>', 'AdminPanel-Forum-Categories/CatSubList/'.$forum_id);
+                }
+              }
+
+            }
+          }
+        }else{
+          // Show delete options for main cat
+          $data['delete_cat_main'] = true;
+          $data['welcome_message'] = "You are about to delete requested main category.  Please proceed with caution.";
+          // Get title for main cat admin is about to delete
+          $data['delete_cat_main_title'] = $this->model->getCatMain($id);
+          // Get all other main cat titles
+          $data['list_all_cat_main'] = $this->model->catMainListExceptSel($data['delete_cat_main_title']);
+        }
       }
     }else{
       // Get data for main categories
       $data['cat_main'] = $this->model->catMainList();
+
+      $data['welcome_message'] = "You are viewing a complete list of main categories.";
 
       // Setup Breadcrumbs
       $data['breadcrumbs'] = "
