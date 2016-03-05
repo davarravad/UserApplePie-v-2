@@ -4,7 +4,9 @@
  */
 
 use Core\Language,
-  Helpers\Form;
+    Helpers\ErrorHelper,
+    Helpers\SuccessHelper,
+    Helpers\Form;
 
 $orderby = $data['orderby'];
 
@@ -16,6 +18,15 @@ $orderby = $data['orderby'];
 		</div>
 		<div class='panel-body'>
 			<p><?php echo $data['welcome_message'] ?></p>
+
+      <?php
+        // Display Success and Error Messages if any (TODO: Move to header file)
+      	echo ErrorHelper::display();
+      	echo SuccessHelper::display();
+      	echo ErrorHelper::display_raw($error);
+      	echo SuccessHelper::display_raw($success);
+      ?>
+
 			<table class='table table-hover responsive'>
 				<tr>
 					<th>
@@ -75,17 +86,24 @@ $orderby = $data['orderby'];
 				?>
 			</table>
 		</div>
+  </div>
+</div>
+
+<!-- Create New Group Form -->
+<div class='col-lg-12 col-md-12'>
+<?php echo Form::open(array('method' => 'post')); ?>
+  <div class='panel panel-info'>
+    <div class='panel-heading'>
+      <i class='glyphicon glyphicon-tower'></i> Group Name
+    </div>
+    <div class='panel-body'>
+      <?php echo Form::input(array('type' => 'text', 'name' => 'ag_groupName', 'class' => 'form-control', 'placeholder' => 'New Group Name', 'maxlength' => '150')); ?>
+    </div>
     <div class='panel-footer'>
-      <!-- Create New Group Form -->
-      <?php echo Form::open(array('method' => 'post')); ?>
-      <div class='input-group' style='margin-bottom: 25px'>
-          <span class='input-group-addon'><i class='glyphicon glyphicon-tower'></i> Group Name</span>
-          <?php echo Form::input(array('type' => 'text', 'name' => 'ag_groupName', 'class' => 'form-control', 'placeholder' => 'New Group Name', 'maxlength' => '150')); ?>
-          <span class="input-group-btn"><button name='submit' type='submit' class="btn btn-success">Create New Group</button></span>
-      </div>
       <input type='hidden' name='csrf_token' value='<?php echo $data['csrf_token'] ?>'>
       <input type='hidden' name='create_group' value='true' />
-      <?php echo Form::close(); ?>
+      <button name='submit' type='submit' class="btn btn-success">Create New Group</button>
     </div>
-	</div>
+  </div>
+<?php echo Form::close(); ?>
 </div>

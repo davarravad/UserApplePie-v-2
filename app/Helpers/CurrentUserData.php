@@ -63,4 +63,30 @@ class CurrentUserData
 		return $data[0]->username;
 	}
 
+  /**
+  * Get Current User's Groups Data For Display
+  */
+
+  public function getUserGroups($where_id){
+    self::$db = Database::get();
+    $user_groups = self::$db->select("
+        SELECT
+          ug.userID, ug.groupID, g.groupID, g.groupName, g.groupDescription, g.groupFontColor, g.groupFontWeight
+        FROM
+          ".PREFIX."users_groups ug
+        LEFT JOIN
+          ".PREFIX."groups g
+          ON g.groupID = ug.groupID
+        WHERE
+          ug.userID = :userID
+        ",
+      array(':userID' => $where_id));
+      if(isset($user_groups)){
+        foreach($user_groups as $row){
+          $usergroup[] = " <font color='$row->groupFontColor' weight='$row->groupFontWeight'>$row->groupName</font> ";
+        }
+      }
+    return $usergroup;
+  }
+
 }

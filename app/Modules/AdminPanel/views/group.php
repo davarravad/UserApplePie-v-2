@@ -4,9 +4,9 @@
  */
 
 use Helpers\Form,
-  Core\Error,
-  Core\Success,
-  Core\Language;
+    Helpers\ErrorHelper,
+    Helpers\SuccessHelper,
+    Core\Language;
 
 ?>
 
@@ -16,10 +16,17 @@ use Helpers\Form,
 			<h3 class='jumbotron-heading'><?php echo $data['title']." - ".$data['g_groupName']  ?></h3>
 		</div>
 		<div class='panel-body'>
+
 			<p><?php echo $data['welcome_message'] ?></p>
 
-			<?php echo Error::display($error); ?>
-			<?php echo Success::display($success); ?>
+      <?php
+        // Display Success and Error Messages if any (TODO: Move to header file)
+      	echo ErrorHelper::display();
+      	echo SuccessHelper::display();
+      	echo ErrorHelper::display_raw($error);
+      	echo SuccessHelper::display_raw($success);
+      ?>
+
 			<?php echo Form::open(array('method' => 'post')); ?>
 
 			<!-- Group Name -->

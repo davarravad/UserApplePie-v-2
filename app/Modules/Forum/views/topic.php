@@ -59,7 +59,7 @@ use Core\Language,
     					echo "</div>";
     					echo "<div class='col-lg-4 col-md-4 col-sm-4' style='text-align:center'>";
     						//Show user's membership status
-    						//get_up_info_mem_status($ID02);
+    						foreach(CurrentUserData::getUserGroups($data['topic_creator']) as $row){ echo $row; };
     					echo "</div>";
     					echo "<div class='col-lg-4 col-md-4 col-sm-4' style='text-align:right'>";
     						// Display how long ago this was posted
@@ -152,8 +152,8 @@ use Core\Language,
 									echo " <a href='".DIR."Profile/$rf_p_user_id/'>$rf_p_user_name</a> ";
 								echo "</div>";
 								echo "<div class='col-lg-4 col-md-4 col-sm-4' style='text-align:center'>";
-									//Show user's membership status
-									//get_up_info_mem_status($rf_p_user_id);
+                  //Show user's membership status
+                  foreach(CurrentUserData::getUserGroups($rf_p_user_id) as $row){ echo $row; };
 								echo "</div>";
 								echo "<div class='col-lg-4 col-md-4 col-sm-4' style='text-align:right'>";
 									// Display how long ago this was posted
