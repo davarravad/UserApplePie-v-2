@@ -5,7 +5,7 @@
  * @author David "DaVaR" Sargent - davar@thedavar.net
  * @version 2.0
  * @date Jan 13, 2016
- * @date updated Feb 19, 2016
+ * @date updated Mar 5, 2016
  */
 
 namespace Modules\Forum\Controllers;
@@ -218,8 +218,8 @@ use Core\Controller,
           // Check to see if user is editing topic
           if($data['action'] == "update_topic"){
             // Get data from post
-    				$data['forum_content'] = Request::post('forum_content');
-            $data['forum_title'] = Request::post('forum_title');
+    				$data['forum_content'] = strip_tags(Request::post('forum_content'));
+            $data['forum_title'] = strip_tags(Request::post('forum_title'));
               // Check to make sure user completed all required fields in form
               if(empty($data['forum_title'])){
                 // Subject field is empty
@@ -250,7 +250,7 @@ use Core\Controller,
           // Check to see if user is editing or creating topic reply
           else if($data['action'] == "update_reply"){
             // Get data from post
-    				$data['fpr_content'] = Request::post('fpr_content');
+    				$data['fpr_content'] = strip_tags(Request::post('fpr_content'));
               // Check to make sure user completed all required fields in form
               if(empty($data['fpr_content'])){
                 // Subject field is empty
@@ -275,7 +275,7 @@ use Core\Controller,
               }// End Form Complete Check
           }else if($data['action'] == "new_reply"){
     				// Get data from post
-    				$data['fpr_content'] = Request::post('fpr_content');
+    				$data['fpr_content'] = strip_tags(Request::post('fpr_content'));
               // Check to make sure user completed all required fields in form
               if(empty($data['fpr_content'])){
                 // Subject field is empty
@@ -378,8 +378,8 @@ use Core\Controller,
   			// Check to make sure the csrf token is good
   			if (Csrf::isTokenValid()) {
   				// Get data from post
-  				$data['forum_title'] = Request::post('forum_title');
-  				$data['forum_content'] = Request::post('forum_content');
+  				$data['forum_title'] = strip_tags(Request::post('forum_title'));
+  				$data['forum_content'] = strip_tags(Request::post('forum_content'));
             // Check to make sure user completed all required fields in form
             if(empty($data['forum_title'])){
               // Username field is empty

@@ -3,7 +3,9 @@
  * Create the members view
  */
 
-use Core\Language;
+use Core\Language,
+		Helpers\ErrorHelper,
+		Helpers\SuccessHelper;
 
 $orderby = $data['orderby'];
 
@@ -15,6 +17,15 @@ $orderby = $data['orderby'];
 		</div>
 		<div class='panel-body'>
 			<p><?php echo $data['welcome_message'] ?></p>
+
+			<?php
+        // Display Success and Error Messages if any (TODO: Move to header file)
+      	echo ErrorHelper::display();
+      	echo SuccessHelper::display();
+      	echo ErrorHelper::display_raw($error);
+      	echo SuccessHelper::display_raw($success);
+      ?>
+
 			<table class='table table-hover responsive'>
 				<tr>
 					<th>
@@ -30,12 +41,12 @@ $orderby = $data['orderby'];
               else if($data['orderby'] == "ID-ASC"){
                 $ob_value = "ID-DESC";
                 $ob_icon = "<i class='glyphicon glyphicon-triangle-top'></i>";
-              }
+              }else{
+								$ob_value = "ID-ASC";
+                $ob_icon = "";
+							}
                 // Setup the order by id button
-                echo "<form action='' method='post'>";
-                echo "<input type='hidden' name='orderby' value='$ob_value'>";
-                echo "<button type='submit' class='btn btn-info btn-sm'>ID $ob_icon</button>";
-                echo "</form>";
+								echo "<a href='".DIR."AdminPanel-Users/$ob_value/".$data['current_page_num']."' class='btn btn-info btn-sm'>UID $ob_icon</button>";
             ?>
           </th>
 					<th>
@@ -51,12 +62,12 @@ $orderby = $data['orderby'];
               else if($data['orderby'] == "UN-ASC"){
                 $obu_value = "UN-DESC";
                 $obu_icon = "<i class='glyphicon glyphicon-triangle-top'></i>";
-              }
-                // Setup the order by id button
-                echo "<form action='' method='post'>";
-                echo "<input type='hidden' name='orderby' value='$obu_value'>";
-                echo "<button type='submit' class='btn btn-info btn-sm'>UserName $obu_icon</button>";
-                echo "</form>";
+              }else{
+								$obu_value = "UN-ASC";
+                $obu_icon = "";
+							}
+              // Setup the order by id button
+              echo "<a href='".DIR."AdminPanel-Users/$obu_value/".$data['current_page_num']."' class='btn btn-info btn-sm'>UserName $obu_icon</button>";
             ?>
           </th>
           <th>FirstName</th>
@@ -69,12 +80,22 @@ $orderby = $data['orderby'];
               echo "<td>$row->userID</td>";
 							echo "<td><a href='".DIR."AdminPanel-User/$row->userID'>$row->username</a></td>";
 							echo "<td>$row->firstName</td>";
-              echo "<td>".date("F d, Y",strtotime($row->LastLogin))."</td>";
+              echo "<td>";
+								if($row->LastLogin){ echo date("F d, Y",strtotime($row->LastLogin)); }else{ echo "Never"; }
+							echo "</td>";
 							echo "</tr>";
 						}
 					}
 				?>
 			</table>
 		</div>
+		<?php
+			// Check to see if there is more than one page
+			if($data['pageLinks'] > "1"){
+				echo "<div class='panel-footer' style='text-align: center'>";
+				echo $data['pageLinks'];
+				echo "</div>";
+			}
+		?>
 	</div>
 </div>

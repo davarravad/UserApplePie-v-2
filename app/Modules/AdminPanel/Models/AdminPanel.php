@@ -15,7 +15,7 @@ use Core\Model;
 class AdminPanel extends Model {
 
   // Get list of all users
-  public function getUsers($orderby){
+  public function getUsers($orderby, $limit = null){
 
     // Set default orderby if one is not set
     if($orderby == "ID-DESC"){
@@ -41,6 +41,7 @@ class AdminPanel extends Model {
           ".PREFIX."users
         ORDER BY
           $run_order
+        $limit
         ");
     return $user_data;
   }
@@ -117,6 +118,23 @@ class AdminPanel extends Model {
 		}else{
 			return false;
 		}
+  }
+
+  /**
+  * getTotalUsers
+  *
+  * Gets total count of users
+  *
+  * @return int count
+  */
+  public function getTotalUsers(){
+    $data = $this->db->select("
+        SELECT
+          *
+        FROM
+          ".PREFIX."users
+        ");
+    return count($data);
   }
 
   // Get list of all groups
@@ -286,8 +304,7 @@ class AdminPanel extends Model {
     $new_group_id = $this->db->lastInsertId('groupID');
     $count = count($data);
     if($count > 0){
-      \Helpers\Url::redirect('AdminPanel-Group/'.$new_group_id);
-      return true;
+      return $new_group_id;
     }else{
       return false;
     }

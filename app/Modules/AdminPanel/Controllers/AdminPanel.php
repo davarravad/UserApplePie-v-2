@@ -17,20 +17,26 @@ use Helpers\Auth\Auth;
 use Helpers\Csrf;
 use Helpers\Request;
 
+define('USERS_PAGEINATOR_LIMIT', '10');  // Sets up users listing page limit 
+
 class AdminPanel extends Controller{
 
   private $model;
   private $forum;
+  private $pages;
 
   public function __construct(){
     parent::__construct();
     $this->model = new \Modules\AdminPanel\Models\AdminPanel();
     $this->forum = new \Modules\AdminPanel\Models\ForumAdmin();
+    $this->pages = new \Helpers\Paginator(USERS_PAGEINATOR_LIMIT);  // How many rows per page
   }
 
   public function routes(){
     Router::any('AdminPanel', 'Modules\AdminPanel\Controllers\AdminPanel@dashboard');
     Router::any('AdminPanel-Users', 'Modules\AdminPanel\Controllers\AdminPanel@users');
+    Router::any('AdminPanel-Users/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@users');
+    Router::any('AdminPanel-Users/(:any)/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@users');
     Router::any('AdminPanel-User/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@user');
     Router::any('AdminPanel-Groups', 'Modules\AdminPanel\Controllers\AdminPanel@groups');
     Router::any('AdminPanel-Group/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@group');
@@ -57,16 +63,25 @@ class AdminPanel extends Controller{
     View::renderModule('AdminPanel/views/footer', $data);
   }
 
-  public function users(){
+  public function users($set_order_by = 'ID-ASC', $current_page = '1'){
 
     // Check for orderby selection
-    $data['orderby'] = Request::post('orderby');
+    $data['orderby'] = $set_order_by;
+
+    // Set total number of rows for paginator
+    $total_num_users = $this->model->getTotalUsers();
+    $this->pages->setTotal($total_num_users);
+
+    // Send page links to view
+    $pageFormat = DIR."AdminPanel-Users/$set_order_by/"; // URL page where pages are
+    $data['pageLinks'] = $this->pages->pageLinks($pageFormat, null, $current_page);
+    $data['current_page_num'] = $current_page;
 
     // Get data for users
     $data['current_page'] = $_SERVER['REQUEST_URI'];
     $data['title'] = "Users";
     $data['welcome_message'] = "Welcome to the Users Admin Panel";
-    $data['users_list'] = $this->model->getUsers($data['orderby']);
+    $data['users_list'] = $this->model->getUsers($data['orderby'], $this->pages->getLimit($current_page, USERS_PAGEINATOR_LIMIT));
 
     // Setup Breadcrumbs
     $data['breadcrumbs'] = "
@@ -137,7 +152,7 @@ class AdminPanel extends Controller{
   				// Run the update profile script
   				if($this->model->updateProfile($au_id, $au_username, $au_firstName, $au_email, $au_gender, $au_website, $au_userImage, $au_aboutme)){
   					// Success
-  					$success[] = "You Have Successfully Updated User Profile";
+            \Helpers\SuccessHelper::push('You Have Successfully Updated User Profile', 'AdminPanel-User/'.$au_id);
   				}else{
   					// Fail
   					$error[] = "Profile Update Failed";
@@ -152,8 +167,7 @@ class AdminPanel extends Controller{
           // Updates current user's group
   				if($this->model->removeFromGroup($au_userID, $au_groupID)){
   					// Success
-  					$success[] = "You Have Successfully Removed User From Group";
-            \Helpers\Url::previous();
+            \Helpers\SuccessHelper::push('You Have Successfully Removed User From Group', 'AdminPanel-User/'.$au_userID);
   				}else{
   					// Fail
   					$error[] = "Remove From Group Failed";
@@ -168,8 +182,7 @@ class AdminPanel extends Controller{
           // Updates current user's group
   				if($this->model->addToGroup($au_userID, $au_groupID)){
   					// Success
-  					$success[] = "You Have Successfully Added User to Group";
-            \Helpers\Url::previous();
+            \Helpers\SuccessHelper::push('You Have Successfully Added User to Group', 'AdminPanel-User/'.$au_userID);
   				}else{
   					// Fail
   					$error[] = "Add to Group Failed";
@@ -182,8 +195,7 @@ class AdminPanel extends Controller{
           // Run the Activation script
   				if($this->model->activateUser($au_id)){
   					// Success
-  					$success[] = "You Have Successfully Activated User";
-            \Helpers\Url::previous();
+            \Helpers\SuccessHelper::push('You Have Successfully Activated User', 'AdminPanel-User/'.$au_id);
   				}else{
   					// Fail
   					$error[] = "Activate User Failed";
@@ -196,8 +208,7 @@ class AdminPanel extends Controller{
           // Run the Activation script
   				if($this->model->deactivateUser($au_id)){
   					// Success
-  					$success[] = "You Have Successfully Deactivated User";
-            \Helpers\Url::previous();
+            \Helpers\SuccessHelper::push('You Have Successfully Deactivated User', 'AdminPanel-User/'.$au_id);
   				}else{
   					// Fail
   					$error[] = "Deactivate User Failed";
@@ -263,12 +274,12 @@ class AdminPanel extends Controller{
         if($_POST['create_group'] == "true"){
           // Catch password inputs using the Request helper
           $ag_groupName = Request::post('ag_groupName');
-//echo "$ag_groupName";
+
           // Run the update group script
-          if($this->model->createGroup($ag_groupName)){
+          $new_group_id = $this->model->createGroup($ag_groupName);
+          if($new_group_id){
             // Success
-            $success[] = "You Have Successfully Added Group";
-            //\Helpers\Url::redirect('AdminPanel-Group/');
+            \Helpers\SuccessHelper::push('You Have Successfully Added Group', 'AdminPanel-Group/'.$new_group_id);
           }else{
             // Fail
             $error[] = "Group Add Failed";
@@ -324,7 +335,6 @@ class AdminPanel extends Controller{
 
     // Check to make sure admin is trying to update group data
 		if(isset($_POST['submit'])){
-
 			// Check to make sure the csrf token is good
 			if (Csrf::isTokenValid()) {
         // Check for update group
@@ -339,7 +349,7 @@ class AdminPanel extends Controller{
   				// Run the update group script
   				if($this->model->updateGroup($ag_groupID, $ag_groupName, $ag_groupDescription, $ag_groupFontColor, $ag_groupFontWeight)){
   					// Success
-  					$success[] = "You Have Successfully Updated Group";
+            \Helpers\SuccessHelper::push('You Have Successfully Updated a Group', 'AdminPanel-Group/'.$ag_groupID);
   				}else{
   					// Fail
   					$error[] = "Group Update Failed";
@@ -353,8 +363,7 @@ class AdminPanel extends Controller{
           // Run the update group script
           if($this->model->deleteGroup($ag_groupID)){
             // Success
-            $success[] = "You Have Successfully Deleted Group";
-            \Helpers\Url::redirect('AdminPanel-Groups');
+            \Helpers\SuccessHelper::push('You Have Successfully Deleted a Group', 'AdminPanel-Groups');
           }else{
             // Fail
             $error[] = "Group Delete Failed";
