@@ -1,6 +1,11 @@
 <?php
 /**
- * Create the members view
+ * Forum Categories Admin Panel View
+ *
+ * @author DaVaR - davar@userapplepie.com
+ * @version 1.0
+ * @date Feb 20 2016
+ * @updated Mar 4 2016
  */
 
 use Helpers\Form,
@@ -57,12 +62,22 @@ use Helpers\Form,
                 foreach ($data['cat_sub_titles'] as $row) {
                   if(!empty($row->forum_cat)){
                     echo "<div class='panel panel-primary'>";
+                      echo "<div class='panel-heading'>";
+                        echo "<strong>$row->forum_cat</strong><br>";
+                        echo "$row->forum_des";
+                      echo "</div>";
                       echo "<div class='panel-body'>";
-                        echo "<div class='col-lg-8 col-md-8'>";
-                          echo "<strong>$row->forum_cat</strong><br>";
-                          echo "$row->forum_des";
+                        echo "<div class='col-lg-6 col-md-6'>";
+                          // Display total number of topics for this category
+                          echo " <div class='label label-warning' style='margin-top: 5px'>";
+                          echo "Topics <span class='badge'>$row->total_topics_display</span>";
+                          echo "</div> ";
+                          // Display total number of topic replies for this category
+                          echo " <div class='label label-warning' style='margin-top: 5px'>";
+                          echo "Replies <span class='badge'>$row->total_topic_replys_display</span>";
+                          echo "</div> ";
                         echo "</div>";
-                        echo "<div class='col-lg-4 col-md-4' style='text-align: right'>";
+                        echo "<div class='col-lg-6 col-md-6' style='text-align: right'>";
                           // Check to see if object is at top
                           if($row->forum_order_cat > 1){
                             echo "<a href='".DIR."AdminPanel-Forum-Categories/CatSubUp/$row->forum_id/$row->forum_order_cat' class='btn btn-primary btn-xs' role='button'><span class='glyphicon glyphicon-triangle-top' aria-hidden='true'></span></a> ";
@@ -72,6 +87,7 @@ use Helpers\Form,
                             echo "<a href='".DIR."AdminPanel-Forum-Categories/CatSubDown/$row->forum_id/$row->forum_order_cat' class='btn btn-primary btn-xs' role='button'><span class='glyphicon glyphicon-triangle-bottom' aria-hidden='true'></span></a> ";
                           }
                           echo "<a href='".DIR."AdminPanel-Forum-Categories/CatSubEdit/$row->forum_id' class='btn btn-success btn-xs' role='button'><span class='glyphicon glyphicon-cog' aria-hidden='true'></span> Edit</a> ";
+                          echo "<a href='".DIR."AdminPanel-Forum-Categories/DeleteSubCat/$row->forum_id' class='btn btn-danger btn-xs' role='button'><span class='glyphicon glyphicon-remove-circle' aria-hidden='true'></span></a> ";
                         echo "</div>";
                       echo "</div>";
                     echo "</div>";
@@ -151,16 +167,59 @@ use Helpers\Form,
                 echo Form::input(array('type' => 'hidden', 'name' => 'action', 'value' => 'delete_cat_main'));
                 echo Form::input(array('type' => 'hidden', 'name' => 'csrf_token', 'value' => $data['csrf_token']));
               echo Form::close();
+            }else if($data['delete_cat_sub']  == true){
+              // Display Delete Sub Cat Form
+              echo Form::open(array('method' => 'post'));
+                echo "<div class='panel panel-danger'>";
+                  echo "<div class='panel-heading'>";
+                    echo "Delete Forum Sub Category: <strong>".$data['delete_cat_sub_title']."</strong>";
+                  echo "</div>";
+                  echo "<div class='panel-body'>";
+                    echo "What would you like to do with all Topics, and Topic Replies that are connected to Sub Category: <strong>".$data['delete_cat_sub_title']."</strong> ?";
+                    echo "<select class='form-control' id='delete_cat_sub_action' name='delete_cat_sub_action'>";
+                      echo "<option value=''>Select What To Do With Content</option>";
+                      echo "<option value='delete_all'>Delete Everything Related to Sub Category (This Can NOT be undone!)</option>";
+                      // Show list of all main categories that admin can move content to
+                      if(isset($data['list_all_cat_sub'])){
+                        foreach ($data['list_all_cat_sub'] as $row) {
+                          echo "<option value='move_to_$row->forum_id'>Move Content to: $row->forum_title > $row->forum_cat</option>";
+                        }
+                      }
+                    echo "</select>";
+                  echo "</div>";
+                  echo "<div class='panel-footer'>";
+                    echo "<button class='btn btn-danger' name='submit' type='submit'>Delete Sub Category</button>";
+                  echo "</div>";
+                echo "</div>";
+                echo Form::input(array('type' => 'hidden', 'name' => 'action', 'value' => 'delete_cat_sub'));
+                echo Form::input(array('type' => 'hidden', 'name' => 'csrf_token', 'value' => $data['csrf_token']));
+              echo Form::close();
             }else{
               // Display main categories for forum
               if(isset($data['cat_main'])){
                 foreach($data['cat_main'] as $row){
                   echo "<div class='panel panel-primary'>";
-                    echo "<div class='panel-body'>";
-                      echo "<div class='col-lg-8 col-md-8'>";
+                    echo "<div class='panel-heading'>";
+                      echo "<h3 class='panel-title'>";
                         echo $row->forum_title;
+                      echo "</h3>";
+                    echo "</div>";
+                    echo "<div class='panel-body'>";
+                      echo "<div class='col-lg-6 col-md-6' style='text-align: left; margin-bottom: 2px'>";
+                        // Display total number of sub cats for this category
+                        echo " <div class='label label-warning' style='margin-top: 5px'>";
+                        echo "Sub Cats <span class='badge'>$row->total_sub_cats</span>";
+                        echo "</div> ";
+                        // Display total number of topics for this category
+                        echo " <div class='label label-warning' style='margin-top: 5px'>";
+                        echo "Topics <span class='badge'>$row->total_topics_display</span>";
+                        echo "</div> ";
+                        // Display total number of topic replies for this category
+                        echo " <div class='label label-warning' style='margin-top: 5px'>";
+                        echo "Replies <span class='badge'>$row->total_topic_replys_display</span>";
+                        echo "</div> ";
                       echo "</div>";
-                      echo "<div class='col-lg-4 col-md-4' style='text-align: right'>";
+                      echo "<div class='col-lg-6 col-md-6' style='text-align: right; margin-bottom: 2px'>";
                         // Check to see if object is at top
                         if($row->forum_order_title > 1){
                           echo "<a href='".DIR."AdminPanel-Forum-Categories/CatMainUp/$row->forum_order_title' class='btn btn-primary btn-xs' role='button'><span class='glyphicon glyphicon-triangle-top' aria-hidden='true'></span></a> ";
