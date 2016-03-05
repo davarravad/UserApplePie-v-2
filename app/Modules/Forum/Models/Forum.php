@@ -458,12 +458,59 @@ class Forum extends Model {
       // Update messages table
       $query = $this->db->insert(PREFIX.'forum_posts', array('forum_id' => $forum_id, 'forum_user_id' => $forum_user_id, 'forum_title' => $forum_title, 'forum_content' => $forum_content));
       $count = count($query);
+      $last_insert_id = $this->db->lastInsertId('forum_post_id');
       // Check to make sure Topic was Created
+      if($count > 0){
+        return $last_insert_id;
+      }else{
+        return false;
+      }
+    }
+
+    /**
+     * sendNewImage
+     *
+     * add uploaded image to database
+     *
+     * @param in $user_id
+     * @param string $imageName
+     * @param string $imageLocation
+     * @param int $imageSize
+     * @param int $forumID
+     * @param int $forumTopicID
+     * @param int $forumTopicReplyID
+     *
+     * @return booleen true/false
+     */
+    public function sendNewImage($user_id, $imageName, $imageLocation, $imageSize, $forumID, $forumTopicID, $forumTopicReplyID = null){
+      // Update forum images table
+      $query = $this->db->insert(PREFIX.'forum_images', array('user_id' => $user_id, 'imageName' => $imageName, 'imageLocation' => $imageLocation, 'imageSize' => $imageSize, 'forumID' => $forumID, 'forumTopicID' => $forumTopicID, 'forumTopicReplyID' => $forumTopicReplyID));
+      $count = count($query);
+      // Check to make sure row was inserted
       if($count > 0){
         return true;
       }else{
         return false;
       }
+    }
+
+    /**
+     * getForumImagesTopic
+     *
+     * get topic images
+     *
+     * @param int $id
+     *
+     * @return string returns image url
+     */
+    public function getForumImagesTopic($topic_id){
+      $data = $this->db->select("
+        SELECT imageLocation
+        FROM ".PREFIX."forum_images
+        WHERE forumTopicID = :topic_id
+      ",
+      array(':topic_id' => $topic_id));
+      return $data[0]->imageLocation;
     }
 
     /**

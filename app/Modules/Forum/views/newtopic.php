@@ -36,7 +36,7 @@ use Core\Language,
 				<?php echo $data['welcome_message']; ?>
 
 
-            <?php echo Form::open(array('method' => 'post')); ?>
+            <?php echo Form::open(array('method' => 'post', 'enctype' => 'multipart/form-data')); ?>
 
             <!-- Topic Title -->
             <div class='input-group' style='margin-bottom: 25px'>
@@ -48,6 +48,12 @@ use Core\Language,
             <div class='input-group' style='margin-bottom: 25px'>
               <span class='input-group-addon'><i class='glyphicon glyphicon-pencil'></i> </span>
               <?php echo Form::textBox(array('type' => 'text', 'name' => 'forum_content', 'class' => 'form-control', 'value' => $data['forum_content'], 'placeholder' => 'Topic Content', 'rows' => '6')); ?>
+            </div>
+
+            <!-- Image Upload -->
+            <div class='input-group' style='margin-bottom: 25px'>
+              <span class='input-group-addon'><i class='glyphicon glyphicon-picture'></i> </span>
+              <?php echo Form::input(array('type' => 'file', 'name' => 'forumImage', 'id' => 'forumImage', 'class' => 'form-control', 'accept' => 'image/jpeg,image/png,image/gif')); ?>
             </div>
 
               <!-- CSRF Token -->
