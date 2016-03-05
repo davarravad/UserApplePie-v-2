@@ -20,7 +20,8 @@ use Core\Controller,
   Helpers\SuccessHelper,
   Helpers\ErrorHelper,
   Helpers\PageViews,
-  Helpers\Sweets;
+  Helpers\Sweets,
+  Helpers\SimpleImage;
 
   class Forum extends Controller{
 
@@ -206,6 +207,9 @@ use Core\Controller,
       $pageFormat = DIR."Topic/$id/"; // URL page where pages are
       $data['pageLinks'] = $this->pagesReply->pageLinks($pageFormat, null, $current_page);
 
+      // Get related images if any
+      $data['forum_images'] = $this->model->getForumImagesTopic($id);
+
       // Check to see if user is submitting a new topic reply
   		if(isset($_POST['submit'])){
 
@@ -292,8 +296,42 @@ use Core\Controller,
                     $redirect_page_num = ceil(($total_num_replys + 1) / $page_reply_limit);
                     // Send emails to those who are subscribed to this topic
                     $this->model->sendTopicSubscribeEmails($id, $u_id, $data['title'], $data['forum_cat'], $data['fpr_content']);
+
+                    // Check for image upload with this topic
+                    $picture = file_exists($_FILES['forumImage']['tmp_name']) || is_uploaded_file($_FILES['forumImage']['tmp_name']) ? $_FILES['forumImage'] : array ();
+                      // Make sure image is being uploaded before going further
+                      if(sizeof($picture)>0){
+                        // Get image size
+                        $check = getimagesize ( $picture['tmp_name'] );
+                        // Get file size for db
+                        $file_size = $picture['size'];
+                        // Make sure image size is not too large
+                        if($picture['size'] < 1000000 && $check && ($check['mime'] == "image/jpeg" || $check['mime'] == "image/png" || $check['mime'] == "image/gif")){
+                          if(!file_exists('images/forum-pics')){
+                            mkdir('images/forum-pics',0777,true);
+                          }
+                          // Upload the image to server
+                          $image = new SimpleImage($picture['tmp_name']);
+                          $new_image_name = "forum-image-topic-reply-uid{$u_id}-fid{$id}-ftid{$reply_id}";
+                          $dir = 'images/forum-pics/'.$new_image_name.'.gif';
+                          $image->best_fit(400,300)->save($dir);
+                          $forumImage = $dir;
+                          // Make sure image was Successfull
+                          if($forumImage){
+                            // Add new image to database
+                            if($this->model->sendNewImage($u_id, $new_image_name, $dir, $file_size, $topic_forum_id, $id, $reply_id)){
+                              $img_success = "<br> Image Successfully Uploaded";
+                            }else{
+                              $img_success = "<br> No Image Uploaded";
+                            }
+                          }
+                        }else{
+                          $img_success = "<br> Image was NOT uploaded because the file size was too large!";
+                        }
+                      }
+
           					// Success
-                    SuccessHelper::push('You Have Successfully Created a New Topic Reply', 'Topic/'.$id.'/'.$redirect_page_num.'/#topicreply'.$reply_id);
+                    SuccessHelper::push('You Have Successfully Created a New Topic Reply'.$img_success, 'Topic/'.$id.'/'.$redirect_page_num.'/#topicreply'.$reply_id);
                     $data['hide_form'] = "true";
           				}else{
           					// Fail
@@ -380,6 +418,7 @@ use Core\Controller,
   				// Get data from post
   				$data['forum_title'] = strip_tags(Request::post('forum_title'));
   				$data['forum_content'] = strip_tags(Request::post('forum_content'));
+
             // Check to make sure user completed all required fields in form
             if(empty($data['forum_title'])){
               // Username field is empty
@@ -392,9 +431,44 @@ use Core\Controller,
             // Check for errors before sending message
             if(count($error) == 0){
                 // No Errors, lets submit the new topic to db
-        				if($this->model->sendTopic($u_id, $id, $data['forum_title'], $data['forum_content'])){
+                $new_topic = $this->model->sendTopic($u_id, $id, $data['forum_title'], $data['forum_content']);
+        				if($new_topic){
+                  // New Topic Successfully Created Now Check if User is Uploading Image
+                  // Check for image upload with this topic
+                  $picture = file_exists($_FILES['forumImage']['tmp_name']) || is_uploaded_file($_FILES['forumImage']['tmp_name']) ? $_FILES['forumImage'] : array ();
+                    // Make sure image is being uploaded before going further
+                    if(sizeof($picture)>0){
+                      // Get image size
+                      $check = getimagesize ( $picture['tmp_name'] );
+                      // Get file size for db
+                      $file_size = $picture['size'];
+                      // Make sure image size is not too large
+                      if($picture['size'] < 1000000 && $check && ($check['mime'] == "image/jpeg" || $check['mime'] == "image/png" || $check['mime'] == "image/gif")){
+                        if(!file_exists('images/forum-pics')){
+                          mkdir('images/forum-pics',0777,true);
+                        }
+                        // Upload the image to server
+                        $image = new SimpleImage($picture['tmp_name']);
+                        $new_image_name = "forum-image-topic-uid{$u_id}-fid{$id}-ftid{$new_topic}";
+                        $dir = 'images/forum-pics/'.$new_image_name.'.gif';
+                        $image->best_fit(400,300)->save($dir);
+                        $forumImage = $dir;
+                        var_dump($forumImage);
+                        // Make sure image was Successfull
+                        if($forumImage){
+                          // Add new image to database
+                          if($this->model->sendNewImage($u_id, $new_image_name, $dir, $file_size, $id, $new_topic)){
+                            $img_success = "<br> Image Successfully Uploaded";
+                          }else{
+                            $img_success = "<br> No Image Uploaded";
+                          }
+                        }
+                      }else{
+                        $img_success = "<br> Image was NOT uploaded because the file size was too large!";
+                      }
+                    }
         					// Success
-                  SuccessHelper::push('You Have Successfully Created a New Topic', 'Topics/'.$id);
+                  SuccessHelper::push('You Have Successfully Created a New Topic'.$img_success, 'Topic/'.$new_topic);
                   $data['hide_form'] = "true";
         				}else{
         					// Fail

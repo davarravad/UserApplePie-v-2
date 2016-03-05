@@ -15,7 +15,8 @@ use Core\Language,
   Helpers\TimeDiff,
   Helpers\CurrentUserData,
   Helpers\BBCode,
-  Helpers\Sweets;
+  Helpers\Sweets,
+  Helpers\Images;
 
 ?>
 
@@ -45,6 +46,10 @@ use Core\Language,
         echo "<div class='btn btn-xs btn-info'>Views <span class='badge'>".$data['PageViews']."</span></div>";
         // Display Total Sweets Count for Topic and All Replys
         echo Sweets::getTotalSweets($data['topic_id'], 'Forum_Topic', 'Forum_Topic_Reply');
+        // Display total images
+        echo "<div class='btn btn-success btn-xs'> Images <span class='badge'>";
+          echo Images::getImageCountForum('Topic', $data['topic_id']);
+        echo "</span></div>";
         echo "<hr>";
 
         // Topic Display
@@ -85,6 +90,11 @@ use Core\Language,
             echo Form::close();
           }else{
   				  echo $data_topic_content;
+          }
+          // Check to see if there are any images attaced to this post
+          if(isset($data['forum_images'])){
+            echo "<hr>";
+            echo "<div align='center'><a href='".DIR."{$data['forum_images']}' target='_blank'><img src='".DIR."{$data['forum_images']}' height='100px'></a></div>";
           }
   			echo "</div>";
   			echo "<div class='panel-footer'>";
@@ -184,6 +194,12 @@ use Core\Language,
               }else{
 							  echo "$rf_p_content_bb";
               }
+              // Check to see if there are any images attaced to this post
+              $check_for_image = Images::getForumImagesTopicReply($rf_p_id, $rf_p_main_id);
+              if(isset($check_for_image)){
+                echo "<hr>";
+                echo "<div align='center'><a href='".DIR."{$check_for_image}' target='_blank'><img src='".DIR."{$check_for_image}' height='100px'></a></div>";
+              }
 						echo "</div>";
 						echo "<div class='panel-footer' style='text-align:right'>";
 							echo "<div class='row'>";
@@ -228,12 +244,18 @@ use Core\Language,
           if(isset($data['current_userID'])){
 ?>
             <hr>
-            <?php echo Form::open(array('method' => 'post')); ?>
+            <?php echo Form::open(array('method' => 'post', 'enctype' => 'multipart/form-data')); ?>
 
             <!-- Topic Reply Content -->
             <div class='input-group' style='margin-bottom: 25px'>
               <span class='input-group-addon'><i class='glyphicon glyphicon-pencil'></i> </span>
               <?php echo Form::textBox(array('type' => 'text', 'name' => 'fpr_content', 'class' => 'form-control', 'value' => $data['fpr_content'], 'placeholder' => 'Topic Reply Content', 'rows' => '6')); ?>
+            </div>
+
+            <!-- Image Upload -->
+            <div class='input-group' style='margin-bottom: 25px'>
+              <span class='input-group-addon'><i class='glyphicon glyphicon-picture'></i> </span>
+              <?php echo Form::input(array('type' => 'file', 'name' => 'forumImage', 'id' => 'forumImage', 'class' => 'form-control', 'accept' => 'image/jpeg,image/png,image/gif')); ?>
             </div>
 
               <!-- CSRF Token -->

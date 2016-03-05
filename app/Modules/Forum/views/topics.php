@@ -15,7 +15,8 @@ use Core\Language,
   Helpers\TimeDiff,
   Helpers\CurrentUserData,
   Helpers\PageViews,
-  Helpers\Sweets;
+  Helpers\Sweets,
+  Helpers\Images;
 
 ?>
 
@@ -99,16 +100,20 @@ use Core\Language,
                     echo "<div class='col-md-2 col-sm-3 col-xs-6'>";
                       // Display total replys
                       // Display total topic replys
-                      echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'>";
+                      echo "<div class='btn btn-info btn-xs' style='margin-bottom: 3px'>";
                   		  echo "Replies <span class='badge'>$row2->total_topic_replys</span>";
                   		echo "</div>";
-                      echo "<br>";
+                      echo " ";
                       // Display total sweets
                       echo Sweets::getTotalSweets($f_p_id, 'Forum_Topic', 'Forum_Topic_Reply');
-                      echo "<Br>";
+                      echo " ";
                       // Display total views
                       echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'> Views <span class='badge'>";
                         echo PageViews::views('false', $f_p_id, 'Forum_Topic', $data['current_userID']);
+                      echo "</span></div> ";
+                      // Display total images
+                      echo "<div class='btn btn-success btn-xs' style='margin-top: 3px'> Images <span class='badge'>";
+                        echo Images::getImageCountForum('Topic', $f_p_id);
                       echo "</span></div>";
                     echo "</div>";
                     echo "<div class='col-md-3 col-sm-3 col-xs-6' style='text-align: right'>";
