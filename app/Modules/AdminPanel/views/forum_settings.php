@@ -1,6 +1,11 @@
 <?php
 /**
- * Create the members view
+ * Forum Settings Admin Panel View
+ *
+ * @author DaVaR - davar@userapplepie.com
+ * @version 1.0
+ * @date Feb 20 2016
+ * @updated Mar 4 2016
  */
 
 use Helpers\Form,

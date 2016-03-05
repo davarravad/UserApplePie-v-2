@@ -76,7 +76,6 @@ use Core\Language,
                           echo "<div class='btn btn-info btn-xs' style='margin-top: 5px'>";
                           echo "Topics <span class='badge'>$row2->total_topics_display</span>";
                           echo "</div>";
-        									echo " ";
         									// Display total number of topic replys for this category
                           echo "<div class='btn btn-info btn-xs' style='margin-top: 3px'>";
                           echo "Replies <span class='badge'>$row2->total_topic_replys_display</span>";
