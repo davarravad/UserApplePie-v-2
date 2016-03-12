@@ -89,4 +89,22 @@ class CurrentUserData
     return $usergroup;
   }
 
+  /**
+	 * Get selected user's profile image from db
+	 */
+	public static function getUserImage($where_id){
+		$data = self::$db->select("SELECT userImage FROM ".PREFIX."users WHERE userID = :userID",
+			array(':userID' => $where_id));
+		return $data[0]->userImage;
+	}
+
+  /**
+	 * Get selected user's signup date from db
+	 */
+	public static function getSignUp($where_id){
+		$data = self::$db->select("SELECT SignUp FROM ".PREFIX."users WHERE userID = :userID",
+			array(':userID' => $where_id));
+		return date("F d, Y",strtotime($data[0]->SignUp));
+	}
+
 }

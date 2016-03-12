@@ -16,7 +16,8 @@ use Core\Language,
   Helpers\CurrentUserData,
   Helpers\BBCode,
   Helpers\Sweets,
-  Helpers\Images;
+  Helpers\Images,
+  Helpers\ForumStats;
 
 ?>
 
@@ -56,17 +57,13 @@ use Core\Language,
     		echo "<div class='panel panel-default'>";
     			echo "<div class='panel-heading'>";
     				echo "<div class='row'>";
-    					echo "<div class='col-lg-4 col-md-4 col-sm-4'>";
+    					echo "<div class='col-lg-6 col-md-6 col-sm-6'>";
     						// Show user main pic
                 // Get user name from userID
                 $f_p_user_name = CurrentUserData::getUserName($data['topic_creator']);
-    						echo " <a href='".DIR."Profile/".$data['topic_creator']."/'>$f_p_user_name</a> ";
+    						echo " <a href='".DIR."Profile/$f_p_user_name/'>$f_p_user_name</a> ";
     					echo "</div>";
-    					echo "<div class='col-lg-4 col-md-4 col-sm-4' style='text-align:center'>";
-    						//Show user's membership status
-    						foreach(CurrentUserData::getUserGroups($data['topic_creator']) as $row){ echo $row; };
-    					echo "</div>";
-    					echo "<div class='col-lg-4 col-md-4 col-sm-4' style='text-align:right'>";
+    					echo "<div class='col-lg-6 col-md-6 col-sm-6' style='text-align:right'>";
     						// Display how long ago this was posted
                 $data_topic_date = $data['topic_date'];
     						echo "<font color=green> " . TimeDiff::dateDiff("now", "$data_topic_date", 1) . " ago</font> ";
@@ -75,27 +72,57 @@ use Core\Language,
     			echo "</div>";
           //Format the content with bbcode
   				$data_topic_content = BBCode::getHtml($data['topic_content']);
-  			echo "<div class='panel-body forum'>";
-          if($data['action'] == "edit_topic" && $data['current_userID'] == $data['topic_creator']){
-            echo "<font color='green' size='0.5'><b>Editing Topic</b></font>";
-            echo Form::open(array('method' => 'post'));
-            echo Form::input(array('type' => 'text', 'name' => 'forum_title', 'class' => 'form-control', 'value' => $data['title'], 'placeholder' => 'Topic Title', 'maxlength' => '100'));
-            echo Form::textBox(array('type' => 'text', 'name' => 'forum_content', 'class' => 'form-control', 'value' => $data['topic_content'], 'placeholder' => 'Topic Content', 'rows' => '6'));
-            // Topic Reply Edit True
-            echo "<input type='hidden' name='action' value='update_topic' />";
-            // CSRF Token
-            echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
-            // Display Submit Button
-            echo "<button class='btn btn-xs btn-success' name='submit' type='submit'>Update Topic</button>";
-            echo Form::close();
-          }else{
-  				  echo $data_topic_content;
-          }
-          // Check to see if there are any images attaced to this post
-          if(isset($data['forum_images'])){
-            echo "<hr>";
-            echo "<div align='center'><a href='".DIR."{$data['forum_images']}' target='_blank'><img src='".DIR."{$data['forum_images']}' height='100px'></a></div>";
-          }
+  			echo "<div class='panel-body forum' style='padding: 0px;'>";
+          echo "<div class='col-lg-3 col-md-3 col-sm-3 hidden-xs' style='padding-top: 8px; padding-bottom: 8px; height: 100%; text-align: left; border-right: 1px solid #cccccc;'>";
+            // Display User's Stats
+            // Check to see if user has a profile image
+            $user_image_display = CurrentUserData::getUserImage($data['topic_creator']);
+            $user_signup_display = CurrentUserData::getSignUp($data['topic_creator']);
+            $user_total_posts = ForumStats::getTotalPosts($data['topic_creator']);
+            if(!empty($user_image_display)){
+              echo "<img src='".$user_image_display."' class='img-responsive'>";
+            }else{
+              echo "<span class='glyphicon glyphicon-user icon-size'></span>";
+            }
+            echo " <strong><a href='".DIR."Profile/$f_p_user_name/' class='btn btn-xs btn-default'>$f_p_user_name</a></strong> <Br>";
+            // Show user's membership status
+            foreach(CurrentUserData::getUserGroups($data['topic_creator']) as $row){ echo "<font size='2'>".$row."</font><br>"; };
+            echo "<font size='1'>";
+              echo "<strong>Total Posts</strong>: $user_total_posts<br>";
+              echo "<strong>Joined</strong>: $user_signup_display";
+            echo "</font>";
+            echo " <a href='".DIR."Profile/$f_p_user_name' class='btn btn-xs btn-default'>Profile</a> ";
+            // Check to see if current user is logged in... if not then hide the pm button
+            if(!empty($data['current_userID'])){
+              echo " <a href='".DIR."NewMessage/$f_p_user_name' class='btn btn-xs btn-default'>PM</a> ";
+            }
+          echo "</div>";
+          echo "<div class='col-lg-9 col-md-9 col-sm-9' style='padding-top: 8px; padding-bottom: 8px;'>";
+            // Display Post DateTime
+            echo "<font size='1'><strong>Posted:</strong> ".date("F d, Y @ h:i A ",strtotime($data['topic_date']))." </font><hr style='margin-top: 0px'>";
+            // Display Topic Content
+            if($data['action'] == "edit_topic" && $data['current_userID'] == $data['topic_creator']){
+              echo "<font color='green' size='0.5'><b>Editing Topic</b></font>";
+              echo Form::open(array('method' => 'post'));
+              echo Form::input(array('type' => 'text', 'name' => 'forum_title', 'class' => 'form-control', 'value' => $data['title'], 'placeholder' => 'Topic Title', 'maxlength' => '100'));
+              echo Form::textBox(array('type' => 'text', 'name' => 'forum_content', 'class' => 'form-control', 'value' => $data['topic_content'], 'placeholder' => 'Topic Content', 'rows' => '6'));
+              // Topic Reply Edit True
+              echo "<input type='hidden' name='action' value='update_topic' />";
+              // CSRF Token
+              echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
+              // Display Submit Button
+              echo "<button class='btn btn-xs btn-success' name='submit' type='submit'>Update Topic</button>";
+              echo Form::close();
+            }else{
+    				  echo $data_topic_content;
+            }
+            // Check to see if there are any images attaced to this post
+            if(isset($data['forum_images'])){
+              echo "<Br><Br><font size='1'>Image Attachments</font>";
+              echo "<hr style='margin-top: 0px'>";
+              echo "<div align='center'><a href='".DIR."{$data['forum_images']}' target='_blank'><img src='".DIR."{$data['forum_images']}' height='100px'></a></div>";
+            }
+          echo "</div>";
   			echo "</div>";
   			echo "<div class='panel-footer'>";
   				echo "<div class='row'>";
@@ -172,34 +199,63 @@ use Core\Language,
 								echo "</div>";
 							echo "</div>";
 						echo "</div>";
-						echo "<div class='panel-body forum'>";
+						echo "<div class='panel-body forum' style='padding: 0px;'>";
 							//Format the content with bbcode
 							$rf_p_content_bb = BBCode::getHtml($rf_p_content);
-              // Check to see if user is trying to edit this reply
-              // Make sure user owns this reply before they can edit it
-              // Make sure this is the reply user is trying to edit
-              if($data['action'] == "edit_reply" && $data['current_userID'] == $rf_p_user_id && $data['edit_reply_id'] == $rf_p_main_id){
-                echo "<font color='green' size='0.5'><b>Editing Topic Reply</b></font>";
-                echo Form::open(array('method' => 'post', 'action' => '#topicreply'.$rf_p_main_id));
-                echo Form::textBox(array('type' => 'text', 'name' => 'fpr_content', 'class' => 'form-control', 'value' => $rf_p_content, 'placeholder' => 'Topic Reply Content', 'rows' => '6'));
-                // Topic Reply Edit True
-                echo "<input type='hidden' name='action' value='update_reply' />";
-                // Topic Reply ID for editing
-                echo "<input type='hidden' name='edit_reply_id' value='".$rf_p_main_id."' />";
-                // CSRF Token
-                echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
-                // Display Submit Button
-                echo "<button class='btn btn-xs btn-success' name='submit' type='submit'>Update Reply</button>";
-                echo Form::close();
-              }else{
-							  echo "$rf_p_content_bb";
-              }
-              // Check to see if there are any images attaced to this post
-              $check_for_image = Images::getForumImagesTopicReply($rf_p_id, $rf_p_main_id);
-              if(isset($check_for_image)){
-                echo "<hr>";
-                echo "<div align='center'><a href='".DIR."{$check_for_image}' target='_blank'><img src='".DIR."{$check_for_image}' height='100px'></a></div>";
-              }
+              echo "<div class='col-lg-3 col-md-3 col-sm-3 hidden-xs' style='padding-top: 8px; padding-bottom: 8px; height: 100%; text-align: left; border-right: 1px solid #cccccc;'>";
+                // Display User's Stats
+                // Check to see if user has a profile image
+                $user_image_display = CurrentUserData::getUserImage($rf_p_user_id);
+                $user_signup_display = CurrentUserData::getSignUp($rf_p_user_id);
+                $user_total_posts = ForumStats::getTotalPosts($rf_p_user_id);
+                if(!empty($user_image_display)){
+                  echo "<img src='".$user_image_display."' class='img-responsive'>";
+                }else{
+                  echo "<span class='glyphicon glyphicon-user icon-size'></span>";
+                }
+                echo " <strong><a href='".DIR."Profile/".$rf_p_user_name."' class='btn btn-xs btn-default'>$rf_p_user_name</a></strong> <Br>";
+                // Show user's membership status
+                foreach(CurrentUserData::getUserGroups($rf_p_user_id) as $row){ echo "<font size='2'>".$row."</font><br>"; };
+                echo "<font size='1'>";
+                  echo "<strong>Total Posts</strong>: $user_total_posts<br>";
+                  echo "<strong>Joined</strong>: $user_signup_display";
+                echo "</font>";
+                echo " <a href='".DIR."Profile/$rf_p_user_name' class='btn btn-xs btn-default'>Profile</a> ";
+                // Check to see if current user is logged in... if not then hide the pm button
+                if(!empty($data['current_userID'])){
+                  echo " <a href='".DIR."NewMessage/$rf_p_user_name' class='btn btn-xs btn-default'>PM</a> ";
+                }
+              echo "</div>";
+              echo "<div class='col-lg-9 col-md-9 col-sm-9' style='padding-top: 8px; padding-bottom: 8px;'>";
+                // Display Post DateTime
+                echo "<font size='1'><strong>Posted:</strong> ".date("F d, Y @ h:i A ",strtotime($rf_p_timestamp))." </font><hr style='margin-top: 0px'>";
+                // Check to see if user is trying to edit this reply
+                // Make sure user owns this reply before they can edit it
+                // Make sure this is the reply user is trying to edit
+                if($data['action'] == "edit_reply" && $data['current_userID'] == $rf_p_user_id && $data['edit_reply_id'] == $rf_p_main_id){
+                  echo "<font color='green' size='0.5'><b>Editing Topic Reply</b></font>";
+                  echo Form::open(array('method' => 'post', 'action' => '#topicreply'.$rf_p_main_id));
+                  echo Form::textBox(array('type' => 'text', 'name' => 'fpr_content', 'class' => 'form-control', 'value' => $rf_p_content, 'placeholder' => 'Topic Reply Content', 'rows' => '6'));
+                  // Topic Reply Edit True
+                  echo "<input type='hidden' name='action' value='update_reply' />";
+                  // Topic Reply ID for editing
+                  echo "<input type='hidden' name='edit_reply_id' value='".$rf_p_main_id."' />";
+                  // CSRF Token
+                  echo "<input type='hidden' name='csrf_token' value='".$data['csrf_token']."' />";
+                  // Display Submit Button
+                  echo "<button class='btn btn-xs btn-success' name='submit' type='submit'>Update Reply</button>";
+                  echo Form::close();
+                }else{
+  							  echo "$rf_p_content_bb";
+                }
+                // Check to see if there are any images attaced to this post
+                $check_for_image = Images::getForumImagesTopicReply($rf_p_id, $rf_p_main_id);
+                if(isset($check_for_image)){
+                  echo "<Br><Br><font size='1'>Image Attachments</font>";
+                  echo "<hr style='margin-top: 0px'>";
+                  echo "<div align='center'><a href='".DIR."{$check_for_image}' target='_blank'><img src='".DIR."{$check_for_image}' height='100px'></a></div>";
+                }
+              echo "</div>";
 						echo "</div>";
 						echo "<div class='panel-footer' style='text-align:right'>";
 							echo "<div class='row'>";
