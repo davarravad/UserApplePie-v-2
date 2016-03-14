@@ -27,12 +27,16 @@ The framework requirements are limited:
 
 ## Installation
 
+Tested on Windows 10 WAMP Server and Ubuntu 14.04
+
 1. [Download](http://www.userapplepie.com/Downloads/) the framework.
 2. Unzip the package to your web server.
 3. Open `app/Core/Config.php` and set your base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do) and database credentials.
 4. Edit `.htaccess` file and save the base path (if the framework is installed in a folder, the base path should reflect the folder path `/path/to/folder/` otherwise a single `/` will do).
 5. Import the database.sql to your database (Updated table PREFIX if changed in Config.php).
 6. Enjoy!
+
+Note: The first user that registers for the site is set as admin.  Make sure you are first to sign up!
 
 Note: Project is not complete, Stuff might be broken...
 
