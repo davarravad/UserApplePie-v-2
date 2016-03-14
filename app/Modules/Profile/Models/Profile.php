@@ -19,7 +19,8 @@ class Profile extends Model {
 						u.SignUp,
 						ue.userID,
 						ue.website,
-						ue.aboutme
+						ue.aboutme,
+						ue.signature
 					FROM
 						".PREFIX."users u
 					LEFT JOIN
@@ -48,14 +49,14 @@ class Profile extends Model {
 	}
 
 	// Update User's Profile Data
-	public function updateProfile($u_id, $firstName, $gender, $website, $userImage, $aboutme){
+	public function updateProfile($u_id, $firstName, $gender, $website, $userImage, $aboutme, $signature){
 		// Format the About Me for database
 		$aboutme = nl2br($aboutme);
 		// Update users table
 		$query_a = $this->db->update(PREFIX.'users', array('firstName' => $firstName, 'gender' => $gender, 'userImage' => $userImage), array('userID' => $u_id));
 		$count_a = count($query_a);
 		// Update users_extprofile
-		$query_b = $this->db->update(PREFIX.'users_extprofile', array('website' => $website, 'aboutme' => $aboutme), array('userID' => $u_id));
+		$query_b = $this->db->update(PREFIX.'users_extprofile', array('website' => $website, 'aboutme' => $aboutme, 'signature' => $signature), array('userID' => $u_id));
 		$count_b = count($query_b);
 		// Check to make sure something was updated
 		$count_t = $count_a + $count_b;

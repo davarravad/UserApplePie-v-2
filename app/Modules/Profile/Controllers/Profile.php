@@ -120,9 +120,10 @@ class Profile extends Controller{
 				$website = Request::post('website');
 				$userImage = Request::post('userImage');
 				$aboutme = Request::post('aboutme');
+				$signature = Request::post('signature');
 
 				// Run the Activation script
-				if($this->model->updateProfile($u_id, $firstName, $gender, $website, $userImage, $aboutme)){
+				if($this->model->updateProfile($u_id, $firstName, $gender, $website, $userImage, $aboutme, $signature)){
 					// Success
 					$success[] = "You Have Successfully Updated Your Profile";
 				}else{
@@ -142,6 +143,7 @@ class Profile extends Controller{
 			$data['u_userImage'] = $user_data->userImage;
 			$data['u_aboutme'] = str_replace("<br />", "", $user_data->aboutme);
 			$data['u_website'] = $user_data->website;
+			$data['u_signature'] = $user_data->signature;
 		}
 
 		View::renderTemplate('header', $data);

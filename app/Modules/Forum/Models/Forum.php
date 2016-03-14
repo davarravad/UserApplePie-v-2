@@ -114,9 +114,9 @@ class Forum extends Model {
           FROM ".PREFIX."forum_posts fp
           LEFT JOIN ".PREFIX."forum_posts_replys fpr
           ON fp.forum_post_id = fpr.fpr_post_id
-          ORDER BY fpr.fpr_timestamp, fp.forum_timestamp DESC
+          WHERE fp.allow = 'TRUE'
+          ORDER BY fpr.fpr_timestamp DESC
         ) sub
-
         GROUP BY forum_post_id
         ORDER BY tstamp DESC
         LIMIT 10
@@ -218,6 +218,7 @@ class Forum extends Model {
         LEFT JOIN ".PREFIX."forum_posts_replys fpr
         ON fp.forum_post_id = fpr.fpr_post_id
         WHERE fp.forum_id = :where_id
+        AND fp.allow = 'TRUE'
         ORDER BY tstamp DESC
       ) sub
       GROUP BY forum_post_id
@@ -389,6 +390,86 @@ class Forum extends Model {
     }
 
     /**
+     * topic_allow
+     *
+     * get Topic Allowed Status (TRUE = show | FALSE = hide)
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string
+     */
+    public function topic_allow($where_id){
+      $data = $this->db->select("
+        SELECT allow
+        FROM ".PREFIX."forum_posts
+        WHERE forum_post_id = :where_id
+        LIMIT 1
+      ",
+      array(':where_id' => $where_id));
+      return $data[0]->allow;
+    }
+
+    /**
+     * topic_hidden_userID
+     *
+     * get Topic hidden userID
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return int
+     */
+    public function topic_hidden_userID($where_id){
+      $data = $this->db->select("
+        SELECT hide_userID
+        FROM ".PREFIX."forum_posts
+        WHERE forum_post_id = :where_id
+        LIMIT 1
+      ",
+      array(':where_id' => $where_id));
+      return $data[0]->hide_userID;
+    }
+
+    /**
+     * topic_hidden_reason
+     *
+     * get Topic Hidden Reason
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string
+     */
+    public function topic_hidden_reason($where_id){
+      $data = $this->db->select("
+        SELECT hide_reason
+        FROM ".PREFIX."forum_posts
+        WHERE forum_post_id = :where_id
+        LIMIT 1
+      ",
+      array(':where_id' => $where_id));
+      return $data[0]->hide_reason;
+    }
+
+    /**
+     * topic_hidden_timestamp
+     *
+     * get Topic Hidden DateTime
+     *
+     * @param int $where_id = forum_post_id
+     *
+     * @return string
+     */
+    public function topic_hidden_timestamp($where_id){
+      $data = $this->db->select("
+        SELECT hide_timestamp
+        FROM ".PREFIX."forum_posts
+        WHERE forum_post_id = :where_id
+        LIMIT 1
+      ",
+      array(':where_id' => $where_id));
+      return $data[0]->hide_timestamp;
+    }
+
+    /**
      * forum_topic_replys
      *
      * get list of topic replies for given topic
@@ -508,6 +589,7 @@ class Forum extends Model {
         SELECT imageLocation
         FROM ".PREFIX."forum_images
         WHERE forumTopicID = :topic_id
+        AND forumTopicReplyID IS NULL
       ",
       array(':topic_id' => $topic_id));
       return $data[0]->imageLocation;
@@ -658,6 +740,56 @@ class Forum extends Model {
     public function updateTopicLockStatus($id, $setting){
       // Update messages table
       $query = $this->db->update(PREFIX.'forum_posts', array('forum_status' => $setting), array('forum_post_id' => $id));
+      $count = count($query);
+      // Check to make sure Topic was Created
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    /**
+     * updateTopicHideStatus
+     *
+     * edit topic hide/unhide status
+     *
+     * @param int $id Current Topic ID
+     * @param int $setting (FALSE)Show (TRUE)Hide
+     * @param int $user_id
+     * @param string $reason
+     *
+     * @return booleen true/false
+     */
+    public function updateTopicHideStatus($id, $setting, $user_id = "0", $reason = ""){
+      // Update messages table
+      $current_datetime = date("Y-m-d H:i:s");
+      $query = $this->db->update(PREFIX.'forum_posts', array('allow' => $setting, 'hide_userID' => $user_id, 'hide_reason' => $reason, 'hide_timestamp' => $current_datetime), array('forum_post_id' => $id));
+      $count = count($query);
+      // Check to make sure Topic was Created
+      if($count > 0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    /**
+     * updateReplyHideStatus
+     *
+     * edit topic reply hide/unhide status
+     *
+     * @param int $id Current Topic Reply ID
+     * @param int $setting (FALSE)Show (TRUE)Hide
+     * @param int $user_id
+     * @param string $reason
+     *
+     * @return booleen true/false
+     */
+    public function updateReplyHideStatus($id, $setting, $user_id = "0", $reason = ""){
+      // Update messages table
+      $current_datetime = date("Y-m-d H:i:s");
+      $query = $this->db->update(PREFIX.'forum_posts_replys', array('allow' => $setting, 'hide_userID' => $user_id, 'hide_reason' => $reason, 'hide_timestamp' => $current_datetime), array('id' => $id));
       $count = count($query);
       // Check to make sure Topic was Created
       if($count > 0){

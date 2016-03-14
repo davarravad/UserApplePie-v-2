@@ -50,11 +50,16 @@ use Core\Language,
               <?php echo Form::textBox(array('type' => 'text', 'name' => 'forum_content', 'class' => 'form-control', 'value' => $data['forum_content'], 'placeholder' => 'Topic Content', 'rows' => '6')); ?>
             </div>
 
-            <!-- Image Upload -->
-            <div class='input-group' style='margin-bottom: 25px'>
-              <span class='input-group-addon'><i class='glyphicon glyphicon-picture'></i> </span>
-              <?php echo Form::input(array('type' => 'file', 'name' => 'forumImage', 'id' => 'forumImage', 'class' => 'form-control', 'accept' => 'image/jpeg,image/png,image/gif')); ?>
-            </div>
+            <?php
+              // Check to see if user is a new user.  If so then disable image uploads
+              if($data['is_new_user'] != true){
+             ?>
+                <!-- Image Upload -->
+                <div class='input-group' style='margin-bottom: 25px'>
+                  <span class='input-group-addon'><i class='glyphicon glyphicon-picture'></i> </span>
+                  <?php echo Form::input(array('type' => 'file', 'name' => 'forumImage', 'id' => 'forumImage', 'class' => 'form-control', 'accept' => 'image/jpeg,image/png,image/gif')); ?>
+                </div>
+            <?php } ?>
 
               <!-- CSRF Token -->
               <input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />

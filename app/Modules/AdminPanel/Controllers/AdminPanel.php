@@ -17,7 +17,7 @@ use Helpers\Auth\Auth;
 use Helpers\Csrf;
 use Helpers\Request;
 
-define('USERS_PAGEINATOR_LIMIT', '10');  // Sets up users listing page limit 
+define('USERS_PAGEINATOR_LIMIT', '10');  // Sets up users listing page limit
 
 class AdminPanel extends Controller{
 
@@ -44,6 +44,7 @@ class AdminPanel extends Controller{
     Router::any('AdminPanel-Forum-Categories', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
     Router::any('AdminPanel-Forum-Categories/(:any)/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
     Router::any('AdminPanel-Forum-Categories/(:any)/(:any)/(:any)', 'Modules\AdminPanel\Controllers\AdminPanel@forum_categories');
+    Router::any('AdminPanel-Forum-Blocked-Content', 'Modules\AdminPanel\Controllers\AdminPanel@forum_blocked');
   }
 
   public function dashboard(){
@@ -55,7 +56,7 @@ class AdminPanel extends Controller{
     // Setup Breadcrumbs
     $data['breadcrumbs'] = "
       <li><a href='".DIR."AdminPanel'><i class='fa fa-fw fa-cog'></i> Admin Panel</a></li>
-      <li class='active'><i class='fa fa-fw fa-dashboard'></i>".$data['title']."</li>
+      <li class='active'><i class='fa fa-fw fa-dashboard'></i> ".$data['title']."</li>
     ";
 
     View::renderModule('AdminPanel/views/header', $data);
@@ -945,6 +946,29 @@ class AdminPanel extends Controller{
 
     View::renderModule('AdminPanel/views/header', $data);
     View::renderModule('AdminPanel/views/forum_categories', $data, $error, $success);
+    View::renderModule('AdminPanel/views/footer', $data);
+  }
+
+  public function forum_blocked(){
+    // Get data for dashboard
+    $data['current_page'] = $_SERVER['REQUEST_URI'];
+    $data['title'] = "Forum Blocked Content";
+    $data['welcome_message'] = "Welcom to the Admin Panel Blocked Content Listing!";
+
+    // Get list of blocked topics
+    $data['blocked_topics'] = $this->forum->getBlockedTopics();
+
+    // Get list of blocked topic replies
+    $data['blocked_replies'] = $this->forum->getBlockedReplies();
+
+    // Setup Breadcrumbs
+    $data['breadcrumbs'] = "
+      <li><a href='".DIR."AdminPanel'><i class='glyphicon glyphicon-cog'></i> Admin Panel</a></li>
+      <li class='active'><i class='glyphicon glyphicon-remove-sign'></i> ".$data['title']."</li>
+    ";
+
+    View::renderModule('AdminPanel/views/header', $data);
+    View::renderModule('AdminPanel/views/forum_blocked', $data,$error,$success);
     View::renderModule('AdminPanel/views/footer', $data);
   }
 

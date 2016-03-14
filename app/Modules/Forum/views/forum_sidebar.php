@@ -43,7 +43,7 @@ foreach($data['forum_recent_posts'] as $row_rp)
   $f_p_title = strlen($f_p_title) > 30 ? substr($f_p_title, 0, 34) . ".." : $f_p_title;
 
   //If no reply show created by
-  if($rp_timestamp2 == NULL){
+  if(!isset($rp_timestamp2)){
     echo "<ul class='list-group-item'>";
     echo "<a href='".DIR."Profile/$f_p_user_id/'>$f_p_user_name</a> created.. <br>";
     echo "<strong>";
