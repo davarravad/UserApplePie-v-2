@@ -811,4 +811,38 @@ class ForumAdmin extends Model {
     return $data;
   }
 
+  /**
+   * getBlockedTopics
+   *
+   * get list of topics that are current blocked
+   *
+   * @return array returns forum topics list data
+   */
+  public function getBlockedTopics(){
+    $data = $this->db->select("
+      SELECT *
+      FROM ".PREFIX."forum_posts
+      WHERE allow = 'FALSE'
+      ORDER BY hide_timestamp DESC
+    ");
+    return $data;
+  }
+
+  /**
+   * getBlockedReplies
+   *
+   * get list of topics that are current blocked
+   *
+   * @return array returns forum replies list data
+   */
+  public function getBlockedReplies(){
+    $data = $this->db->select("
+      SELECT *
+      FROM ".PREFIX."forum_posts_replys
+      WHERE allow = 'FALSE'
+      ORDER BY hide_timestamp DESC
+    ");
+    return $data;
+  }
+
 }

@@ -177,6 +177,12 @@ use Core\Controller,
       $data['topic_content'] = $this->model->topic_content($id);
       $data['topic_edit_date'] = $this->model->topic_edit_date($id);
       $data['topic_status'] = $this->model->topic_status($id);
+      $data['topic_allow'] = $this->model->topic_allow($id);
+
+      // Get hidden information if there is any
+      $data['hidden_userID'] = $this->model->topic_hidden_userID($id);
+      $data['hidden_reason'] = $this->model->topic_hidden_reason($id);
+      $data['hidden_timestamp'] = $this->model->topic_hidden_timestamp($id);
 
       // Check to see if current user owns the origianal post
       $data['current_userID'] = $u_id;
@@ -187,17 +193,28 @@ use Core\Controller,
         $data['current_page'] = $current_page;
       }
 
-      // Chec to see if current user is subscribed to this topic
-      $data['is_user_subscribed'] = $this->model->checkTopicSubscribe($id, $u_id);
-
       // Check to see if current user is admin
       $data['is_admin'] = $this->auth->checkIsAdmin($u_id);
+
+      // Check to see if current user is moderator
+      $data['is_mod'] = $this->auth->checkIsMod($u_id);
+
+      // Check to see if current user is a new user
+      $data['is_new_user'] = $this->auth->checkIsNewUser($u_id);
 
       // Get replys that are related to Requested Topic
       $data['topic_replys'] = $this->model->forum_topic_replys($id, $this->pagesReply->getLimit($current_page, $this->forum_topic_reply_limit));
 
       // Check to see if user has posted on this topic
       $data['checkUserPosted'] = $this->model->checkUserPosted($id, $u_id);
+
+      // If user has not yet posted, then we set subcribe to true for new posts
+      if($data['checkUserPosted'] == true){
+        // Check to see if current user is subscribed to this topic
+        $data['is_user_subscribed'] = $this->model->checkTopicSubscribe($id, $u_id);
+      }else{
+        $data['is_user_subscribed'] = true;
+      }
 
       // Set total number of messages for paginator
       $total_num_replys = $this->model->getTotalReplys($id);
@@ -208,7 +225,7 @@ use Core\Controller,
       $data['pageLinks'] = $this->pagesReply->pageLinks($pageFormat, null, $current_page);
 
       // Get related images if any
-      $data['forum_images'] = $this->model->getForumImagesTopic($id);
+      $data['forum_topic_images'] = $this->model->getForumImagesTopic($id);
 
       // Check to see if user is submitting a new topic reply
   		if(isset($_POST['submit'])){
@@ -300,13 +317,13 @@ use Core\Controller,
                     // Check for image upload with this topic
                     $picture = file_exists($_FILES['forumImage']['tmp_name']) || is_uploaded_file($_FILES['forumImage']['tmp_name']) ? $_FILES['forumImage'] : array ();
                       // Make sure image is being uploaded before going further
-                      if(sizeof($picture)>0){
+                      if(sizeof($picture)>0 && ($data['is_new_user'] != true)){
                         // Get image size
                         $check = getimagesize ( $picture['tmp_name'] );
                         // Get file size for db
                         $file_size = $picture['size'];
                         // Make sure image size is not too large
-                        if($picture['size'] < 1000000 && $check && ($check['mime'] == "image/jpeg" || $check['mime'] == "image/png" || $check['mime'] == "image/gif")){
+                        if($picture['size'] < 5000000 && $check && ($check['mime'] == "image/jpeg" || $check['mime'] == "image/png" || $check['mime'] == "image/gif")){
                           if(!file_exists('images/forum-pics')){
                             mkdir('images/forum-pics',0777,true);
                           }
@@ -338,15 +355,41 @@ use Core\Controller,
                     $error[] = 'New Topic Reply Create Failed';
           				}
               }// End Form Complete Check
-          }else if($data['action'] == "lock_topic" && $data['is_admin'] == true){
+          }else if($data['action'] == "lock_topic" && ($data['is_admin'] == true || $data['is_mod'] == true)){
             // Update database with topic locked (2)
             if($this->model->updateTopicLockStatus($id, "2")){
               SuccessHelper::push('You Have Successfully Locked This Topic', 'Topic/'.$id);
             }
-          }else if($data['action'] == "unlock_topic" && $data['is_admin'] == true){
+          }else if($data['action'] == "unlock_topic" && ($data['is_admin'] == true || $data['is_mod'] == true)){
             // Update the database with topic unlocked (1)
             if($this->model->updateTopicLockStatus($id, "1")){
               SuccessHelper::push('You Have Successfully UnLocked This Topic', 'Topic/'.$id);
+            }
+          }else if($data['action'] == "hide_topic" && ($data['is_admin'] == true || $data['is_mod'] == true)){
+            // Update database with topic hidden (TRUE)
+            $hide_reason = Request::post('hide_reason');
+            if($this->model->updateTopicHideStatus($id, "FALSE", $u_id, $hide_reason)){
+              SuccessHelper::push('You Have Successfully Hidden This Topic', 'Topic/'.$id);
+            }
+          }else if($data['action'] == "unhide_topic" && ($data['is_admin'] == true || $data['is_mod'] == true)){
+            // Update the database with topic unhide (FALSE)
+            if($this->model->updateTopicHideStatus($id, "TRUE", $u_id, "UnHide")){
+              SuccessHelper::push('You Have Successfully UnHide This Topic', 'Topic/'.$id);
+            }
+          }else if($data['action'] == "hide_reply" && ($data['is_admin'] == true || $data['is_mod'] == true)){
+            // Update database with topic reply hidden (TRUE)
+            $hide_reason = Request::post('hide_reason');
+            $reply_id = Request::post('reply_id');
+            $reply_url = Request::post('reply_url');
+            if($this->model->updateReplyHideStatus($reply_id, "FALSE", $u_id, $hide_reason)){
+              SuccessHelper::push('You Have Successfully Hidden Topic Reply', $reply_url);
+            }
+          }else if($data['action'] == "unhide_reply" && ($data['is_admin'] == true || $data['is_mod'] == true)){
+            // Update the database with topic reply unhide (FALSE)
+            $reply_id = Request::post('reply_id');
+            $reply_url = Request::post('reply_url');
+            if($this->model->updateReplyHideStatus($reply_id, "TRUE", $u_id, "UnHide")){
+              SuccessHelper::push('You Have Successfully UnHide Topic Reply', $reply_url);
             }
           }else if($data['action'] == "subscribe" && isset($u_id)){
             // Update users topic subcrition status as true
@@ -410,6 +453,9 @@ use Core\Controller,
       // Output Welcome Message
       $data['welcome_message'] = "Welcome to the new topic page.";
 
+      // Check to see if current user is a new user
+      $data['is_new_user'] = $this->auth->checkIsNewUser($u_id);
+
       // Check to see if user is submitting a new topic
   		if(isset($_POST['submit'])){
 
@@ -437,13 +483,13 @@ use Core\Controller,
                   // Check for image upload with this topic
                   $picture = file_exists($_FILES['forumImage']['tmp_name']) || is_uploaded_file($_FILES['forumImage']['tmp_name']) ? $_FILES['forumImage'] : array ();
                     // Make sure image is being uploaded before going further
-                    if(sizeof($picture)>0){
+                    if(sizeof($picture)>0 && ($data['is_new_user'] != true)){
                       // Get image size
                       $check = getimagesize ( $picture['tmp_name'] );
                       // Get file size for db
                       $file_size = $picture['size'];
                       // Make sure image size is not too large
-                      if($picture['size'] < 1000000 && $check && ($check['mime'] == "image/jpeg" || $check['mime'] == "image/png" || $check['mime'] == "image/gif")){
+                      if($picture['size'] < 5000000 && $check && ($check['mime'] == "image/jpeg" || $check['mime'] == "image/png" || $check['mime'] == "image/gif")){
                         if(!file_exists('images/forum-pics')){
                           mkdir('images/forum-pics',0777,true);
                         }

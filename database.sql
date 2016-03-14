@@ -100,6 +100,10 @@ CREATE TABLE IF NOT EXISTS `uap_forum_posts` (
   `forum_edit_date` varchar(20) DEFAULT NULL,
   `forum_status` int(11) NOT NULL DEFAULT '1',
   `subscribe_email` varchar(10) NOT NULL DEFAULT 'true',
+  `allow` varchar(11) NOT NULL DEFAULT 'TRUE',
+  `hide_reason` varchar(255) NOT NULL,
+  `hide_userID` int(11) NOT NULL,
+  `hide_timestamp` datetime NOT NULL,
   `forum_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`forum_post_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -119,6 +123,10 @@ CREATE TABLE IF NOT EXISTS `uap_forum_posts_replys` (
   `fpr_content` text NOT NULL,
   `subscribe_email` varchar(10) NOT NULL DEFAULT 'true',
   `fpr_edit_date` varchar(20) DEFAULT NULL,
+  `allow` varchar(11) NOT NULL DEFAULT 'TRUE',
+  `hide_reason` varchar(255) NOT NULL,
+  `hide_userID` int(11) NOT NULL,
+  `hide_timestamp` datetime NOT NULL,
   `fpr_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -252,6 +260,7 @@ CREATE TABLE IF NOT EXISTS `uap_users_extprofile` (
   `userID` int(11) NOT NULL,
   `website` varchar(100) NOT NULL,
   `aboutme` text NOT NULL,
+  `signature` text NOT NULL,
   PRIMARY KEY (`userID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

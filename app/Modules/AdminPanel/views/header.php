@@ -107,34 +107,12 @@ if(!ctype_digit($cur_userID) && !ctype_digit($cu_groupID)){
           <li <?php if($data['current_page'] == "/AdminPanel"){echo "class='active'";} ?>  >
             <a href='<?php echo DIR; ?>AdminPanel'><i class='fa fa-fw fa-dashboard'></i> Dashboard</a>
           </li>
-   <!-- // Pages on the todo list
-          <li <?php if($data['current_page'] == "reports"){echo "class='active'";} ?>  >
-            <a href='<?php echo DIR; ?>AdminPanel/reports'><i class='glyphicon glyphicon-info-sign'></i> Support Tickets</a>
-          </li>
-          <li <?php if($data['current_page'] == "errors"){echo "class='active'";} ?>  >
-            <a href='<?php echo DIR; ?>AdminPanel/errors'><i class='glyphicon glyphicon-alert'></i> Site Errors</a>
-          </li>
-          <li <?php if($data['current_page'] == "admin_configuration"){echo "class='active'";} ?>  >
-            <a href='<?php echo DIR; ?>AdminPanel/admin_configuration'><i class='glyphicon glyphicon-wrench'></i> Site Configuration</a>
-          </li>
-    -->
           <li <?php if($data['current_page'] == "/AdminPanel-Users"){echo "class='active'";} ?>  >
             <a href='<?php echo DIR; ?>AdminPanel-Users'><i class='glyphicon glyphicon-user'></i> Users</a>
           </li>
           <li <?php if($data['current_page'] == "/AdminPanel-Groups"){echo "class='active'";} ?>  >
             <a href='<?php echo DIR; ?>AdminPanel-Groups'><i class='glyphicon glyphicon-book'></i> Groups</a>
           </li>
-    <!-- Todo pages
-          <li <?php if($data['current_page'] == "admin_pages"){echo "class='active'";} ?>  >
-            <a href='<?php echo DIR; ?>AdminPanel/admin_pages'><i class='glyphicon glyphicon-file'></i> Pages</a>
-          </li>
-          <li <?php if($data['current_page'] == "adminmessage"){echo "class='active'";} ?>  >
-            <a href='<?php echo DIR; ?>AdminPanel/adminmessage'><i class='fa fa-fw fa-desktop'></i> Site Message</a>
-          </li>
-          <li <?php if($data['current_page'] == "admin_wm"){echo "class='active'";} ?>  >
-            <a href='<?php echo DIR; ?>AdminPanel/admin_wm'><i class='glyphicon glyphicon-envelope'></i> Register Message</a>
-          </li>
-      -->
           <li>
             <a href='javascript:;' data-toggle='collapse' data-target='#demo'><i class='glyphicon glyphicon-tasks'></i> Forum <i class='glyphicon glyphicon-menu-down'></i></a>
             <ul id='demo' class='collapse'>
@@ -143,6 +121,9 @@ if(!ctype_digit($cur_userID) && !ctype_digit($cu_groupID)){
               </li>
               <li <?php if($data['current_page'] == "AdminPanel-Forum-Categories"){echo "class='active'";} ?>>
                 <a href='<?php echo DIR; ?>AdminPanel-Forum-Categories'><i class='glyphicon glyphicon-list'></i> Categories</a>
+              </li>
+              <li <?php if($data['current_page'] == "AdminPanel-Forum-Blocked-Content"){echo "class='active'";} ?>>
+                <a href='<?php echo DIR; ?>AdminPanel-Forum-Blocked-Content'><i class='glyphicon glyphicon-remove-sign'></i> Blocked Content</a>
               </li>
             </ul>
           </li>

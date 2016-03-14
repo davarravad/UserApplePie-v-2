@@ -55,6 +55,12 @@
 					<?php echo Form::textBox(array('type' => 'text', 'name' => 'aboutme', 'class' => 'form-control', 'value' => $data['u_aboutme'], 'placeholder' => 'About Me', 'rows' => '6')); ?>
 				</div>
 
+        <!-- Signature -->
+				<div class='input-group' style='margin-bottom: 25px'>
+					<span class='input-group-addon'><i class='glyphicon glyphicon-book'></i> Signature</span>
+					<?php echo Form::textBox(array('type' => 'text', 'name' => 'signature', 'class' => 'form-control', 'value' => $data['u_signature'], 'placeholder' => 'Forum Signature', 'rows' => '4')); ?>
+				</div>
+
 				<!-- CSRF Token -->
 				<input type="hidden" name="csrf_token" value="<?php echo $data['csrf_token']; ?>" />
 				<button class="btn btn-md btn-success" name="submit" type="submit">

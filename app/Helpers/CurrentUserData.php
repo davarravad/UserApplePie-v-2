@@ -1,8 +1,9 @@
 <?php
 namespace Helpers;
 
-use Helpers\Database;
-use Helpers\Cookie;
+use Helpers\Database,
+    Helpers\Cookie,
+    Helpers\BBCode;
 
 class CurrentUserData
 {
@@ -105,6 +106,16 @@ class CurrentUserData
 		$data = self::$db->select("SELECT SignUp FROM ".PREFIX."users WHERE userID = :userID",
 			array(':userID' => $where_id));
 		return date("F d, Y",strtotime($data[0]->SignUp));
+	}
+
+  /**
+	 * Get current user's signature from database
+	 */
+	public static function getUserSignature($where_id){
+		$data = self::$db->select("SELECT signature FROM ".PREFIX."users_extprofile WHERE userID = :userID",
+			array(':userID' => $where_id));
+		$signature_data = BBCode::getHtml($data[0]->signature);
+    return $signature_data;
 	}
 
 }

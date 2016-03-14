@@ -995,4 +995,72 @@ class Auth {
         }
   	}
 
+    /**
+  	 * Check to see if Current User is Admin
+     * @param int $where_id (current user's userID)
+     * @return boolean (true/false)
+  	 */
+  	public function checkIsMod($where_id){
+      $user_groups = $this->db->select("
+          SELECT
+            groupID
+          FROM
+            ".PREFIX."users_groups
+          WHERE
+            userID = :userID
+          ",
+        array(':userID' => $where_id));
+        // Make sure user is logged in
+        if(isset($where_id)){
+        	// Get user's group status
+        	foreach($user_groups as $user_group_data){
+        		$cu_groupID[] = $user_group_data->groupID;
+        	}
+        }else{
+          $cu_groupID[] = "0";
+        }
+        // Set which group(s) are admin (4)
+        if(in_array(3,$cu_groupID)){
+          // User is Admin
+          return true;
+        }else{
+          // User Not Admin
+          return false;
+        }
+  	}
+
+    /**
+  	 * Check to see if Current User is New User
+     * @param int $where_id (current user's userID)
+     * @return boolean (true/false)
+  	 */
+  	public function checkIsNewUser($where_id){
+      $user_groups = $this->db->select("
+          SELECT
+            groupID
+          FROM
+            ".PREFIX."users_groups
+          WHERE
+            userID = :userID
+          ",
+        array(':userID' => $where_id));
+        // Make sure user is logged in
+        if(isset($where_id)){
+        	// Get user's group status
+        	foreach($user_groups as $user_group_data){
+        		$cu_groupID[] = $user_group_data->groupID;
+        	}
+        }else{
+          $cu_groupID[] = "0";
+        }
+        // Set which group(s) are admin (4)
+        if(in_array(1,$cu_groupID)){
+          // User is Admin
+          return true;
+        }else{
+          // User Not Admin
+          return false;
+        }
+  	}
+
 }
