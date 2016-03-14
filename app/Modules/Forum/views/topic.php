@@ -90,9 +90,9 @@ use Core\Language,
             $user_signup_display = CurrentUserData::getSignUp($data['topic_creator']);
             $user_total_posts = ForumStats::getTotalPosts($data['topic_creator']);
             if(!empty($user_image_display)){
-              echo "<img src='".$user_image_display."' class='img-responsive'>";
+              echo "<img src='".$user_image_display."' class='img-responsive' style='margin-bottom: 2px'>";
             }else{
-              echo "<span class='glyphicon glyphicon-user icon-size'></span>";
+              echo "<span class='glyphicon glyphicon-user icon-size' style='margin-bottom: 2px'></span>";
             }
             echo " <strong><a href='".DIR."Profile/$f_p_user_name/' class='btn btn-xs btn-default'>$f_p_user_name</a></strong> <Br>";
             // Show user's membership status
@@ -226,9 +226,9 @@ use Core\Language,
                 $user_signup_display = CurrentUserData::getSignUp($rf_p_user_id);
                 $user_total_posts = ForumStats::getTotalPosts($rf_p_user_id);
                 if(!empty($user_image_display)){
-                  echo "<img src='".$user_image_display."' class='img-responsive'>";
+                  echo "<img src='".$user_image_display."' class='img-responsive' style='margin-bottom: 2px'>";
                 }else{
-                  echo "<span class='glyphicon glyphicon-user icon-size'></span>";
+                  echo "<span class='glyphicon glyphicon-user icon-size' style='margin-bottom: 2px'></span>";
                 }
                 echo " <strong><a href='".DIR."Profile/".$rf_p_user_name."' class='btn btn-xs btn-default'>$rf_p_user_name</a></strong> <Br>";
                 // Show user's membership status
