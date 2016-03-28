@@ -1,4 +1,6 @@
-# UAP Version 2.0.0 - Coming Soon
+# UAP Version 2.0.0
+
+We have moved on to v3 since the release of Nova Framework.  Check out our new github repo [UAP3](https://github.com/UserApplePie/UAP-MVC-CMS-3/)
 
 [![Join the chat at https://gitter.im/davarravad/UserApplePie-v-2](https://badges.gitter.im/davarravad/UserApplePie-v-2.svg)](https://gitter.im/davarravad/UserApplePie-v-2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 
